@@ -1,0 +1,20 @@
+import description from './description.md';
+import hintsRaw from './hints.md';
+import { starterTs, starterJs, solutionTs, solutionJs } from './code';
+import { validate } from './validate';
+import { parseHints } from '../_utils';
+import type { Challenge } from '../../types';
+
+export const challenge: Challenge = {
+  id: 'be-01-list-files',
+  title: 'List Files in Directory',
+  category: 'be',
+  difficulty: 'easy',
+  comingSoon: false,
+  description,
+  concepts: ['fs module', 'readdirSync', 'array join', 'Node.js built-ins'],
+  hints: parseHints(hintsRaw),
+  starterCode: { typescript: starterTs, javascript: starterJs },
+  solution: { typescript: solutionTs, javascript: solutionJs },
+  validate,
+};

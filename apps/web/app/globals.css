@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-bg-base text-text-primary font-body antialiased;
+  }
+}
+
+/* Clerk auth: remove nested card chrome — our page wrapper is the only card */
+@layer components {
+  .cl-cardBox,
+  .cl-card,
+  .cl-scrollBox {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
+
+/*
+  Dark mode semantic token overrides.
+  These live outside @layer so they get higher final cascade priority than
+  Tailwind utilities (specificity 0,2,0 vs 0,1,0 — .dark selector + token class).
+  Every component that uses the semantic text/bg/border tokens gets dark mode
+  automatically, without needing explicit dark: prefixes everywhere.
+*/
+.dark .text-text-primary   { color: #F0EDE8; }
+.dark .text-text-secondary { color: #AAA5A0; }
+.dark .text-text-muted     { color: #8A8580; }
+.dark .text-text-inverse   { color: #F5F3F0; }
+
+.dark .bg-bg-base    { background-color: #0F0F0F; }
+.dark .bg-bg-surface { background-color: #1A1A1A; }
+.dark .bg-bg-subtle  { background-color: #252525; }
+.dark .bg-bg-inverse { background-color: #000000; }
+
+.dark .border-border-subtle { border-color: #2A2A2A; }
+.dark .border-border-strong { border-color: #3A3A3A; }
