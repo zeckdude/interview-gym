@@ -1,18 +1,19 @@
 'use client';
 
-import type { FilterCategory } from '@/data/types';
+import type { ContentFilterCategory } from '@/lib/categories';
 import { cn } from '@/lib/utils';
 
-const tabs: { id: FilterCategory; label: string }[] = [
+const tabs: { id: ContentFilterCategory; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'be', label: 'Backend' },
-  { id: 'fe', label: 'FE Essential' },
-  { id: 'fe-advanced', label: 'FE Advanced' },
+  { id: 'frontend', label: 'Frontend' },
+  { id: 'react', label: 'React' },
+  { id: 'nextjs', label: 'Next.js' },
 ];
 
 interface FilterTabsProps {
-  active: FilterCategory;
-  onChange: (category: FilterCategory) => void;
+  active: ContentFilterCategory;
+  onChange: (category: ContentFilterCategory) => void;
 }
 
 export function FilterTabs({ active, onChange }: FilterTabsProps) {

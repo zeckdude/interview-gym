@@ -118,6 +118,66 @@ apps/web/data/challenges/
 - `apps/web/data/challenges/_utils.ts` — exports `errorResult()` and `parseHints()`
 - Import these in every `validate.ts` and `index.ts` — do not duplicate them
 
+## Content taxonomy
+
+**Source of truth:** `apps/web/data/types.ts` (types) and `apps/web/lib/categories.ts` (filter/display helpers).
+
+### Top-level categories (filter tabs)
+
+| Value | UI label |
+|-------|----------|
+| `be` | Backend |
+| `fe` | Frontend |
+| `stack` | Stack & Tooling |
+
+`all` is a filter-only value — not stored on content.
+
+### Subcategories (multi-select toggles under a top level)
+
+| Top level | Subcategories |
+|-----------|---------------|
+| Backend | *(none for now)* |
+| Frontend | `react`, `nextjs`, `css`, `ai` |
+| Stack & Tooling | `typescript`, `vitest` |
+
+**Rules:**
+- `subcategory: null` = **general** content for that top level. No "General" label in the UI.
+- No subcategory toggles selected under a top level → show **all** content for that top level (general + every subcategory).
+- One or more subcategory toggles selected → show **general + selected subcategories only**.
+
+### Legacy category migration
+
+Existing data files still use `category: ChallengeCategory`. Map at read time via `resolveTaxonomy()`:
+
+| Legacy `category` | Taxonomy |
+|-------------------|----------|
+| `be` | Backend (general) |
+| `fe` | Frontend (general) |
+| `fe-advanced` | Frontend → React |
+| `nextjs` | Frontend → Next.js |
+
+New content should set explicit `topLevel` + `subcategory` on challenges, lessons, and questions when the legacy field is insufficient (e.g. CSS, AI, TypeScript, Vitest).
+
+### Launch requirement — 10 / 10 / 10
+
+Every **new** top-level bucket or subcategory must ship with:
+
+- **10 easy** lessons + **10 easy** challenges
+- **10 intermediate** lessons + **10 intermediate** challenges
+- **10 advanced** lessons + **10 advanced** challenges
+
+Constants: `CONTENT_LAUNCH_MIN_PER_DIFFICULTY` and `CONTENT_LAUNCH_DIFFICULTIES` in `lib/categories.ts`.
+
+Do not mark a bucket "live" in filters until it meets this minimum.
+
+### Most Asked
+
+- **Default:** Curated in data files (`mostAsked: true` + optional `mostAskedReason`) based on real interview frequency — set when content is authored or reviewed, not by users in the list UI.
+- **Lessons:** Inherit from explicit `mostAsked` on the lesson, or from any related challenge marked most asked (`getCuratedMostAskedForLesson()`).
+- **Personal override:** Signed-in users can mark/unmark via the `⋯` menu on challenge, lesson, and question **detail pages only**. Overrides are stored per user in `MostAskedOverride` (not canonical data).
+- **Reset:** “Reset to default” removes the personal override and restores curated flags.
+- List filters and badges use **effective** most asked (curated + personal override).
+
 ## Commands
 
 ```bash

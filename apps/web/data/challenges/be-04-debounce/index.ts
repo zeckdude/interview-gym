@@ -9,7 +9,7 @@ export const challenge: Challenge = {
   id: 'be-04-debounce',
   title: 'Debounce Function from Scratch',
   category: 'be',
-  difficulty: 'medium',
+  difficulty: 'intermediate',
   comingSoon: false,
   description,
   concepts: ['debounce', 'setTimeout', 'clearTimeout', 'closures', 'higher-order functions'],
@@ -17,4 +17,6 @@ export const challenge: Challenge = {
   starterCode: { typescript: starterTs, javascript: starterJs },
   solution: { typescript: solutionTs, javascript: solutionJs },
   validate,
+  mostAsked: true,
+  hasLivePreview: false,
 };

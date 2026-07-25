@@ -1,7 +1,8 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
+import { getUserTimezone } from '@/lib/badges';
 import { prisma } from '@/lib/prisma';
-import { computeStreak } from '@/lib/streak';
+import { checkAndBreakStreak } from '@/lib/streak';
 
 export async function GET() {
   const { userId } = await auth();
@@ -13,12 +14,7 @@ export async function GET() {
   try {
     const user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      include: {
-        attempts: {
-          select: { createdAt: true },
-          orderBy: { createdAt: 'desc' },
-        },
-      },
+      select: { id: true },
     });
 
     if (!user) {
@@ -26,17 +22,22 @@ export async function GET() {
         currentStreak: 0,
         longestStreak: 0,
         lastActivityAt: null,
+        freezesAvailable: 1,
+        needsFreezeDecision: false,
+        missedDate: null,
       });
     }
 
-    const { currentStreak, longestStreak, lastActivityAt } = computeStreak(
-      user.attempts.map((a) => a.createdAt)
-    );
+    const timezone = await getUserTimezone(user.id);
+    const result = await checkAndBreakStreak(user.id, timezone);
 
     return NextResponse.json({
-      currentStreak,
-      longestStreak,
-      lastActivityAt: lastActivityAt?.toISOString() ?? null,
+      currentStreak: result.currentStreak,
+      longestStreak: result.longestStreak,
+      lastActivityAt: result.lastActivityAt?.toISOString() ?? null,
+      freezesAvailable: result.freezesAvailable,
+      needsFreezeDecision: result.needsFreezeDecision,
+      missedDate: result.missedDate,
     });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

@@ -2,16 +2,30 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getClerkUserEmail } from '@/lib/auth';
+import {
+  checkAndAwardBadges,
+  getUserTimezone,
+  updateSpacedRepetition,
+} from '@/lib/badges';
+import { getChallengeDifficulty } from '@/lib/challenge-lookup';
 import { prisma } from '@/lib/prisma';
-import { computeStreak } from '@/lib/streak';
+import { updatePersonalBest } from '@/lib/personal-bests';
+import { updateStreak } from '@/lib/streak';
+import { updateWeakSpot } from '@/lib/weak-spots';
 
 const attemptSchema = z.object({
   challengeId: z.string().min(1),
-  challengeType: z.enum(['be', 'fe', 'fe-advanced', 'be-question', 'fe-question']),
-  language: z.enum(['javascript', 'typescript']),
+  challengeType: z.enum(['be', 'fe', 'fe-advanced', 'nextjs', 'be-question', 'fe-question', 'nextjs-question']),
+  language: z.enum(['javascript', 'typescript']).optional().default('typescript'),
   code: z.string().optional(),
+  answer: z.string().optional(),
   passed: z.boolean(),
   timeSpentMs: z.number().int().nonnegative().optional(),
+  aiCoachUsed: z.boolean().optional().default(false),
+  aiReviewUsed: z.boolean().optional().default(false),
+  aiImproveUsed: z.boolean().optional().default(false),
+  hintUsed: z.boolean().optional().default(false),
+  trackingOnly: z.boolean().optional().default(false),
 });
 
 export async function POST(request: Request) {
@@ -57,19 +71,62 @@ export async function POST(request: Request) {
       userId: user.id,
       challengeId: parsed.data.challengeId,
       challengeType: parsed.data.challengeType,
-      language: parsed.data.language,
+      language: parsed.data.language ?? 'typescript',
       code: parsed.data.code,
+      answer: parsed.data.answer,
       passed: parsed.data.passed,
       timeSpentMs: parsed.data.timeSpentMs,
+      aiCoachUsed: parsed.data.aiCoachUsed,
+      aiReviewUsed: parsed.data.aiReviewUsed,
+      aiImproveUsed: parsed.data.aiImproveUsed,
+      hintUsed: parsed.data.hintUsed,
     },
   });
 
-  // Compute updated streak so client can do an optimistic update without a re-fetch
-  const allAttempts = await prisma.attempt.findMany({
-    where: { userId: user.id },
-    select: { createdAt: true },
-  });
-  const { currentStreak } = computeStreak(allAttempts.map((a) => a.createdAt));
+  if (
+    parsed.data.passed &&
+    parsed.data.timeSpentMs &&
+    ['be', 'fe', 'fe-advanced', 'nextjs'].includes(parsed.data.challengeType)
+  ) {
+    await updatePersonalBest(
+      user.id,
+      parsed.data.challengeId,
+      parsed.data.timeSpentMs,
+      true
+    );
+  }
 
-  return NextResponse.json({ success: true, attemptId: attempt.id, currentStreak });
+  const timezone = await getUserTimezone(user.id);
+  const difficulty = getChallengeDifficulty(parsed.data.challengeId, parsed.data.challengeType);
+
+  // Skip streak/badge side effects for AI-only tracking records
+  if (parsed.data.trackingOnly) {
+    return NextResponse.json({
+      success: true,
+      attemptId: attempt.id,
+      trackingOnly: true,
+    });
+  }
+
+  const [streak] = await Promise.all([
+    updateStreak(user.id, timezone),
+    updateSpacedRepetition(
+      user.id,
+      parsed.data.challengeId,
+      parsed.data.challengeType,
+      difficulty,
+      parsed.data.passed
+    ),
+    updateWeakSpot(user.id, parsed.data.challengeId, parsed.data.passed),
+  ]);
+
+  const newBadges = await checkAndAwardBadges(user.id);
+
+  return NextResponse.json({
+    success: true,
+    attemptId: attempt.id,
+    currentStreak: streak.currentStreak,
+    longestStreak: streak.longestStreak,
+    newBadges,
+  });
 }

@@ -10,16 +10,18 @@ interface CodeEditorProps {
 }
 
 export function CodeEditor({ language, value, onChange }: CodeEditorProps) {
-  const { theme } = useTheme();
+  const { look, darkMode } = useTheme();
+  const monacoTheme =
+    darkMode === 'dark' ? look.dark.monacoThemeDark : look.light.monacoThemeLight;
 
   return (
-    <div className="rounded-lg overflow-hidden border border-border-subtle dark:border-[#2A2A2A] shadow-card">
+    <div className="rounded-lg overflow-hidden border border-border-subtle shadow-card">
       <Editor
         height="480px"
         language={language}
         value={value}
         onChange={(val) => onChange(val ?? '')}
-        theme={theme === 'dark' ? 'vs-dark' : 'vs-light'}
+        theme={monacoTheme}
         options={{
           fontSize: 14,
           fontFamily: 'JetBrains Mono, Fira Code, monospace',
@@ -30,6 +32,7 @@ export function CodeEditor({ language, value, onChange }: CodeEditorProps) {
           roundedSelection: true,
           automaticLayout: true,
           tabSize: 2,
+          scrollbar: { alwaysConsumeMouseWheel: false },
         }}
       />
     </div>

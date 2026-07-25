@@ -1,0 +1,29 @@
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .print-page {
+    padding: 0 !important;
+  }
+
+  .print-page section {
+    break-inside: avoid;
+  }
+
+  .print-page table {
+    page-break-inside: auto;
+  }
+
+  .print-page tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+}
+
+@media screen {
+  body {
+    background: #fff;
+  }
+}

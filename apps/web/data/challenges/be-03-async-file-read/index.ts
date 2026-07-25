@@ -9,7 +9,7 @@ export const challenge: Challenge = {
   id: 'be-03-async-file-read',
   title: 'Async File Read with Promises',
   category: 'be',
-  difficulty: 'easy',
+  difficulty: 'intermediate',
   comingSoon: false,
   description,
   concepts: ['fs.promises', 'async/await', 'try/catch', 'error handling'],
@@ -17,4 +17,6 @@ export const challenge: Challenge = {
   starterCode: { typescript: starterTs, javascript: starterJs },
   solution: { typescript: solutionTs, javascript: solutionJs },
   validate,
+  mostAsked: false,
+  hasLivePreview: false,
 };

@@ -1,7 +1,7 @@
 import { executeUserCode, getExport } from '../../../lib/execute-code';
 import { errorResult } from '../_utils';
 
-export function validate(userCode: string) {
+export async function validate(userCode: string) {
   try {
     const exports = executeUserCode(userCode, () => ({}));
     const getConfig = getExport<
@@ -9,7 +9,11 @@ export function validate(userCode: string) {
         databaseUrl: string;
         apiKey: string;
         port: number;
-      }
+      } | Promise<{
+        databaseUrl: string;
+        apiKey: string;
+        port: number;
+      }>
     >(exports, 'getConfig');
 
     const validEnv = {
@@ -18,7 +22,7 @@ export function validate(userCode: string) {
       PORT: '3000',
     };
 
-    const result = getConfig(validEnv);
+    const result = await getConfig(validEnv);
     const validPassed =
       result.databaseUrl === validEnv.DATABASE_URL &&
       result.apiKey === validEnv.API_KEY &&
@@ -26,7 +30,7 @@ export function validate(userCode: string) {
 
     let errorMessage = '';
     try {
-      getConfig({ DATABASE_URL: 'postgres://localhost/db' });
+      await getConfig({ DATABASE_URL: 'postgres://localhost/db' });
     } catch (e: unknown) {
       errorMessage = String(e);
     }

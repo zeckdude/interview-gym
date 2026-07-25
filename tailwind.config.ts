@@ -52,6 +52,8 @@ const config: Config = {
         'cat-fe-light': '#D6EAF8',
         'cat-advanced': '#16A085',
         'cat-advanced-light': '#D1F2EB',
+        'cat-nextjs': '#111827',
+        'cat-nextjs-light': '#E5E7EB',
       },
 
       fontFamily: {
@@ -92,6 +94,16 @@ const config: Config = {
         '18': '4.5rem',
         '22': '5.5rem',
         '30': '7.5rem',
+      },
+
+      keyframes: {
+        'slide-up': {
+          '0%': { transform: 'translateY(100%)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
+      animation: {
+        'slide-up': 'slide-up 0.3s ease-out forwards',
       },
     },
   },

@@ -30,7 +30,7 @@ Interview Gym is a full-stack web app that helps senior frontend engineers prepa
 | Database | PostgreSQL on Railway | Stores your attempts, progress, and preferences |
 | ORM | Prisma | Lets you talk to the database using TypeScript instead of raw SQL |
 | AI | Anthropic Claude | Powers the coaching, code review, and improvement features |
-| Email | SendGrid | Sends your practice reminders |
+| Email | Resend | Sends your practice reminders |
 
 ---
 

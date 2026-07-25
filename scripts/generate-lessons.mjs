@@ -1,0 +1,188 @@
+import fs from 'fs';
+import path from 'path';
+
+const dir = 'apps/web/data/lessons';
+
+const lessons = [
+  { file: 'lesson-fs-module.ts', export: 'lessonFsModule', id: 'lesson-fs-module', title: 'Node.js fs Module — Reading and Writing Files', category: 'be', related: ['be-01', 'be-02', 'be-03'], minutes: 10, concepts: ['fs', 'readFile', 'writeFile', 'sync vs async'], mdn: [{ label: 'Node.js fs module', url: 'https://nodejs.org/api/fs.html' }], fn: 'joinPath', jsStarter: "function joinPath(base, segment) {\n  // Return base + '/' + segment (no double slashes)\n  \n}", tsStarter: "function joinPath(base: string, segment: string): string {\n  // Return base + '/' + segment (no double slashes)\n  \n}", jsSolution: "function joinPath(base, segment) {\n  const trimmed = base.endsWith('/') ? base.slice(0, -1) : base;\n  const seg = segment.startsWith('/') ? segment.slice(1) : segment;\n  return trimmed + '/' + seg;\n}", tsSolution: "function joinPath(base: string, segment: string): string {\n  const trimmed = base.endsWith('/') ? base.slice(0, -1) : base;\n  const seg = segment.startsWith('/') ? segment.slice(1) : segment;\n  return trimmed + '/' + seg;\n}", tests: "joinPath('/data', 'users.json') === '/data/users.json' && joinPath('/data/', '/users.json') === '/data/users.json'", prompt: 'Implement joinPath(base, segment) that joins path segments cleanly — no double slashes.' },
+  { file: 'lesson-async-promises.ts', export: 'lessonAsyncPromises', id: 'lesson-async-promises', title: 'Async JavaScript — Promises, async/await, and Error Handling', category: 'be', related: ['be-03', 'be-07'], minutes: 12, concepts: ['Promise', 'async/await', 'try/catch'], mdn: [{ label: 'Using Promises — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises' }], fn: 'delay', jsStarter: "function delay(ms) {\n  // Return a Promise that resolves after ms milliseconds\n  \n}", tsStarter: "function delay(ms: number): Promise<void> {\n  // Return a Promise that resolves after ms milliseconds\n  \n}", jsSolution: "function delay(ms) {\n  return new Promise((resolve) => setTimeout(resolve, ms));\n}", tsSolution: "function delay(ms: number): Promise<void> {\n  return new Promise((resolve) => setTimeout(resolve, ms));\n}", tests: "typeof delay(10).then === 'function'", prompt: 'Implement delay(ms) — returns a Promise that resolves after ms milliseconds.' },
+  { file: 'lesson-event-emitter.ts', export: 'lessonEventEmitter', id: 'lesson-event-emitter', title: 'Node.js EventEmitter — Custom Events', category: 'be', related: ['be-08'], minutes: 10, concepts: ['EventEmitter', 'on', 'emit'], mdn: [{ label: 'EventEmitter — Node.js', url: 'https://nodejs.org/api/events.html' }], fn: 'createEmitter', jsStarter: "function createEmitter() {\n  const listeners = {};\n  return {\n    on(event, fn) { /* store listener */ },\n    emit(event, data) { /* call listeners */ },\n  };\n}", tsStarter: "function createEmitter() {\n  const listeners: Record<string, Array<(data: unknown) => void>> = {};\n  return {\n    on(event: string, fn: (data: unknown) => void) { /* store listener */ },\n    emit(event: string, data: unknown) { /* call listeners */ },\n  };\n}", jsSolution: "function createEmitter() {\n  const listeners = {};\n  return {\n    on(event, fn) {\n      if (!listeners[event]) listeners[event] = [];\n      listeners[event].push(fn);\n    },\n    emit(event, data) {\n      (listeners[event] || []).forEach((fn) => fn(data));\n    },\n  };\n}", tsSolution: "function createEmitter() {\n  const listeners: Record<string, Array<(data: unknown) => void>> = {};\n  return {\n    on(event: string, fn: (data: unknown) => void) {\n      if (!listeners[event]) listeners[event] = [];\n      listeners[event].push(fn);\n    },\n    emit(event: string, data: unknown) {\n      (listeners[event] || []).forEach((fn) => fn(data));\n    },\n  };\n}", tests: "(() => { let v = 0; const e = createEmitter(); e.on('x', (d) => { v = d; }); e.emit('x', 42); return v === 42; })()", prompt: 'Complete the mini EventEmitter — on registers listeners, emit calls them with data.' },
+  { file: 'lesson-http-server.ts', export: 'lessonHttpServer', id: 'lesson-http-server', title: 'Building HTTP Servers in Node.js', category: 'be', related: ['be-13', 'be-05'], minutes: 12, concepts: ['HTTP', 'request', 'response', 'routing'], mdn: [{ label: 'HTTP — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP' }], fn: 'matchRoute', jsStarter: "function matchRoute(method, path, routes) {\n  // Return handler or null\n  \n}", tsStarter: "function matchRoute(method: string, path: string, routes: Record<string, unknown>): unknown {\n  \n}", jsSolution: "function matchRoute(method, path, routes) {\n  return routes[method + ' ' + path] ?? null;\n}", tsSolution: "function matchRoute(method: string, path: string, routes: Record<string, unknown>): unknown {\n  return routes[method + ' ' + path] ?? null;\n}", tests: "matchRoute('GET', '/users', { 'GET /users': 1 }) === 1 && matchRoute('POST', '/users', { 'GET /users': 1 }) === null", prompt: 'Implement matchRoute(method, path, routes) — returns the handler for METHOD path or null.' },
+  { file: 'lesson-streams.ts', export: 'lessonStreams', id: 'lesson-streams', title: 'Node.js Streams — Pipes and Transform', category: 'be', related: ['be-12', 'be-15'], minutes: 11, concepts: ['streams', 'pipe', 'transform'], mdn: [{ label: 'Streams — Node.js', url: 'https://nodejs.org/api/stream.html' }], fn: 'transformLines', jsStarter: "function transformLines(lines, fn) {\n  \n}", tsStarter: "function transformLines(lines: string[], fn: (line: string) => string): string[] {\n  \n}", jsSolution: "function transformLines(lines, fn) {\n  return lines.map(fn);\n}", tsSolution: "function transformLines(lines: string[], fn: (line: string) => string): string[] {\n  return lines.map(fn);\n}", tests: "JSON.stringify(transformLines(['a','b'], (l) => l.toUpperCase())) === JSON.stringify(['A','B'])", prompt: 'Implement transformLines(lines, fn) — maps each line through fn.' },
+  { file: 'lesson-closures-hof.ts', export: 'lessonClosuresHof', id: 'lesson-closures-hof', title: 'Closures and Higher-Order Functions', category: 'be', related: ['be-04', 'be-17'], minutes: 12, concepts: ['closure', 'lexical scope', 'HOF'], mdn: [{ label: 'Closures — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures' }], fn: 'makeAdder', jsStarter: "function makeAdder(x) {\n  \n}", tsStarter: "function makeAdder(x: number): (y: number) => number {\n  \n}", jsSolution: "function makeAdder(x) {\n  return function(y) { return x + y; };\n}", tsSolution: "function makeAdder(x: number): (y: number) => number {\n  return function(y: number): number { return x + y; };\n}", tests: 'makeAdder(5)(3) === 8 && makeAdder(100)(1) === 101', prompt: 'Implement makeAdder(x) that returns a function adding x to its argument.', extraSteps: true },
+  { file: 'lesson-express-middleware.ts', export: 'lessonExpressMiddleware', id: 'lesson-express-middleware', title: 'Express Middleware — How the Chain Works', category: 'be', related: ['be-10'], minutes: 10, concepts: ['middleware', 'next()'], mdn: [{ label: 'Express middleware', url: 'https://expressjs.com/en/guide/using-middleware.html' }], fn: 'runMiddleware', jsStarter: "function runMiddleware(middlewares, req, res) {\n  \n}", tsStarter: "function runMiddleware(middlewares: Array<(req: object, res: object, next: () => void) => void>, req: object, res: object): void {\n  \n}", jsSolution: "function runMiddleware(middlewares, req, res) {\n  let i = 0;\n  const next = () => { if (i < middlewares.length) middlewares[i++](req, res, next); };\n  next();\n}", tsSolution: "function runMiddleware(middlewares: Array<(req: object, res: object, next: () => void) => void>, req: object, res: object): void {\n  let i = 0;\n  const next = () => { if (i < middlewares.length) middlewares[i++](req, res, next); };\n  next();\n}", tests: "(() => { let n = 0; runMiddleware([(r,s,next) => { n++; next(); }, (r,s,next) => { n++; next(); }], {}, {}); return n === 2; })()", prompt: 'Implement runMiddleware — runs middleware functions in order via next().' },
+  { file: 'lesson-rest-api.ts', export: 'lessonRestApi', id: 'lesson-rest-api', title: 'REST API Design and CRUD', category: 'be', related: ['be-13', 'be-20'], minutes: 11, concepts: ['REST', 'CRUD', 'HTTP methods'], mdn: [{ label: 'HTTP methods — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods' }], fn: 'crudAction', jsStarter: "function crudAction(method) {\n  \n}", tsStarter: "function crudAction(method: string): string | null {\n  \n}", jsSolution: "function crudAction(method) {\n  const map = { GET: 'read', POST: 'create', PUT: 'update', DELETE: 'delete' };\n  return map[method] ?? null;\n}", tsSolution: "function crudAction(method: string): string | null {\n  const map: Record<string, string> = { GET: 'read', POST: 'create', PUT: 'update', DELETE: 'delete' };\n  return map[method] ?? null;\n}", tests: "crudAction('GET') === 'read' && crudAction('POST') === 'create' && crudAction('PATCH') === null", prompt: 'Map HTTP methods to CRUD actions.' },
+  { file: 'lesson-error-handling.ts', export: 'lessonErrorHandling', id: 'lesson-error-handling', title: 'Error Handling in Node.js and Express', category: 'be', related: ['be-07', 'be-15'], minutes: 10, concepts: ['try/catch', 'async errors'], mdn: [{ label: 'Error handling — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Control_flow_and_error_handling' }], fn: 'safeParse', jsStarter: "function safeParse(json) {\n  \n}", tsStarter: "function safeParse(json: string): { ok: true; data: unknown } | { ok: false; error: string } {\n  \n}", jsSolution: "function safeParse(json) {\n  try { return { ok: true, data: JSON.parse(json) }; }\n  catch (e) { return { ok: false, error: e.message }; }\n}", tsSolution: "function safeParse(json: string): { ok: true; data: unknown } | { ok: false; error: string } {\n  try { return { ok: true, data: JSON.parse(json) }; }\n  catch (e) { return { ok: false, error: (e as Error).message }; }\n}", tests: "safeParse('{\"a\":1}').ok === true && safeParse('bad').ok === false", prompt: 'Implement safeParse(json) — returns { ok: true, data } or { ok: false, error }.' },
+  { file: 'lesson-postgres-pg.ts', export: 'lessonPostgresPg', id: 'lesson-postgres-pg', title: 'PostgreSQL with node-postgres', category: 'be', related: ['be-18'], minutes: 11, concepts: ['SQL', 'parameterized queries'], mdn: [{ label: 'node-postgres', url: 'https://node-postgres.com/' }], fn: 'buildQuery', jsStarter: "function buildQuery(table, id) {\n  \n}", tsStarter: "function buildQuery(table: string, id: number): { text: string; values: unknown[] } {\n  \n}", jsSolution: "function buildQuery(table, id) {\n  return { text: 'SELECT * FROM ' + table + ' WHERE id = $1', values: [id] };\n}", tsSolution: "function buildQuery(table: string, id: number): { text: string; values: unknown[] } {\n  return { text: 'SELECT * FROM ' + table + ' WHERE id = $1', values: [id] };\n}", tests: "(() => { const q = buildQuery('users', 5); return q.text.includes('users') && q.values[0] === 5; })()", prompt: 'Build a parameterized SELECT query object with text and values.' },
+  { file: 'lesson-jwt.ts', export: 'lessonJwt', id: 'lesson-jwt', title: 'JSON Web Tokens — Auth the Right Way', category: 'be', related: ['be-20', 'be-05'], minutes: 10, concepts: ['JWT', 'Bearer token'], mdn: [{ label: 'JWT introduction', url: 'https://jwt.io/introduction' }], fn: 'decodePayload', jsStarter: "function decodePayload(token) {\n  \n}", tsStarter: "function decodePayload(token: string): Record<string, unknown> {\n  \n}", jsSolution: "function decodePayload(token) {\n  const payload = token.split('.')[1];\n  return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));\n}", tsSolution: "function decodePayload(token: string): Record<string, unknown> {\n  const payload = token.split('.')[1];\n  return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));\n}", tests: "(() => { const p = btoa(JSON.stringify({sub:'123'})); return decodePayload('h.' + p + '.s').sub === '123'; })()", prompt: 'Decode the payload (middle segment) of a JWT from base64 JSON.' },
+  { file: 'lesson-worker-threads.ts', export: 'lessonWorkerThreads', id: 'lesson-worker-threads', title: 'CPU-Intensive Work — Worker Threads', category: 'be', related: ['be-16'], minutes: 10, concepts: ['worker threads', 'parallelism'], mdn: [{ label: 'Worker threads — Node.js', url: 'https://nodejs.org/api/worker_threads.html' }], fn: 'chunkArray', jsStarter: "function chunkArray(arr, size) {\n  \n}", tsStarter: "function chunkArray<T>(arr: T[], size: number): T[][] {\n  \n}", jsSolution: "function chunkArray(arr, size) {\n  const result = [];\n  for (let i = 0; i < arr.length; i += size) result.push(arr.slice(i, i + size));\n  return result;\n}", tsSolution: "function chunkArray<T>(arr: T[], size: number): T[][] {\n  const result: T[][] = [];\n  for (let i = 0; i < arr.length; i += size) result.push(arr.slice(i, i + size));\n  return result;\n}", tests: "JSON.stringify(chunkArray([1,2,3,4,5], 2)) === JSON.stringify([[1,2],[3,4],[5]])", prompt: 'Implement chunkArray(arr, size) — splits an array into sub-arrays.' },
+  { file: 'lesson-pub-sub.ts', export: 'lessonPubSub', id: 'lesson-pub-sub', title: 'Pub/Sub Pattern — Decoupled Communication', category: 'be', related: ['be-08', 'be-16'], minutes: 10, concepts: ['pub/sub', 'decoupling'], mdn: [{ label: 'Observer pattern — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/API/EventTarget' }], fn: 'createPubSub', jsStarter: "function createPubSub() {\n  const subs = {};\n  return { subscribe(channel, fn) {}, publish(channel, msg) {} };\n}", tsStarter: "function createPubSub() {\n  const subs: Record<string, Array<(msg: unknown) => void>> = {};\n  return { subscribe(channel: string, fn: (msg: unknown) => void) {}, publish(channel: string, msg: unknown) {} };\n}", jsSolution: "function createPubSub() {\n  const subs = {};\n  return {\n    subscribe(channel, fn) { if (!subs[channel]) subs[channel] = []; subs[channel].push(fn); },\n    publish(channel, msg) { (subs[channel] || []).forEach((fn) => fn(msg)); },\n  };\n}", tsSolution: "function createPubSub() {\n  const subs: Record<string, Array<(msg: unknown) => void>> = {};\n  return {\n    subscribe(channel: string, fn: (msg: unknown) => void) { if (!subs[channel]) subs[channel] = []; subs[channel].push(fn); },\n    publish(channel: string, msg: unknown) { (subs[channel] || []).forEach((fn) => fn(msg)); },\n  };\n}", tests: "(() => { let m = ''; const ps = createPubSub(); ps.subscribe('news', (x) => { m = x; }); ps.publish('news', 'hi'); return m === 'hi'; })()", prompt: 'Complete pub/sub — subscribe adds listeners, publish notifies them.' },
+  { file: 'lesson-memoization.ts', export: 'lessonMemoization', id: 'lesson-memoization', title: 'Memoization and Caching', category: 'be', related: ['be-11', 'be-04'], minutes: 10, concepts: ['memoization', 'cache'], mdn: [{ label: 'Memoization — MDN', url: 'https://developer.mozilla.org/en-US/docs/Glossary/Memoization' }], fn: 'memoize', jsStarter: "function memoize(fn) {\n  const cache = {};\n  return function(...args) { };\n}", tsStarter: "function memoize<T extends (...args: unknown[]) => unknown>(fn: T): T {\n  const cache: Record<string, unknown> = {};\n  return function(...args: unknown[]) { } as T;\n}", jsSolution: "function memoize(fn) {\n  const cache = {};\n  return function(...args) {\n    const key = JSON.stringify(args);\n    if (key in cache) return cache[key];\n    return (cache[key] = fn(...args));\n  };\n}", tsSolution: "function memoize<T extends (...args: unknown[]) => unknown>(fn: T): T {\n  const cache: Record<string, unknown> = {};\n  return function(...args: unknown[]) {\n    const key = JSON.stringify(args);\n    if (key in cache) return cache[key];\n    return (cache[key] = fn(...args));\n  } as T;\n}", tests: "(() => { let c = 0; const f = memoize((n) => { c++; return n * 2; }); f(3); f(3); f(4); return c === 2; })()", prompt: 'Implement memoize(fn) — caches results by arguments.' },
+  { file: 'lesson-graceful-shutdown.ts', export: 'lessonGracefulShutdown', id: 'lesson-graceful-shutdown', title: 'Graceful Shutdown — Closing Cleanly', category: 'be', related: ['be-19'], minutes: 9, concepts: ['SIGTERM', 'drain connections'], mdn: [{ label: 'Process signals — Node.js', url: 'https://nodejs.org/api/process.html#signal-events' }], fn: 'registerShutdown', jsStarter: "function registerShutdown(handlers) {\n  let called = false;\n  return { shutdown() {} };\n}", tsStarter: "function registerShutdown(handlers: Array<() => void>) {\n  let called = false;\n  return { shutdown() {} };\n}", jsSolution: "function registerShutdown(handlers) {\n  let called = false;\n  return { shutdown() { if (called) return; called = true; handlers.forEach((h) => h()); } };\n}", tsSolution: "function registerShutdown(handlers: Array<() => void>) {\n  let called = false;\n  return { shutdown() { if (called) return; called = true; handlers.forEach((h) => h()); } };\n}", tests: "(() => { let n = 0; const s = registerShutdown([() => n++, () => n++]); s.shutdown(); s.shutdown(); return n === 2; })()", prompt: 'Run all handlers once on first shutdown() call.' },
+  { file: 'lesson-react-hooks.ts', export: 'lessonReactHooks', id: 'lesson-react-hooks', title: 'React Hooks Deep Dive — useState, useEffect, useRef', category: 'fe', related: ['fe-01', 'fe-02', 'fe-03', 'fe-04', 'fe-05', 'fe-06'], minutes: 15, concepts: ['useState', 'useEffect', 'useRef'], mdn: [{ label: 'React Hooks', url: 'https://react.dev/reference/react' }], fn: 'useCounterLogic', jsStarter: "function useCounterLogic(initial) {\n  let count = initial;\n  return { get count() { return count; }, increment() { count++; } };\n}", tsStarter: "function useCounterLogic(initial: number) {\n  let count = initial;\n  return { get count() { return count; }, increment() { count++; } };\n}", jsSolution: "function useCounterLogic(initial) {\n  let count = initial;\n  return { get count() { return count; }, increment() { count++; } };\n}", tsSolution: "function useCounterLogic(initial: number) {\n  let count = initial;\n  return { get count() { return count; }, increment() { count++; } };\n}", tests: "(() => { const c = useCounterLogic(0); c.increment(); c.increment(); return c.count === 2; })()", prompt: 'Simulate useState — useCounterLogic(initial) returns count and increment().' },
+  { file: 'lesson-custom-hooks.ts', export: 'lessonCustomHooks', id: 'lesson-custom-hooks', title: 'Building Custom React Hooks', category: 'fe', related: ['fe-05', 'fea-02'], minutes: 11, concepts: ['custom hooks', 'composition'], mdn: [{ label: 'Custom Hooks', url: 'https://react.dev/learn/reusing-logic-with-custom-hooks' }], fn: 'createToggle', jsStarter: "function createToggle(initial = false) {\n  let on = initial;\n  return { isOn: () => on, toggle: () => { on = !on; } };\n}", tsStarter: "function createToggle(initial = false) {\n  let on = initial;\n  return { isOn: () => on, toggle: () => { on = !on; } };\n}", jsSolution: "function createToggle(initial = false) {\n  let on = initial;\n  return { isOn: () => on, toggle: () => { on = !on; } };\n}", tsSolution: "function createToggle(initial = false) {\n  let on = initial;\n  return { isOn: () => on, toggle: () => { on = !on; } };\n}", tests: "(() => { const t = createToggle(); t.toggle(); return t.isOn() === true; })()", prompt: 'Build toggle logic — createToggle() returns isOn() and toggle().' },
+  { file: 'lesson-context-api.ts', export: 'lessonContextApi', id: 'lesson-context-api', title: 'React Context — Avoiding Prop Drilling', category: 'fe', related: ['fea-03', 'fe-06'], minutes: 10, concepts: ['Context', 'Provider'], mdn: [{ label: 'React Context', url: 'https://react.dev/learn/passing-data-deeply-with-context' }], fn: 'createStore', jsStarter: "function createStore(initial) {\n  let value = initial;\n  return { get: () => value, set: (v) => { value = v; } };\n}", tsStarter: "function createStore<T>(initial: T) {\n  let value = initial;\n  return { get: () => value, set: (v: T) => { value = v; } };\n}", jsSolution: "function createStore(initial) {\n  let value = initial;\n  return { get: () => value, set: (v) => { value = v; } };\n}", tsSolution: "function createStore<T>(initial: T) {\n  let value = initial;\n  return { get: () => value, set: (v: T) => { value = v; } };\n}", tests: "(() => { const s = createStore(1); s.set(5); return s.get() === 5; })()", prompt: 'Implement a simple store with get() and set(v).' },
+  { file: 'lesson-performance-optimization.ts', export: 'lessonPerformanceOptimization', id: 'lesson-performance-optimization', title: 'React Performance — memo, useMemo, useCallback', category: 'fe', related: ['fe-12', 'fea-05'], minutes: 12, concepts: ['React.memo', 'useMemo'], mdn: [{ label: 'memo — React', url: 'https://react.dev/reference/react/memo' }], fn: 'shallowEqual', jsStarter: "function shallowEqual(a, b) {\n  \n}", tsStarter: "function shallowEqual(a: Record<string, unknown>, b: Record<string, unknown>): boolean {\n  \n}", jsSolution: "function shallowEqual(a, b) {\n  const keysA = Object.keys(a);\n  if (keysA.length !== Object.keys(b).length) return false;\n  return keysA.every((k) => a[k] === b[k]);\n}", tsSolution: "function shallowEqual(a: Record<string, unknown>, b: Record<string, unknown>): boolean {\n  const keysA = Object.keys(a);\n  if (keysA.length !== Object.keys(b).length) return false;\n  return keysA.every((k) => a[k] === b[k]);\n}", tests: "shallowEqual({a:1,b:2}, {a:1,b:2}) && !shallowEqual({a:1}, {a:2})", prompt: 'Implement shallow object equality.' },
+  { file: 'lesson-error-boundaries.ts', export: 'lessonErrorBoundaries', id: 'lesson-error-boundaries', title: 'Error Boundaries — Catching React Errors', category: 'fe', related: ['fea-07'], minutes: 9, concepts: ['error boundary', 'fallback UI'], mdn: [{ label: 'Error Boundaries — React', url: 'https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary' }], fn: 'safeRender', jsStarter: "function safeRender(renderFn, fallback) {\n  \n}", tsStarter: "function safeRender<T>(renderFn: () => T, fallback: (e: unknown) => T): T {\n  \n}", jsSolution: "function safeRender(renderFn, fallback) {\n  try { return renderFn(); } catch (e) { return fallback(e); }\n}", tsSolution: "function safeRender<T>(renderFn: () => T, fallback: (e: unknown) => T): T {\n  try { return renderFn(); } catch (e) { return fallback(e); }\n}", tests: "safeRender(() => { throw new Error('x'); }, () => 'fallback') === 'fallback'", prompt: 'Implement safeRender(renderFn, fallback) — catches errors.' },
+  { file: 'lesson-intersection-observer.ts', export: 'lessonIntersectionObserver', id: 'lesson-intersection-observer', title: 'Intersection Observer — Scroll-Based UI', category: 'fe', related: ['fe-09', 'fe-02'], minutes: 10, concepts: ['IntersectionObserver', 'lazy loading'], mdn: [{ label: 'Intersection Observer — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API' }], fn: 'isInViewport', jsStarter: "function isInViewport(elTop, elBottom, viewTop, viewBottom) {\n  \n}", tsStarter: "function isInViewport(elTop: number, elBottom: number, viewTop: number, viewBottom: number): boolean {\n  \n}", jsSolution: "function isInViewport(elTop, elBottom, viewTop, viewBottom) {\n  return elBottom > viewTop && elTop < viewBottom;\n}", tsSolution: "function isInViewport(elTop: number, elBottom: number, viewTop: number, viewBottom: number): boolean {\n  return elBottom > viewTop && elTop < viewBottom;\n}", tests: "isInViewport(100, 200, 0, 150) && !isInViewport(200, 300, 0, 150)", prompt: 'Implement viewport overlap check.' },
+  { file: 'lesson-accessibility.ts', export: 'lessonAccessibility', id: 'lesson-accessibility', title: 'Accessibility — Building Inclusive UIs', category: 'fe', related: ['fe-10', 'fea-18'], minutes: 11, concepts: ['ARIA', 'keyboard navigation'], mdn: [{ label: 'Accessibility — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/Accessibility' }], fn: 'getAriaLabel', jsStarter: "function getAriaLabel(isOpen) {\n  \n}", tsStarter: "function getAriaLabel(isOpen: boolean): string {\n  \n}", jsSolution: "function getAriaLabel(isOpen) {\n  return isOpen ? 'Close menu' : 'Open menu';\n}", tsSolution: "function getAriaLabel(isOpen: boolean): string {\n  return isOpen ? 'Close menu' : 'Open menu';\n}", tests: "getAriaLabel(false) === 'Open menu' && getAriaLabel(true) === 'Close menu'", prompt: 'Return Open menu or Close menu based on isOpen.' },
+  { file: 'lesson-drag-drop.ts', export: 'lessonDragDrop', id: 'lesson-drag-drop', title: 'HTML5 Drag and Drop API', category: 'fe', related: ['fe-04'], minutes: 10, concepts: ['dragstart', 'drop'], mdn: [{ label: 'Drag and Drop — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API' }], fn: 'reorder', jsStarter: "function reorder(list, fromIndex, toIndex) {\n  \n}", tsStarter: "function reorder<T>(list: T[], fromIndex: number, toIndex: number): T[] {\n  \n}", jsSolution: "function reorder(list, fromIndex, toIndex) {\n  const result = [...list];\n  const [item] = result.splice(fromIndex, 1);\n  result.splice(toIndex, 0, item);\n  return result;\n}", tsSolution: "function reorder<T>(list: T[], fromIndex: number, toIndex: number): T[] {\n  const result = [...list];\n  const [item] = result.splice(fromIndex, 1);\n  result.splice(toIndex, 0, item);\n  return result;\n}", tests: "JSON.stringify(reorder(['a','b','c'], 0, 2)) === JSON.stringify(['b','c','a'])", prompt: 'Implement reorder(list, fromIndex, toIndex).' },
+  { file: 'lesson-web-workers.ts', export: 'lessonWebWorkers', id: 'lesson-web-workers', title: 'Web Workers — Non-Blocking UI', category: 'fe', related: ['fe-20'], minutes: 10, concepts: ['Web Workers', 'postMessage'], mdn: [{ label: 'Web Workers — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API' }], fn: 'sumLargeArray', jsStarter: "function sumLargeArray(nums) {\n  \n}", tsStarter: "function sumLargeArray(nums: number[]): number {\n  \n}", jsSolution: "function sumLargeArray(nums) {\n  return nums.reduce((a, b) => a + b, 0);\n}", tsSolution: "function sumLargeArray(nums: number[]): number {\n  return nums.reduce((a, b) => a + b, 0);\n}", tests: 'sumLargeArray([1,2,3,4]) === 10', prompt: 'Implement sumLargeArray(nums).' },
+  { file: 'lesson-sse.ts', export: 'lessonSse', id: 'lesson-sse', title: 'Server-Sent Events — Real-Time Without WebSockets', category: 'fe', related: ['fea-15'], minutes: 10, concepts: ['SSE', 'EventSource'], mdn: [{ label: 'Server-sent events — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events' }], fn: 'parseSseLine', jsStarter: "function parseSseLine(line) {\n  \n}", tsStarter: "function parseSseLine(line: string): { type: string; value: string } | null {\n  \n}", jsSolution: "function parseSseLine(line) {\n  if (!line.includes(':')) return null;\n  const [type, ...rest] = line.split(':');\n  return { type: type.trim(), value: rest.join(':').trim() };\n}", tsSolution: "function parseSseLine(line: string): { type: string; value: string } | null {\n  if (!line.includes(':')) return null;\n  const [type, ...rest] = line.split(':');\n  return { type: type.trim(), value: rest.join(':').trim() };\n}", tests: "parseSseLine('data: hello').value === 'hello'", prompt: 'Parse an SSE line like data: hello into { type, value }.' },
+  { file: 'lesson-concurrent-react.ts', export: 'lessonConcurrentReact', id: 'lesson-concurrent-react', title: 'React 18 Concurrent Features', category: 'fe-advanced', related: ['fea-04', 'fea-05', 'fea-06'], minutes: 12, concepts: ['concurrent rendering', 'Suspense'], mdn: [{ label: 'Concurrent React', url: 'https://react.dev/blog/2022/03/29/react-v18' }], fn: 'schedulePriority', jsStarter: "function schedulePriority(urgent, deferred) {\n  urgent();\n  deferred();\n}", tsStarter: "function schedulePriority(urgent: () => void, deferred: () => void): void {\n  urgent();\n  deferred();\n}", jsSolution: "function schedulePriority(urgent, deferred) {\n  urgent();\n  deferred();\n}", tsSolution: "function schedulePriority(urgent: () => void, deferred: () => void): void {\n  urgent();\n  deferred();\n}", tests: "(() => { let order = []; schedulePriority(() => order.push('u'), () => order.push('d')); return order[0] === 'u' && order[1] === 'd'; })()", prompt: 'Run urgent() before deferred().' },
+  { file: 'lesson-state-machines.ts', export: 'lessonStateMachines', id: 'lesson-state-machines', title: 'Finite State Machines for UI', category: 'fe-advanced', related: ['fea-13'], minutes: 11, concepts: ['FSM', 'transitions'], mdn: [{ label: 'Finite state machine — MDN', url: 'https://developer.mozilla.org/en-US/docs/Glossary/Finite_state_machine' }], fn: 'transition', jsStarter: "function transition(state, event, machine) {\n  \n}", tsStarter: "function transition(state: string, event: string, machine: Record<string, Record<string, string>>): string {\n  \n}", jsSolution: "function transition(state, event, machine) {\n  return machine[state]?.[event] ?? state;\n}", tsSolution: "function transition(state: string, event: string, machine: Record<string, Record<string, string>>): string {\n  return machine[state]?.[event] ?? state;\n}", tests: "transition('idle', 'START', { idle: { START: 'loading' } }) === 'loading'", prompt: 'Implement FSM transition — return next state or stay if invalid.' },
+  { file: 'lesson-design-tokens.ts', export: 'lessonDesignTokens', id: 'lesson-design-tokens', title: 'Design Token Systems', category: 'fe-advanced', related: ['fea-14'], minutes: 10, concepts: ['design tokens', 'theming'], mdn: [{ label: 'CSS custom properties — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties' }], fn: 'resolveToken', jsStarter: "function resolveToken(name, tokens) {\n  \n}", tsStarter: "function resolveToken(name: string, tokens: Record<string, string>): string {\n  \n}", jsSolution: "function resolveToken(name, tokens) {\n  let val = tokens[name];\n  while (val && val.startsWith('{') && val.endsWith('}')) {\n    val = tokens[val.slice(1, -1)];\n  }\n  return val;\n}", tsSolution: "function resolveToken(name: string, tokens: Record<string, string>): string {\n  let val = tokens[name];\n  while (val && val.startsWith('{') && val.endsWith('}')) {\n    val = tokens[val.slice(1, -1)];\n  }\n  return val;\n}", tests: "resolveToken('color.text', { 'color.brand': '#FF6B35', 'color.text': '{color.brand}' }) === '#FF6B35'", prompt: 'Resolve token references like {color.brand} to final values.' },
+  { file: 'lesson-core-web-vitals.ts', export: 'lessonCoreWebVitals', id: 'lesson-core-web-vitals', title: 'Core Web Vitals and Performance', category: 'fe-advanced', related: ['fea-17', 'fea-20'], minutes: 11, concepts: ['LCP', 'CLS'], mdn: [{ label: 'Web Vitals', url: 'https://web.dev/vitals/' }], fn: 'clsScore', jsStarter: "function clsScore(shifts) {\n  \n}", tsStarter: "function clsScore(shifts: number[]): number {\n  \n}", jsSolution: "function clsScore(shifts) {\n  return shifts.reduce((a, b) => a + b, 0);\n}", tsSolution: "function clsScore(shifts: number[]): number {\n  return shifts.reduce((a, b) => a + b, 0);\n}", tests: 'clsScore([0.1, 0.05, 0.02]) === 0.17', prompt: 'Calculate total CLS score by summing layout shift values.' },
+  { file: 'lesson-csp.ts', export: 'lessonCsp', id: 'lesson-csp', title: 'Content Security Policy', category: 'fe-advanced', related: ['fea-16'], minutes: 10, concepts: ['CSP', 'XSS prevention'], mdn: [{ label: 'CSP — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP' }], fn: 'buildCspHeader', jsStarter: "function buildCspHeader(directives) {\n  \n}", tsStarter: "function buildCspHeader(directives: Record<string, string[]>): string {\n  \n}", jsSolution: "function buildCspHeader(directives) {\n  return Object.entries(directives).map(([k, v]) => k + ' ' + v.join(' ')).join('; ');\n}", tsSolution: "function buildCspHeader(directives: Record<string, string[]>): string {\n  return Object.entries(directives).map(([k, v]) => k + ' ' + v.join(' ')).join('; ');\n}", tests: "buildCspHeader({ 'script-src': [\"'self'\"] }).includes(\"script-src 'self'\")", prompt: 'Build a CSP header string from a directives object.' },
+];
+
+function esc(s) {
+  return s.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
+}
+
+function defaultSteps(lesson) {
+  if (lesson.extraSteps) {
+    return `[
+    {
+      type: 'explanation',
+      title: 'What is a Closure?',
+      content: \`
+A **closure** is a function that remembers variables from the scope where it was created — even after that outer scope has finished executing.
+
+Think of it like a backpack. When a function is created, it packs up any variables it references. It carries that backpack wherever it goes.
+      \`,
+    },
+    {
+      type: 'code-example',
+      title: 'Basic Closure Example',
+      language: 'javascript',
+      content: \`
+function makeCounter() {
+  let count = 0;
+  return function() {
+    count++;
+    return count;
+  };
+}
+
+const counter = makeCounter();
+console.log(counter()); // 1
+console.log(counter()); // 2
+      \`,
+    },
+    {
+      type: 'gotcha',
+      title: '⚠️ The Loop Closure Gotcha',
+      content: \`
+Use **let** in loops — **var** shares one binding across all iterations, causing classic closure bugs in async callbacks.
+      \`,
+    },
+    {
+      type: 'explanation',
+      title: 'Higher-Order Functions',
+      content: \`
+A **higher-order function** takes or returns another function. debounce, map, and filter are all HOFs powered by closures.
+      \`,
+    },
+  ]`;
+  }
+  const topic = lesson.title.split('—')[0].trim();
+  return `[
+    {
+      type: 'explanation',
+      title: 'Why This Matters',
+      content: \`
+**${topic}** is a core interview topic. Understanding it deeply means you can explain trade-offs, not just recite syntax.
+
+**Key concepts:** ${lesson.concepts.join(', ')}
+      \`,
+    },
+    {
+      type: 'code-example',
+      title: 'Example',
+      language: 'javascript',
+      content: \`${esc(lesson.jsSolution)}\`,
+    },
+    {
+      type: 'gotcha',
+      title: '⚠️ Common Interview Trap',
+      content: \`
+Interviewers love asking about edge cases for **${lesson.concepts[0]}**. Always mention error handling and when NOT to use this pattern.
+      \`,
+    },
+  ]`;
+}
+
+for (const l of lessons) {
+  const mdnLinks = l.mdn.map((m) => `    { label: '${m.label.replace(/'/g, "\\'")}', url: '${m.url}' }`).join(',\n');
+  const content = `import type { Lesson } from './types';
+import { runUserCode } from './_utils';
+
+export const ${l.export}: Lesson = {
+  id: '${l.id}',
+  title: '${l.title.replace(/'/g, "\\'")}',
+  category: '${l.category}',
+  relatedChallengeIds: ${JSON.stringify(l.related)},
+  estimatedMinutes: ${l.minutes},
+  concepts: ${JSON.stringify(l.concepts)},
+  steps: ${defaultSteps(l)},
+  miniChallenge: {
+    id: 'mini-${l.id.replace('lesson-', '')}',
+    prompt: \`${esc(l.prompt)}\`,
+    timeLimitSeconds: ${l.category === 'fe-advanced' ? 120 : 90},
+    starterCode: {
+      javascript: \`${esc(l.jsStarter)}\`,
+      typescript: \`${esc(l.tsStarter)}\`,
+    },
+    solution: {
+      javascript: \`${esc(l.jsSolution)}\`,
+      typescript: \`${esc(l.tsSolution)}\`,
+    },
+    validate: (userCode: string) => {
+      const result = runUserCode<(...args: unknown[]) => unknown>(userCode, '${l.fn}');
+      if (!result.passed) return { passed: false, feedback: result.feedback };
+      try {
+        const testRunner = new Function('${l.fn}', 'return Boolean(${l.tests.replace(/\\/g, '\\\\').replace(/'/g, "\\'")})');
+        const ok = testRunner(result.value);
+        return ok
+          ? { passed: true, feedback: 'Perfect! All tests passed. ✓' }
+          : { passed: false, feedback: 'Not quite — check the requirements and try again.' };
+      } catch (e) {
+        return { passed: false, feedback: \`Error running tests: \${e instanceof Error ? e.message : String(e)}\` };
+      }
+    },
+  },
+  mdnLinks: [
+${mdnLinks}
+  ],
+};
+`;
+  fs.writeFileSync(path.join(dir, l.file), content);
+}
+
+const imports = lessons.map((l) => `import { ${l.export} } from './${l.file.replace('.ts', '')}';`).join('\n');
+const exports = lessons.map((l) => `  ${l.export},`).join('\n');
+const index = `${imports}
+
+export { type Lesson, type LessonStep, type MiniChallenge, type LessonProgressRecord, type LessonFilterCategory } from './types';
+export { allLessons, getLessonById, filterLessons } from './registry';
+
+// registry re-export below
+`;
+fs.writeFileSync(path.join(dir, 'registry.ts'), `${imports}
+
+export const allLessons = [
+${exports}
+];
+
+export function getLessonById(id: string) {
+  return allLessons.find((l) => l.id === id);
+}
+
+export function filterLessons(category: 'all' | 'be' | 'fe' | 'fe-advanced') {
+  if (category === 'all') return allLessons;
+  return allLessons.filter((l) => l.category === category);
+}
+`);
+fs.writeFileSync(path.join(dir, 'index.ts'), index);
+console.log('Generated', lessons.length, 'lessons');

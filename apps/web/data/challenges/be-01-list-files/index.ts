@@ -17,4 +17,6 @@ export const challenge: Challenge = {
   starterCode: { typescript: starterTs, javascript: starterJs },
   solution: { typescript: solutionTs, javascript: solutionJs },
   validate,
+  mostAsked: false,
+  hasLivePreview: false,
 };

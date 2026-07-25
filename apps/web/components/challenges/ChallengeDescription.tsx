@@ -3,9 +3,24 @@
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import type { Element, Text, RootContent } from 'hast';
+import { ListenButton } from '@/components/audio/ListenButton';
+import {
+  ReadAlongSentences,
+  readAlongHeadlineClass,
+} from '@/components/audio/ReadAlongSentences';
+import { useListenButtonsPreference } from '@/hooks/useListenButtonsPreference';
+import { useReadAlongPlayback } from '@/hooks/useReadAlongPlayback';
+import {
+  isCodeOnlyMarkdown,
+  splitMarkdownIntoSections,
+  type MarkdownSection,
+} from '@/lib/markdown-to-speech';
+import { cn } from '@/lib/utils';
 
 interface ChallengeDescriptionProps {
   description: string;
+  /** When false, hides all listen controls (e.g. nested inside a code-example step). */
+  enableListen?: boolean;
 }
 
 function extractText(node: Element | RootContent | null | undefined): string {
@@ -17,43 +32,7 @@ function extractText(node: Element | RootContent | null | undefined): string {
   return '';
 }
 
-const components: Components = {
-  h2({ children }) {
-    return (
-      <div className="flex items-center gap-3 pb-4">
-        <div className="w-1.5 h-8 bg-brand rounded-full flex-shrink-0" />
-        <h2 className="font-display font-bold text-xl text-text-primary dark:text-[#F0EDE8] leading-tight">
-          {children}
-        </h2>
-      </div>
-    );
-  },
-
-  h3({ children }) {
-    const label = String(children);
-    const isWhy =
-      label.toLowerCase().includes('matters') || label.toLowerCase().includes('why');
-
-    return (
-      <div
-        className={`flex items-center gap-2 mt-8 mb-4 pb-2 border-b ${
-          isWhy ? 'border-cat-fe' : 'border-cat-be'
-        }`}
-      >
-        <h3
-          className={`font-display font-semibold text-base ${
-            isWhy ? 'text-cat-fe' : 'text-cat-be'
-          }`}
-        >
-          {children}
-        </h3>
-      </div>
-    );
-  },
-
-  // Blockquotes are used in description.md files for callout info boxes.
-  // "expected" / "output" / "returns" → green (success)
-  // everything else → brand orange
+const bodyComponents: Components = {
   blockquote({ children, node }) {
     const rawText = extractText(node).toLowerCase();
     const isSuccess =
@@ -130,10 +109,140 @@ const components: Components = {
   },
 };
 
-export function ChallengeDescription({ description }: ChallengeDescriptionProps) {
+function SectionBody({
+  section,
+  playback,
+  showBodyReadAlong,
+}: {
+  section: MarkdownSection;
+  playback: ReturnType<typeof useReadAlongPlayback>;
+  showBodyReadAlong: boolean;
+}) {
+  if (showBodyReadAlong && playback.bodySentences.length > 0) {
+    return (
+      <ReadAlongSentences
+        sentences={playback.bodySentences}
+        activeIndex={playback.activeBodyIndex}
+        interactive={showBodyReadAlong}
+        onSentenceClick={(index) => void playback.seekToBodyIndex(index)}
+      />
+    );
+  }
+
+  if (!section.markdown) return null;
+  return <ReactMarkdown components={bodyComponents}>{section.markdown}</ReactMarkdown>;
+}
+
+function SectionBlock({
+  section,
+  enableListen,
+}: {
+  section: MarkdownSection;
+  enableListen: boolean;
+}) {
+  const playback = useReadAlongPlayback({
+    headline: section.heading,
+    body: section.markdown,
+  });
+  const { highlightWhileReading } = useListenButtonsPreference();
+  const showBodyReadAlong =
+    playback.isPlaying && highlightWhileReading && playback.bodySentences.length > 0;
+  const canListen = enableListen && !isCodeOnlyMarkdown(section.markdown);
+
+  if (!section.heading) {
+    return (
+      <section className="group space-y-4">
+        {canListen && (
+          <div className="flex justify-end">
+            <ListenButton sourceText={playback.plan.fullPrepared} playback={playback} />
+          </div>
+        )}
+        <SectionBody
+          section={section}
+          playback={playback}
+          showBodyReadAlong={showBodyReadAlong}
+        />
+      </section>
+    );
+  }
+
+  if (section.level === 2) {
+    return (
+      <section className="group space-y-4">
+        <div className="flex items-center gap-3 pb-4">
+          <div className="w-1.5 h-8 bg-brand rounded-full flex-shrink-0" />
+          <h2
+            className={readAlongHeadlineClass(
+              playback.isHeadlineActive,
+              'font-display font-bold text-xl text-text-primary dark:text-[#F0EDE8] leading-tight flex-1'
+            )}
+          >
+            {section.heading}
+          </h2>
+          {canListen && (
+            <ListenButton sourceText={playback.plan.fullPrepared} playback={playback} />
+          )}
+        </div>
+        <SectionBody
+          section={section}
+          playback={playback}
+          showBodyReadAlong={showBodyReadAlong}
+        />
+      </section>
+    );
+  }
+
+  const isWhy =
+    section.heading.toLowerCase().includes('matters') ||
+    section.heading.toLowerCase().includes('why');
+
   return (
-    <div>
-      <ReactMarkdown components={components}>{description}</ReactMarkdown>
+    <section className="group space-y-4">
+      <div
+        className={cn(
+          'flex items-center gap-2 mt-8 mb-4 pb-2 border-b',
+          isWhy ? 'border-cat-fe' : 'border-cat-be'
+        )}
+      >
+        <h3
+          className={readAlongHeadlineClass(
+            playback.isHeadlineActive,
+            cn(
+              'font-display font-semibold text-base flex-1',
+              !playback.isHeadlineActive && (isWhy ? 'text-cat-fe' : 'text-cat-be')
+            )
+          )}
+        >
+          {section.heading}
+        </h3>
+        {canListen && (
+          <ListenButton sourceText={playback.plan.fullPrepared} playback={playback} />
+        )}
+      </div>
+      <SectionBody
+        section={section}
+        playback={playback}
+        showBodyReadAlong={showBodyReadAlong}
+      />
+    </section>
+  );
+}
+
+export function ChallengeDescription({
+  description,
+  enableListen = true,
+}: ChallengeDescriptionProps) {
+  const sections = splitMarkdownIntoSections(description);
+
+  return (
+    <div className="space-y-2">
+      {sections.map((section, index) => (
+        <SectionBlock
+          key={`${section.heading ?? 'intro'}-${index}`}
+          section={section}
+          enableListen={enableListen}
+        />
+      ))}
     </div>
   );
 }

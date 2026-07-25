@@ -1,6 +1,8 @@
 import { CategoryCard } from '@/components/dashboard/CategoryCard';
 import { RecentActivity } from '@/components/dashboard/RecentActivity';
 import { ReviewToday } from '@/components/dashboard/ReviewToday';
+import { BadgesPreview } from '@/components/dashboard/BadgesPreview';
+import { StreakFreezePrompt } from '@/components/dashboard/StreakFreezePrompt';
 import { StatsBar } from '@/components/dashboard/StatsBar';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { CATEGORY_TOTALS } from '@/data';
@@ -13,16 +15,23 @@ export default async function DashboardPage() {
     totalAttempts: 0,
     challengesPassed: 0,
     passRate: 0,
+    cleanPasses: 0,
     currentStreak: 0,
     thisWeekAttempts: 0,
     categoryStats: {
       be: { completed: 0, passRate: 0 },
       fe: { completed: 0, passRate: 0 },
       'fe-advanced': { completed: 0, passRate: 0 },
+      nextjs: { completed: 0, passRate: 0 },
       'be-question': { completed: 0, passRate: 0 },
       'fe-question': { completed: 0, passRate: 0 },
+      'nextjs-question': { completed: 0, passRate: 0 },
     },
     recentAttempts: [],
+    recentBadges: [],
+    reviewItems: [],
+    needsFreezeDecision: false,
+    freezesAvailable: 1,
   };
 
   return (
@@ -37,12 +46,17 @@ export default async function DashboardPage() {
           </p>
         </div>
 
+        {stats.needsFreezeDecision && (
+          <StreakFreezePrompt freezesAvailable={stats.freezesAvailable ?? 1} />
+        )}
+
         <StatsBar
           totalAttempts={stats.totalAttempts}
           challengesPassed={stats.challengesPassed}
           passRate={stats.passRate}
           currentStreak={stats.currentStreak}
           thisWeekAttempts={stats.thisWeekAttempts}
+          cleanPasses={stats.cleanPasses}
         />
 
         <section>
@@ -56,23 +70,25 @@ export default async function DashboardPage() {
               completed={stats.categoryStats.be.completed}
               total={CATEGORY_TOTALS.be}
               passRate={stats.categoryStats.be.passRate}
-              href="/challenges?filter=be"
+              href="/challenges?category=be"
             />
             <CategoryCard
-              name="FE Essential"
+              name="React"
               category="fe"
-              completed={stats.categoryStats.fe.completed}
-              total={CATEGORY_TOTALS.fe}
-              passRate={stats.categoryStats.fe.passRate}
-              href="/challenges?filter=fe"
+              completed={stats.categoryStats.fe.completed + stats.categoryStats['fe-advanced'].completed}
+              total={CATEGORY_TOTALS.fe + CATEGORY_TOTALS['fe-advanced']}
+              passRate={Math.round(
+                (stats.categoryStats.fe.passRate + stats.categoryStats['fe-advanced'].passRate) / 2
+              )}
+              href="/challenges?category=react"
             />
             <CategoryCard
-              name="FE Advanced"
-              category="fe-advanced"
-              completed={stats.categoryStats['fe-advanced'].completed}
-              total={CATEGORY_TOTALS['fe-advanced']}
-              passRate={stats.categoryStats['fe-advanced'].passRate}
-              href="/challenges?filter=fe-advanced"
+              name="Next.js"
+              category="nextjs"
+              completed={stats.categoryStats.nextjs?.completed ?? 0}
+              total={CATEGORY_TOTALS.nextjs}
+              passRate={stats.categoryStats.nextjs?.passRate ?? 0}
+              href="/challenges?category=nextjs"
             />
             <CategoryCard
               name="Backend Questions"
@@ -80,20 +96,30 @@ export default async function DashboardPage() {
               completed={stats.categoryStats['be-question'].completed}
               total={CATEGORY_TOTALS['be-question']}
               passRate={stats.categoryStats['be-question'].passRate}
-              href="/challenges"
+              href="/questions?category=be"
             />
             <CategoryCard
-              name="FE Questions"
+              name="React Questions"
               category="fe-question"
               completed={stats.categoryStats['fe-question'].completed}
               total={CATEGORY_TOTALS['fe-question']}
               passRate={stats.categoryStats['fe-question'].passRate}
-              href="/challenges"
+              href="/questions?category=react"
+            />
+            <CategoryCard
+              name="Next.js Questions"
+              category="nextjs-question"
+              completed={stats.categoryStats['nextjs-question']?.completed ?? 0}
+              total={CATEGORY_TOTALS['nextjs-question']}
+              passRate={stats.categoryStats['nextjs-question']?.passRate ?? 0}
+              href="/questions?category=nextjs"
             />
           </div>
         </section>
 
-        <ReviewToday />
+        <ReviewToday items={stats.reviewItems ?? []} />
+
+        <BadgesPreview badges={stats.recentBadges ?? []} />
 
         <RecentActivity attempts={stats.recentAttempts} />
       </div>

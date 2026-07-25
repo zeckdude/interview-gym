@@ -12,9 +12,11 @@ export const challenge: Challenge = {
   difficulty: 'easy',
   comingSoon: false,
   description,
-  concepts: ['process.env', 'config patterns', 'validation', 'error throwing'],
+  concepts: ['config patterns', 'validation', 'error throwing', 'type coercion'],
   hints: parseHints(hintsRaw),
   starterCode: { typescript: starterTs, javascript: starterJs },
   solution: { typescript: solutionTs, javascript: solutionJs },
   validate,
+  mostAsked: false,
+  hasLivePreview: false,
 };

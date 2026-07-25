@@ -2,80 +2,193 @@
 
 import { useMemo, useState } from 'react';
 import { ChallengeCard } from '@/components/challenges/ChallengeCard';
-import { FilterTabs } from '@/components/challenges/FilterTabs';
+import { CollapsibleContentFilters } from '@/components/content/CollapsibleContentFilters';
+import { ContentListToolbar } from '@/components/content/ContentListToolbar';
+import { ContentProgressSummary } from '@/components/content/ContentProgressSummary';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { allChallenges } from '@/data';
-import type { FilterCategory } from '@/data/types';
+import { useContentFilters } from '@/hooks/useContentFilters';
+import { useContentFilterQuery } from '@/hooks/useContentFilterQuery';
+import { useMostAskedOptional } from '@/components/providers/MostAskedProvider';
+import { challengeMatchesContentFilters } from '@/lib/categories';
+import { getCuratedMostAskedForChallenge } from '@/lib/most-asked';
+import type { Challenge } from '@/data/types';
+
+type SortOption = 'difficulty-asc' | 'difficulty-desc' | 'most-attempted' | 'least-attempted' | 'az';
+
+const DIFFICULTY_ORDER: Record<Challenge['difficulty'], number> = {
+  easy: 0,
+  intermediate: 1,
+  advanced: 2,
+};
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'difficulty-asc', label: 'Difficulty (easy first)' },
+  { value: 'difficulty-desc', label: 'Difficulty (advanced first)' },
+  { value: 'most-attempted', label: 'Most Attempted' },
+  { value: 'least-attempted', label: 'Least Attempted' },
+  { value: 'az', label: 'A–Z' },
+];
 
 interface ChallengesListProps {
   attemptStats: Record<string, { count: number; passed: boolean }>;
+  weakSpots?: Record<string, number>;
 }
 
-export function ChallengesList({ attemptStats }: ChallengesListProps) {
-  const [filter, setFilter] = useState<FilterCategory>('all');
+export function ChallengesList({ attemptStats, weakSpots = {} }: ChallengesListProps) {
+  const { filters, setFilters, toggleSpecial, toggleSubcategory, clearFilters } =
+    useContentFilters('/challenges');
+  const filterQuery = useContentFilterQuery();
+  const mostAsked = useMostAskedOptional();
+
+  const getEffectiveMostAsked = (challenge: Challenge) => {
+    const curated = getCuratedMostAskedForChallenge(challenge);
+    return mostAsked?.getEffective('challenge', challenge.id, curated) ?? {
+      ...curated,
+      isPersonalOverride: false,
+    };
+  };
   const [search, setSearch] = useState('');
+  const [sort, setSort] = useState<SortOption>('difficulty-asc');
+
+  const activeChallenges = useMemo(
+    () => allChallenges.filter((challenge) => !challenge.comingSoon),
+    []
+  );
+
+  const passedCount = useMemo(
+    () => activeChallenges.filter((challenge) => attemptStats[challenge.id]?.passed).length,
+    [activeChallenges, attemptStats]
+  );
 
   const filtered = useMemo(() => {
     let challenges = allChallenges;
 
-    if (filter !== 'all') {
-      challenges = challenges.filter((c) => c.category === filter);
+    if (filters.topLevel !== 'all' || filters.subcategories.length > 0) {
+      challenges = challenges.filter((challenge) =>
+        challengeMatchesContentFilters(challenge, filters.topLevel, filters.subcategories)
+      );
+    }
+
+    if (filters.difficulty !== 'all') {
+      challenges = challenges.filter((challenge) => challenge.difficulty === filters.difficulty);
+    }
+
+    if (filters.special.includes('most-asked')) {
+      challenges = challenges.filter((challenge) => getEffectiveMostAsked(challenge).mostAsked);
+    }
+
+    if (filters.special.includes('not-passed')) {
+      challenges = challenges.filter((challenge) => !attemptStats[challenge.id]?.passed);
+    }
+
+    if (filters.special.includes('weak-spots')) {
+      challenges = challenges.filter((challenge) => (weakSpots[challenge.id] ?? 0) > 0);
     }
 
     if (search.trim()) {
       const query = search.toLowerCase();
-      challenges = challenges.filter((c) =>
-        c.title.toLowerCase().includes(query)
+      challenges = challenges.filter(
+        (challenge) =>
+          challenge.title.toLowerCase().includes(query) ||
+          challenge.concepts.some((concept) => concept.toLowerCase().includes(query))
       );
     }
 
-    return challenges;
-  }, [filter, search]);
+    const sorted = [...challenges];
+    switch (sort) {
+      case 'difficulty-asc':
+        sorted.sort((a, b) => DIFFICULTY_ORDER[a.difficulty] - DIFFICULTY_ORDER[b.difficulty]);
+        break;
+      case 'difficulty-desc':
+        sorted.sort((a, b) => DIFFICULTY_ORDER[b.difficulty] - DIFFICULTY_ORDER[a.difficulty]);
+        break;
+      case 'most-attempted':
+        sorted.sort(
+          (a, b) => (attemptStats[b.id]?.count ?? 0) - (attemptStats[a.id]?.count ?? 0)
+        );
+        break;
+      case 'least-attempted':
+        sorted.sort(
+          (a, b) => (attemptStats[a.id]?.count ?? 0) - (attemptStats[b.id]?.count ?? 0)
+        );
+        break;
+      case 'az':
+        sorted.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+    }
 
-  const activeCount = allChallenges.filter((c) => !c.comingSoon).length;
-  const lockedCount = allChallenges.filter((c) => c.comingSoon).length;
+    return sorted;
+  }, [filters, search, sort, attemptStats, weakSpots, mostAsked]);
 
   return (
     <PageWrapper title="Challenges">
       <div className="space-y-6">
-        <div>
-          <h1 className="font-display font-bold text-3xl text-text-primary dark:text-[#F0EDE8] mb-2">
-            Challenges
-          </h1>
-          <p className="font-body text-text-secondary dark:text-[#AAA5A0]">
-            {activeCount} ready to tackle · {lockedCount} coming in Phase 2
-          </p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
-          <FilterTabs active={filter} onChange={setFilter} />
-          <input
-            type="search"
-            placeholder="Search challenges..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full sm:w-64 bg-bg-surface dark:bg-[#1A1A1A] border border-border-subtle dark:border-[#2A2A2A] rounded-md px-4 py-2.5 text-text-primary dark:text-[#F0EDE8] font-body text-sm placeholder:text-text-muted dark:placeholder:text-[#8A8580] focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all duration-150"
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div>
+            <h1 className="font-display font-bold text-3xl text-text-primary dark:text-[#F0EDE8] mb-2">
+              Challenges
+            </h1>
+            <p className="font-body text-text-secondary dark:text-[#AAA5A0] max-w-xl">
+              {activeChallenges.length} challenges ready — pick your workout and get after it.
+            </p>
+          </div>
+          <ContentProgressSummary
+            completed={passedCount}
+            total={activeChallenges.length}
+            label="challenges passed"
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <CollapsibleContentFilters
+          filters={filters}
+          setFilters={setFilters}
+          toggleSpecial={toggleSpecial}
+          toggleSubcategory={toggleSubcategory}
+          clearFilters={clearFilters}
+          specialFilters={['most-asked', 'not-passed', 'weak-spots']}
+        />
+
+        <ContentListToolbar
+          showing={filtered.length}
+          total={allChallenges.length}
+          itemLabel="challenges"
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search by title or concept..."
+          sort={sort}
+          onSortChange={(value) => setSort(value as SortOption)}
+          sortOptions={SORT_OPTIONS}
+        />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((challenge) => {
-            const stats = attemptStats[challenge.id];
+            const effectiveMostAsked = getEffectiveMostAsked(challenge);
             return (
-              <ChallengeCard
-                key={challenge.id}
-                challenge={challenge}
-                attemptCount={stats?.count ?? 0}
-                hasPassed={stats?.passed ?? false}
-              />
+            <ChallengeCard
+              key={challenge.id}
+              challenge={challenge}
+              attemptCount={attemptStats[challenge.id]?.count ?? 0}
+              hasPassed={attemptStats[challenge.id]?.passed ?? false}
+              isWeakSpot={(weakSpots[challenge.id] ?? 0) > 0}
+              filterQuery={filterQuery}
+              showMostAsked={effectiveMostAsked.mostAsked}
+              mostAskedIsPersonal={effectiveMostAsked.isPersonalOverride}
+              mostAskedReason={effectiveMostAsked.reason}
+            />
             );
           })}
         </div>
 
         {filtered.length === 0 && (
-          <p className="font-body text-text-secondary dark:text-[#AAA5A0] text-center py-12">
-            No challenges match your search. Try a different term!
-          </p>
+          <div className="text-center py-16 space-y-3">
+            <p className="font-display font-bold text-xl text-text-primary dark:text-[#F0EDE8]">
+              No challenges found
+            </p>
+            <p className="font-body text-text-secondary dark:text-[#AAA5A0]">
+              Try a different filter or search term.
+            </p>
+          </div>
         )}
       </div>
     </PageWrapper>

@@ -1,31 +1,87 @@
 import type { ChallengeCategory, ChallengeDifficulty } from '@/data/types';
 import { cn } from '@/lib/utils';
+import {
+  getDisplayCategory,
+  getDisplayCategoryLabel,
+  getSubcategoryLabel,
+  getTopLevelLabel,
+  type DisplayCategory,
+} from '@/lib/categories';
 
 interface BadgeProps {
   type: 'difficulty' | 'category';
-  value: ChallengeDifficulty | ChallengeCategory | 'be-question' | 'fe-question';
+  value: ChallengeDifficulty | ChallengeCategory | 'be-question' | 'fe-question' | 'nextjs-question';
   className?: string;
 }
 
 const difficultyStyles: Record<ChallengeDifficulty, { bg: string; text: string; label: string }> = {
   easy: { bg: 'bg-easy-light', text: 'text-easy', label: 'Easy' },
-  medium: { bg: 'bg-medium-light', text: 'text-medium', label: 'Medium' },
-  hard: { bg: 'bg-hard-light', text: 'text-hard', label: 'Hard' },
+  intermediate: { bg: 'bg-medium-light', text: 'text-medium', label: 'Intermediate' },
+  advanced: { bg: 'bg-hard-light', text: 'text-hard', label: 'Advanced' },
 };
 
-const categoryStyles: Record<string, { bg: string; text: string; label: string }> = {
-  be: { bg: 'bg-cat-be-light', text: 'text-cat-be', label: 'Backend' },
-  fe: { bg: 'bg-cat-fe-light', text: 'text-cat-fe', label: 'FE Essential' },
-  'fe-advanced': { bg: 'bg-cat-advanced-light', text: 'text-cat-advanced', label: 'FE Advanced' },
-  'be-question': { bg: 'bg-cat-be-light', text: 'text-cat-be', label: 'BE Questions' },
-  'fe-question': { bg: 'bg-cat-fe-light', text: 'text-cat-fe', label: 'FE Questions' },
+const LEGACY_DIFFICULTY_MAP: Record<string, ChallengeDifficulty> = {
+  medium: 'intermediate',
+  hard: 'advanced',
 };
+
+const displayCategoryStyles: Record<DisplayCategory, { bg: string; text: string }> = {
+  be: { bg: 'bg-cat-be-light', text: 'text-cat-be' },
+  fe: { bg: 'bg-cat-fe-light', text: 'text-cat-fe' },
+  stack: { bg: 'bg-bg-subtle', text: 'text-text-secondary' },
+  react: { bg: 'bg-cat-fe-light', text: 'text-cat-fe' },
+  nextjs: { bg: 'bg-cat-nextjs-light', text: 'text-cat-nextjs' },
+  css: { bg: 'bg-cat-fe-light', text: 'text-cat-fe' },
+  ai: { bg: 'bg-cat-fe-light', text: 'text-cat-fe' },
+  typescript: { bg: 'bg-bg-subtle', text: 'text-text-secondary' },
+  vitest: { bg: 'bg-bg-subtle', text: 'text-text-secondary' },
+};
+
+function getDisplayCategoryLabelFromKey(display: DisplayCategory): string {
+  if (display === 'be' || display === 'fe' || display === 'stack') {
+    return getTopLevelLabel(display);
+  }
+  return getSubcategoryLabel(display);
+}
+
+const questionCategoryStyles: Record<string, { bg: string; text: string; label: string }> = {
+  'be-question': { bg: 'bg-cat-be-light', text: 'text-cat-be', label: 'Backend' },
+  'fe-question': { bg: 'bg-cat-fe-light', text: 'text-cat-fe', label: 'Frontend' },
+  'nextjs-question': { bg: 'bg-cat-nextjs-light', text: 'text-cat-nextjs', label: 'Next.js' },
+};
+
+function normalizeDifficulty(value: string): ChallengeDifficulty {
+  if (value in difficultyStyles) return value as ChallengeDifficulty;
+  return LEGACY_DIFFICULTY_MAP[value] ?? 'intermediate';
+}
+
+function getDifficultyStyles(value: string) {
+  return difficultyStyles[normalizeDifficulty(value)];
+}
+
+function getCategoryStyles(value: string) {
+  if (value in questionCategoryStyles) {
+    return questionCategoryStyles[value];
+  }
+  if (value === 'be' || value === 'fe' || value === 'fe-advanced' || value === 'nextjs') {
+    const display = getDisplayCategory(value as ChallengeCategory);
+    const colors = displayCategoryStyles[display];
+    return {
+      ...colors,
+      label:
+        display === 'fe'
+          ? getDisplayCategoryLabel(value as ChallengeCategory)
+          : getDisplayCategoryLabelFromKey(display),
+    };
+  }
+  return { bg: 'bg-bg-subtle', text: 'text-text-secondary', label: value };
+}
 
 export function Badge({ type, value, className }: BadgeProps) {
   const styles =
     type === 'difficulty'
-      ? difficultyStyles[value as ChallengeDifficulty]
-      : categoryStyles[value];
+      ? getDifficultyStyles(value)
+      : getCategoryStyles(value);
 
   return (
     <span
@@ -36,7 +92,7 @@ export function Badge({ type, value, className }: BadgeProps) {
         className
       )}
     >
-      {styles.label}
+      {type === 'difficulty' ? getDifficultyStyles(value).label : styles.label}
     </span>
   );
 }

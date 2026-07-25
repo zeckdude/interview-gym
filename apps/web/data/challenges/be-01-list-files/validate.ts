@@ -1,17 +1,18 @@
 import { executeUserCode, getExport } from '../../../lib/execute-code';
-import { errorResult } from '../_utils';
+import { errorResult, makeFsRequire } from '../_utils';
 
-export function validate(userCode: string) {
+export async function validate(userCode: string) {
   const mockFiles = ['index.js', 'package.json', 'README.md', 'server.js'];
   const mockFs = {
     readdirSync: (_path: string) => mockFiles,
+    promises: {
+      readdir: (_path: string) => Promise.resolve(mockFiles),
+    },
   };
   try {
-    const exports = executeUserCode(userCode, (mod: string) =>
-      mod === 'fs' ? mockFs : {}
-    );
-    const listFiles = getExport<() => string>(exports, 'listFiles');
-    const result = listFiles();
+    const exports = executeUserCode(userCode, makeFsRequire(mockFs));
+    const listFiles = getExport<() => string | Promise<string>>(exports, 'listFiles');
+    const result = await listFiles();
     const expected = 'index.js, package.json, README.md, server.js';
     return {
       passed: result === expected,

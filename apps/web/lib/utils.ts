@@ -14,6 +14,14 @@ export function formatDuration(ms: number | null | undefined): string {
   return `${minutes}m ${remainingSeconds}s`;
 }
 
+export function formatTimeCompact(ms: number | null | undefined): string {
+  if (!ms) return '—';
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
+
 export function formatRelativeTime(date: Date): string {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();

@@ -1,5 +1,5 @@
 import { executeUserCode, getExport } from '../../../lib/execute-code';
-import { errorResult } from '../_utils';
+import { errorResult, makeFsRequire } from '../_utils';
 
 export async function validate(userCode: string) {
   const files: Record<string, string> = {
@@ -9,7 +9,7 @@ export async function validate(userCode: string) {
     promises: {
       readFile: async (path: string, _encoding?: string) => {
         if (!(path in files)) {
-          const err = new Error('ENOENT') as Error & { code: string };
+          const err = new Error(`ENOENT: no such file or directory, open '${path}'`) as Error & { code: string };
           err.code = 'ENOENT';
           throw err;
         }
@@ -18,9 +18,7 @@ export async function validate(userCode: string) {
     },
   };
   try {
-    const exports = executeUserCode(userCode, (mod: string) =>
-      mod === 'fs' ? mockFs : {}
-    );
+    const exports = executeUserCode(userCode, makeFsRequire(mockFs));
     const readFileAsync = getExport<(filename: string) => Promise<string>>(
       exports,
       'readFileAsync'

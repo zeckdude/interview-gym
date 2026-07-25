@@ -8,12 +8,105 @@ datasource db {
 }
 
 model User {
-  id          String           @id @default(cuid())
-  clerkId     String           @unique
-  email       String           @unique
-  createdAt   DateTime         @default(now())
-  attempts    Attempt[]
-  preferences UserPreferences?
+  id                String                 @id @default(cuid())
+  clerkId           String                 @unique
+  email             String                 @unique
+  createdAt         DateTime               @default(now())
+  attempts          Attempt[]
+  preferences       UserPreferences?
+  chatMessages      ChatMessage[]
+  lessonProgress    LessonProgress[]
+  streak            Streak?
+  badges            Badge[]
+  srItems           SpacedRepetitionItem[]
+  simulatorSessions SimulatorSession[]
+  personalBests     PersonalBest[]
+  weakSpots         WeakSpot[]
+  shareToken        ShareToken?
+  notes             ChallengeNote[]
+  userChallenges    UserChallenge[]
+  generationJobs    ChallengeGenerationJob[]
+  notifications     Notification[]
+  pushSubscriptions PushSubscription[]
+  mostAskedOverrides MostAskedOverride[]
+  studyPlanItems     StudyPlanItem[]
+}
+
+model UserChallenge {
+  id                  String                 @id @default(cuid())
+  userId              String
+  user                User                   @relation(fields: [userId], references: [id])
+  title               String
+  category            String
+  difficulty          String
+  description         String
+  concepts            String[]
+  starterCodeJs       String
+  starterCodeTs       String
+  solutionJs          String
+  solutionTs          String
+  lessonContent       String
+  miniChallengePrompt String
+  companyName         String?
+  sourceDescription   String
+  createdAt           DateTime               @default(now())
+  attempts            UserChallengeAttempt[]
+
+  @@index([userId, createdAt])
+}
+
+model UserChallengeAttempt {
+  id          String        @id @default(cuid())
+  userId      String
+  challengeId String
+  challenge   UserChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  passed      Boolean
+  code        String?
+  language    String
+  createdAt   DateTime      @default(now())
+
+  @@index([userId, challengeId])
+}
+
+model ChallengeNote {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  challengeId String
+  content     String
+  hintUsed    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, challengeId])
+}
+
+model LessonProgress {
+  id                  String    @id @default(cuid())
+  userId              String
+  user                User      @relation(fields: [userId], references: [id])
+  lessonId            String
+  completed           Boolean   @default(false)
+  miniChallengePassed Boolean   @default(false)
+  bestTimeMs          Int?
+  attempts            Int       @default(0)
+  lastAttemptAt       DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@unique([userId, lessonId])
+}
+
+model ChatMessage {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  challengeId String
+  role        String
+  content     String
+  createdAt   DateTime @default(now())
+
+  @@index([userId, challengeId])
 }
 
 model Attempt {
@@ -43,4 +136,184 @@ model UserPreferences {
   reminderTime      String   @default("09:00")
   timezone          String   @default("America/Los_Angeles")
   updatedAt         DateTime @updatedAt
+}
+
+model Streak {
+  id                 String    @id @default(cuid())
+  userId             String    @unique
+  user               User      @relation(fields: [userId], references: [id])
+  currentStreak      Int       @default(0)
+  longestStreak      Int       @default(0)
+  lastActivityAt     DateTime?
+  freezesUsed        Int       @default(0)
+  freezesAvailable   Int       @default(1)
+  freezeAppliedFor   String?
+  lastFreezeResetAt  DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  slug        String
+  name        String
+  description String
+  emoji       String
+  earnedAt    DateTime @default(now())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, slug])
+}
+
+model SpacedRepetitionItem {
+  id             String    @id @default(cuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id])
+  challengeId    String
+  challengeType  String
+  difficulty     String
+  lastReviewedAt DateTime?
+  nextReviewAt   DateTime
+  intervalDays   Float     @default(1)
+  easeFactor     Float     @default(2.5)
+  repetitions    Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([userId, challengeId])
+}
+
+model SimulatorSession {
+  id              String               @id @default(cuid())
+  userId          String
+  user            User                 @relation(fields: [userId], references: [id])
+  difficulty      String
+  category        String
+  durationMinutes Int
+  challengeCount  Int                  @default(4)
+  startedAt       DateTime
+  completedAt     DateTime?
+  totalScore      Float?
+  challenges      SimulatorChallenge[]
+
+  @@index([userId, startedAt])
+}
+
+model SimulatorChallenge {
+  id          String           @id @default(cuid())
+  sessionId   String
+  session     SimulatorSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  challengeId String
+  order       Int
+  passed      Boolean?
+  timeSpentMs Int?
+  code        String?
+  language    String?
+  aiFeedback  String?
+  createdAt   DateTime         @default(now())
+}
+
+model PersonalBest {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  challengeId String
+  bestTimeMs  Int
+  achievedAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, challengeId])
+}
+
+model WeakSpot {
+  id             String    @id @default(cuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id])
+  challengeId    String
+  failedAttempts Int       @default(0)
+  flaggedAt      DateTime  @default(now())
+  resolved       Boolean   @default(false)
+  resolvedAt     DateTime?
+
+  @@unique([userId, challengeId])
+}
+
+model ShareToken {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique @default(cuid())
+  createdAt DateTime @default(now())
+}
+
+model ChallengeGenerationJob {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id])
+  status            String    @default("pending")
+  statusMessage     String?
+  sourceDescription String
+  companyName       String?
+  challengeId       String?
+  errorMessage      String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  completedAt       DateTime?
+
+  @@index([userId, createdAt])
+  @@index([userId, status])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String
+  title     String
+  body      String
+  href      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read, createdAt])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  endpoint  String
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, endpoint])
+}
+
+model MostAskedOverride {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemType  String
+  itemId    String
+  mostAsked Boolean
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@unique([userId, itemType, itemId])
+  @@index([userId])
+}
+
+model StudyPlanItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemType  String
+  itemId    String
+  source    String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, itemType, itemId])
+  @@index([userId, sortOrder])
 }

@@ -1,6 +1,9 @@
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
+import { getUserTimezone } from '@/lib/badges';
+import { checkAndBreakStreak } from '@/lib/streak';
 import { getStartOfWeek } from '@/lib/utils';
+import { getNotesForChallenges } from '@/lib/notes';
 import { CATEGORY_TOTALS } from '@/data';
 
 export async function getDashboardData() {
@@ -12,59 +15,104 @@ export async function getDashboardData() {
 
   try {
     const user = await prisma.user.findUnique({
-    where: { clerkId: userId },
-    include: {
-      attempts: {
-        orderBy: { createdAt: 'desc' },
+      where: { clerkId: userId },
+      include: {
+        attempts: {
+          orderBy: { createdAt: 'desc' },
+        },
+        badges: {
+          orderBy: { earnedAt: 'desc' },
+          take: 3,
+        },
       },
-    },
-  });
+    });
 
-  if (!user) {
+    if (!user) {
+      return {
+        totalAttempts: 0,
+        challengesPassed: 0,
+        passRate: 0,
+        currentStreak: 0,
+        thisWeekAttempts: 0,
+        categoryStats: emptyCategoryStats(),
+        recentAttempts: [],
+        recentBadges: [],
+        reviewItems: [],
+      };
+    }
+
+    const attempts = user.attempts;
+    const totalAttempts = attempts.length;
+    const passedAttempts = attempts.filter((a) => a.passed);
+    const challengesPassed = new Set(passedAttempts.map((a) => a.challengeId)).size;
+    const passRate =
+      totalAttempts > 0 ? Math.round((passedAttempts.length / totalAttempts) * 100) : 0;
+
+    const startOfWeek = getStartOfWeek();
+    const thisWeekAttempts = attempts.filter((a) => a.createdAt >= startOfWeek).length;
+
+    const timezone = await getUserTimezone(user.id);
+    const streakResult = await checkAndBreakStreak(user.id, timezone);
+
+    const now = new Date();
+    const dueItems = await prisma.spacedRepetitionItem.findMany({
+      where: {
+        userId: user.id,
+        nextReviewAt: { lte: now },
+      },
+      orderBy: { nextReviewAt: 'asc' },
+      take: 10,
+    });
+
+    const { getChallengeTitle, getCategoryLabel, getChallengeHref } = await import(
+      '@/lib/challenge-lookup'
+    );
+
+    const noteMap = await getNotesForChallenges(
+      user.id,
+      dueItems.map((item) => item.challengeId)
+    );
+
+    const reviewItems = dueItems.map((item) => {
+      const overdueMs = now.getTime() - item.nextReviewAt.getTime();
+      const overdueDays = Math.max(0, Math.floor(overdueMs / 86400000));
+      return {
+        challengeId: item.challengeId,
+        challengeTitle: getChallengeTitle(item.challengeId),
+        category: getCategoryLabel(item.challengeType),
+        difficulty: item.difficulty,
+        overdueDays,
+        href: getChallengeHref(item.challengeId, item.challengeType),
+        hasNote: noteMap.has(item.challengeId),
+      };
+    });
+
+    const cleanPasses = new Set(
+      attempts
+        .filter((a) => a.passed && !a.hintUsed)
+        .map((a) => a.challengeId)
+    ).size;
+
     return {
-      totalAttempts: 0,
-      challengesPassed: 0,
-      passRate: 0,
-      currentStreak: 0,
-      thisWeekAttempts: 0,
-      categoryStats: {
-        be: { completed: 0, passRate: 0 },
-        fe: { completed: 0, passRate: 0 },
-        'fe-advanced': { completed: 0, passRate: 0 },
-        'be-question': { completed: 0, passRate: 0 },
-        'fe-question': { completed: 0, passRate: 0 },
-      },
-      recentAttempts: [],
+      totalAttempts,
+      challengesPassed,
+      passRate,
+      cleanPasses,
+      currentStreak: streakResult.currentStreak,
+      thisWeekAttempts,
+      categoryStats: computeCategoryStats(attempts),
+      recentAttempts: attempts.slice(0, 10),
+      recentBadges: user.badges.map((b) => ({
+        slug: b.slug,
+        name: b.name,
+        emoji: b.emoji,
+        description: b.description,
+        earnedAt: b.earnedAt.toISOString(),
+      })),
+      reviewItems,
+      needsFreezeDecision: streakResult.needsFreezeDecision,
+      freezesAvailable: streakResult.freezesAvailable,
     };
-  }
-
-  const attempts = user.attempts;
-  const totalAttempts = attempts.length;
-  const passedAttempts = attempts.filter((a) => a.passed);
-  const challengesPassed = new Set(
-    passedAttempts.map((a) => a.challengeId)
-  ).size;
-  const passRate =
-    totalAttempts > 0
-      ? Math.round((passedAttempts.length / totalAttempts) * 100)
-      : 0;
-
-  const startOfWeek = getStartOfWeek();
-  const thisWeekAttempts = attempts.filter(
-    (a) => a.createdAt >= startOfWeek
-  ).length;
-
-  const categoryStats = computeCategoryStats(attempts);
-
-  return {
-    totalAttempts,
-    challengesPassed,
-    passRate,
-    currentStreak: 0,
-    thisWeekAttempts,
-    categoryStats,
-    recentAttempts: attempts.slice(0, 10),
-  };
   } catch {
     return {
       totalAttempts: 0,
@@ -72,43 +120,45 @@ export async function getDashboardData() {
       passRate: 0,
       currentStreak: 0,
       thisWeekAttempts: 0,
-      categoryStats: {
-        be: { completed: 0, passRate: 0 },
-        fe: { completed: 0, passRate: 0 },
-        'fe-advanced': { completed: 0, passRate: 0 },
-        'be-question': { completed: 0, passRate: 0 },
-        'fe-question': { completed: 0, passRate: 0 },
-      },
+      categoryStats: emptyCategoryStats(),
       recentAttempts: [],
+      recentBadges: [],
+      reviewItems: [],
     };
   }
+}
+
+function emptyCategoryStats() {
+  return {
+    be: { completed: 0, passRate: 0 },
+    fe: { completed: 0, passRate: 0 },
+    'fe-advanced': { completed: 0, passRate: 0 },
+    nextjs: { completed: 0, passRate: 0 },
+    'be-question': { completed: 0, passRate: 0 },
+    'fe-question': { completed: 0, passRate: 0 },
+    'nextjs-question': { completed: 0, passRate: 0 },
+  };
 }
 
 function computeCategoryStats(
   attempts: { challengeId: string; challengeType: string; passed: boolean }[]
 ) {
-  const types = ['be', 'fe', 'fe-advanced', 'be-question', 'fe-question'] as const;
+  const types = ['be', 'fe', 'fe-advanced', 'nextjs', 'be-question', 'fe-question', 'nextjs-question'] as const;
 
   return Object.fromEntries(
     types.map((type) => {
       const typeAttempts = attempts.filter((a) => a.challengeType === type);
-      const passedIds = new Set(
-        typeAttempts.filter((a) => a.passed).map((a) => a.challengeId)
-      );
+      const passedIds = new Set(typeAttempts.filter((a) => a.passed).map((a) => a.challengeId));
       const passRate =
         typeAttempts.length > 0
           ? Math.round(
-              (typeAttempts.filter((a) => a.passed).length / typeAttempts.length) *
-                100
+              (typeAttempts.filter((a) => a.passed).length / typeAttempts.length) * 100
             )
           : 0;
 
       return [type, { completed: passedIds.size, passRate }];
     })
-  ) as Record<
-    keyof typeof CATEGORY_TOTALS,
-    { completed: number; passRate: number }
-  >;
+  ) as Record<keyof typeof CATEGORY_TOTALS, { completed: number; passRate: number }>;
 }
 
 export async function getChallengeAttemptStats() {
@@ -120,28 +170,28 @@ export async function getChallengeAttemptStats() {
 
   try {
     const user = await prisma.user.findUnique({
-    where: { clerkId: userId },
-    include: { attempts: true },
-  });
-
-  if (!user) {
-    return new Map<string, { count: number; passed: boolean }>();
-  }
-
-  const stats = new Map<string, { count: number; passed: boolean }>();
-
-  for (const attempt of user.attempts) {
-    const existing = stats.get(attempt.challengeId) ?? {
-      count: 0,
-      passed: false,
-    };
-    stats.set(attempt.challengeId, {
-      count: existing.count + 1,
-      passed: existing.passed || attempt.passed,
+      where: { clerkId: userId },
+      include: { attempts: true },
     });
-  }
 
-  return stats;
+    if (!user) {
+      return new Map<string, { count: number; passed: boolean }>();
+    }
+
+    const stats = new Map<string, { count: number; passed: boolean }>();
+
+    for (const attempt of user.attempts) {
+      const existing = stats.get(attempt.challengeId) ?? {
+        count: 0,
+        passed: false,
+      };
+      stats.set(attempt.challengeId, {
+        count: existing.count + 1,
+        passed: existing.passed || attempt.passed,
+      });
+    }
+
+    return stats;
   } catch {
     return new Map<string, { count: number; passed: boolean }>();
   }

@@ -1,8 +1,13 @@
 import { ClerkProvider } from '@clerk/nextjs';
-import { Inter, JetBrains_Mono, Nunito } from 'next/font/google';
+import { Inter, JetBrains_Mono, Nunito, DM_Sans } from 'next/font/google';
 import type { Metadata } from 'next';
 import { clerkAppearance } from '@/lib/clerk-appearance';
+import { BadgeCelebrationProvider } from '@/components/providers/BadgeCelebrationProvider';
+import { MostAskedProvider } from '@/components/providers/MostAskedProvider';
+import { StudyPlanProvider } from '@/components/providers/StudyPlanProvider';
+import { NotificationProvider } from '@/components/providers/NotificationProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { RightPanelProvider } from '@/components/providers/RightPanelProvider';
 import './globals.css';
 
 const nunito = Nunito({
@@ -20,6 +25,12 @@ const inter = Inter({
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-jetbrains-mono',
+  display: 'swap',
+});
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
   display: 'swap',
 });
 
@@ -45,10 +56,20 @@ export default function RootLayout({
     <ClerkProvider appearance={clerkAppearance}>
       <html
         lang="en"
-        className={`${nunito.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+        className={`${nunito.variable} ${inter.variable} ${jetbrainsMono.variable} ${dmSans.variable}`}
       >
         <body>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <BadgeCelebrationProvider>
+              <MostAskedProvider>
+                <StudyPlanProvider>
+                  <NotificationProvider>
+                    <RightPanelProvider>{children}</RightPanelProvider>
+                  </NotificationProvider>
+                </StudyPlanProvider>
+              </MostAskedProvider>
+            </BadgeCelebrationProvider>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
