@@ -88,8 +88,8 @@ export function MiniChallengePanel({
     setCode(challenge.starterCode[lang]);
   };
 
-  const handleSubmit = () => {
-    const validation = challenge.validate(code);
+  const handleSubmit = async () => {
+    const validation = await Promise.resolve(challenge.validate(code));
     setResult(validation);
     setSubmitted(true);
     if (validation.passed) {

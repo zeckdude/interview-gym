@@ -4,6 +4,10 @@ import { feAdvancedChallenges } from './fe-advanced';
 import { feChallenges } from './fe-challenges';
 import { feQuestions } from './fe-questions';
 import { nextjsChallenges } from './nextjs-challenges';
+import { aiChallenges } from './ai-challenges';
+import { vitestChallenges } from './vitest-challenges';
+import { cssChallenges } from './css-challenges';
+import { typescriptChallenges } from './typescript-challenges';
 import { nextjsQuestions } from './nextjs-questions';
 import type { Challenge, FilterCategory } from './types';
 import { getDisplayCategoryLabel } from '@/lib/categories';
@@ -15,6 +19,10 @@ export const allChallenges: Challenge[] = [
   ...feChallenges,
   ...feAdvancedChallenges,
   ...nextjsChallenges,
+  ...aiChallenges,
+  ...vitestChallenges,
+  ...cssChallenges,
+  ...typescriptChallenges,
 ];
 
 export const allQuestions = [...beQuestions, ...feQuestions, ...nextjsQuestions];
@@ -24,6 +32,10 @@ export const CATEGORY_TOTALS = {
   fe: feChallenges.length,
   'fe-advanced': feAdvancedChallenges.length,
   nextjs: nextjsChallenges.length,
+  'fe-ai': aiChallenges.length,
+  'stack-vitest': vitestChallenges.length,
+  'fe-css': cssChallenges.length,
+  'stack-typescript': typescriptChallenges.length,
   'be-question': beQuestions.length,
   'fe-question': feQuestions.length,
   'nextjs-question': nextjsQuestions.length,
@@ -73,5 +85,9 @@ export {
   feChallenges,
   feQuestions,
   nextjsChallenges,
+  aiChallenges,
+  vitestChallenges,
+  cssChallenges,
+  typescriptChallenges,
   nextjsQuestions,
 };

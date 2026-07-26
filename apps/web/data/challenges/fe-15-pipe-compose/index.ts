@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-15-pipe-compose',
   title: 'Pipe and Compose',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'easy',
   comingSoon: false,
   description,

@@ -5,6 +5,8 @@ export const lessonReactComponentPatterns: Lesson = {
   id: 'lesson-react-component-patterns',
   title: 'React Component Patterns — Compound Components & Render Props',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
   relatedChallengeIds: ['fea-10-compound-component', 'fea-11-render-props'],
   estimatedMinutes: 14,

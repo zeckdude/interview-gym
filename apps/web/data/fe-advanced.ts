@@ -20,6 +20,16 @@ import { challenge as fea19 } from './challenges/fea-19-animation-hook';
 import { challenge as fea20 } from './challenges/fea-20-performance-profiler';
 import type { Challenge } from './types';
 
+import { challenge as fea21 } from './challenges/fea-21-toggle-state';
+import { challenge as fea22 } from './challenges/fea-22-input-field';
+import { challenge as fea23 } from './challenges/fea-23-checkbox-group';
+import { challenge as fea24 } from './challenges/fea-24-tabs-state';
+import { challenge as fea25 } from './challenges/fea-25-counter-store';
+import { challenge as fea26 } from './challenges/fea-26-async-cache';
+import { challenge as fea27 } from './challenges/fea-27-batch-scheduler';
+import { challenge as fea28 } from './challenges/fea-28-pub-sub';
+import { challenge as fea29 } from './challenges/fea-29-selector-memo';
+import { challenge as fea30 } from './challenges/fea-30-resource-loader';
 export const feAdvancedChallenges: Challenge[] = [
   fea01,
   fea02,
@@ -41,4 +51,6 @@ export const feAdvancedChallenges: Challenge[] = [
   fea18,
   fea19,
   fea20,
+  fea21, fea22, fea23, fea24, fea25,
+  fea26, fea27, fea28, fea29, fea30,
 ];

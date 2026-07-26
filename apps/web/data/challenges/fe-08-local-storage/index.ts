@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-08-local-storage',
   title: 'LocalStorage Hook',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'easy',
   comingSoon: false,
   description,

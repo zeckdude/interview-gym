@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-18-accessible-dropdown',
   title: 'Accessible Dropdown',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

@@ -3,8 +3,8 @@ import { beChallenges } from '@/data/be-challenges';
 import { validatePrepared, validateSolution } from '../helpers';
 
 describe('BE Challenge Validators', () => {
-  it('has 20 challenges', () => {
-    expect(beChallenges).toHaveLength(20);
+  it('has 30 challenges', () => {
+    expect(beChallenges).toHaveLength(30);
   });
 
   describe.each(beChallenges)('$id ($title)', (challenge) => {

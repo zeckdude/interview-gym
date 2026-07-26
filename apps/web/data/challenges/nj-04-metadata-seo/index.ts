@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-04-metadata-seo',
   title: 'Dynamic Metadata for SEO',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'easy',
   comingSoon: false,
   description,

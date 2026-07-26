@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-10-data-fetching-patterns',
   title: 'Data Fetching: Waterfall vs Parallel',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

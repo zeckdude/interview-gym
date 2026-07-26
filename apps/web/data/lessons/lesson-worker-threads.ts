@@ -5,6 +5,8 @@ export const lessonWorkerThreads: Lesson = {
   id: 'lesson-worker-threads',
   title: 'CPU-Intensive Work — Worker Threads',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-16-queue"],
   estimatedMinutes: 10,

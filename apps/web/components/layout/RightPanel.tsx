@@ -3,9 +3,10 @@
 import { useRightPanel, PANEL_WIDTH } from '@/components/providers/RightPanelProvider';
 import { ConceptPanel } from '@/components/challenges/ConceptPanel';
 import { AiChat } from '@/components/challenges/AiChat';
+import { PlaybookAiChat } from '@/components/playbook/PlaybookAiChat';
 
 export function RightPanel() {
-  const { isOpen, activeTab, setActiveTab, activeConcept, challengeCtx, close } = useRightPanel();
+  const { isOpen, activeTab, setActiveTab, activeConcept, challengeCtx, playbookCtx, close } = useRightPanel();
 
   return (
     <div
@@ -18,26 +19,42 @@ export function RightPanel() {
     >
       {/* Header with tabs + close */}
       <div className="flex items-center border-b border-border-subtle flex-shrink-0 h-16">
-        {/* Tabs */}
         <div className="flex flex-1 h-full">
-          {(
-            [
-              { id: 'concepts', label: '📖 Concepts' },
-              { id: 'chat', label: '💬 Ask AI' },
-            ] as const
-          ).map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 flex items-center justify-center font-body text-sm font-semibold transition-all duration-150 border-b-2 ${
-                activeTab === tab.id
-                  ? 'border-brand text-brand'
-                  : 'border-transparent text-text-muted hover:text-text-primary hover:border-border-strong'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+          {playbookCtx ? (
+            <div className="flex-1 flex flex-col items-center justify-center px-3 py-2 border-b-2 border-brand min-w-0">
+              <span className="font-body text-sm font-semibold text-brand truncate max-w-full">
+                💬 Playbook AI Coach
+              </span>
+              <span className="font-body text-xs text-text-primary truncate max-w-full">
+                {playbookCtx.intent === 'edit-subsection' && playbookCtx.currentSubsection
+                  ? `${playbookCtx.currentSubsection} · ${playbookCtx.entryTitle}`
+                  : playbookCtx.intent === 'edit-entry'
+                    ? playbookCtx.entryTitle
+                    : playbookCtx.intent === 'add-entry'
+                      ? `New ${playbookCtx.categoryLabel} entry`
+                      : playbookCtx.entryTitle}
+              </span>
+            </div>
+          ) : (
+            (
+              [
+                { id: 'concepts', label: '📖 Concepts' },
+                { id: 'chat', label: '💬 Ask AI' },
+              ] as const
+            ).map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 flex items-center justify-center font-body text-sm font-semibold transition-all duration-150 border-b-2 ${
+                  activeTab === tab.id
+                    ? 'border-brand text-brand'
+                    : 'border-transparent text-text-muted hover:text-text-primary hover:border-border-strong'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))
+          )}
         </div>
 
         {/* Close */}
@@ -69,13 +86,15 @@ export function RightPanel() {
 
         {/* Chat tab */}
         <div className={`absolute inset-0 flex flex-col ${activeTab === 'chat' ? '' : 'hidden'}`}>
-          {!challengeCtx ? (
+          {!challengeCtx && !playbookCtx ? (
             <div className="flex flex-col items-center justify-center h-48 text-center px-6">
               <p className="text-4xl mb-3">💬</p>
               <p className="font-body text-sm text-text-secondary">
-                Open a challenge to start chatting with the AI tutor.
+                Open a challenge or Playbook entry to start chatting with the AI coach.
               </p>
             </div>
+          ) : playbookCtx ? (
+            <PlaybookAiChat />
           ) : (
             <AiChat />
           )}

@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-02-event-delegation',
   title: 'Event Delegation',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

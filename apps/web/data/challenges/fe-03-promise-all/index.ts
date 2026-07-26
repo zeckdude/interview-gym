@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-03-promise-all',
   title: 'Promise.all Polyfill',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

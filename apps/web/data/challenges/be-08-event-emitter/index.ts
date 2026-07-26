@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-08-event-emitter',
   title: 'Event Emitter',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

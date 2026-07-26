@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-17-unique-array',
   title: 'Unique Array Values',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'easy',
   comingSoon: false,
   description,

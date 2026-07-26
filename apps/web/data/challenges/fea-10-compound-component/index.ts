@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-10-compound-component',
   title: 'Compound Component',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

@@ -5,6 +5,8 @@ export const lessonFsModule: Lesson = {
   id: 'lesson-fs-module',
   title: 'Node.js fs Module — Reading and Writing Files',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'easy',
   relatedChallengeIds: ["be-01-list-files","be-02-read-write-file","be-03-async-file-read"],
   estimatedMinutes: 10,

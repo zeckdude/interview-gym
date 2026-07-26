@@ -5,6 +5,8 @@ export const lessonWebWorkers: Lesson = {
   id: 'lesson-web-workers',
   title: 'Web Workers — Non-Blocking UI',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["fe-20-fetch-retry"],
   estimatedMinutes: 10,

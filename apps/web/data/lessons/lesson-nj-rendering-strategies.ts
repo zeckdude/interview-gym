@@ -5,6 +5,8 @@ export const lessonNjRenderingStrategies: Lesson = {
   id: 'lesson-nj-rendering-strategies',
   title: 'SSG vs SSR vs ISR vs PPR',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   relatedChallengeIds: ['nj-03-static-dynamic-rendering', 'nj-08-dynamic-routes'],
   estimatedMinutes: 17,

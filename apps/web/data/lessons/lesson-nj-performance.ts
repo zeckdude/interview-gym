@@ -5,6 +5,8 @@ export const lessonNjPerformance: Lesson = {
   id: 'lesson-nj-performance',
   title: 'Performance Optimization in Next.js',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   relatedChallengeIds: ['nj-16-image-optimization', 'nj-18-performance-bundle'],
   estimatedMinutes: 15,

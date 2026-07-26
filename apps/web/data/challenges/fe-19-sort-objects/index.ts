@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-19-sort-objects',
   title: 'Sort Array of Objects',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'easy',
   comingSoon: false,
   description,

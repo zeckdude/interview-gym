@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-06-suspense-boundary',
   title: 'Suspense Boundary',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

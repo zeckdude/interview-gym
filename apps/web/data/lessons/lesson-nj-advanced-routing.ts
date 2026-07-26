@@ -5,6 +5,8 @@ export const lessonNjAdvancedRouting: Lesson = {
   id: 'lesson-nj-advanced-routing',
   title: 'Parallel Routes & Intercepting Routes',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   relatedChallengeIds: ['nj-09-parallel-intercepting-routes', 'nj-11-error-handling'],
   estimatedMinutes: 16,

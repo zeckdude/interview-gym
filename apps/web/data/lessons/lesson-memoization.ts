@@ -5,6 +5,8 @@ export const lessonMemoization: Lesson = {
   id: 'lesson-memoization',
   title: 'Memoization and Caching',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-11-cache-lru","be-04-debounce"],
   estimatedMinutes: 10,

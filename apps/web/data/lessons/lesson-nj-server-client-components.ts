@@ -5,6 +5,8 @@ export const lessonNjServerClientComponents: Lesson = {
   id: 'lesson-nj-server-client-components',
   title: 'Server vs Client Components — The Mental Model',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   relatedChallengeIds: ['nj-02-server-client-components', 'nj-03-static-dynamic-rendering'],
   estimatedMinutes: 15,

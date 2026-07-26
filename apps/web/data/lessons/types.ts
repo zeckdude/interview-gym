@@ -29,7 +29,7 @@ export interface MiniChallenge {
     javascript: string;
     typescript: string;
   };
-  validate: (userCode: string) => MiniChallengeResult;
+  validate: (userCode: string) => MiniChallengeResult | Promise<MiniChallengeResult>;
 }
 
 export interface Lesson {

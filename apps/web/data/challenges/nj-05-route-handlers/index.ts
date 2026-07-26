@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-05-route-handlers',
   title: 'Route Handlers with Auth',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

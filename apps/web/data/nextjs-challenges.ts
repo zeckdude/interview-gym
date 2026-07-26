@@ -19,6 +19,16 @@ import { challenge as nj18performancebundle } from './challenges/nj-18-performan
 import { challenge as nj19testingnextjs } from './challenges/nj-19-testing-nextjs';
 import { challenge as nj20deploymentconfig } from './challenges/nj-20-deployment-config';
 
+import { challenge as nj21normalizeslug } from './challenges/nj-21-normalize-slug';
+import { challenge as nj22dynamicsegment } from './challenges/nj-22-dynamic-segment';
+import { challenge as nj23parsesearchparams } from './challenges/nj-23-parse-search-params';
+import { challenge as nj24buildpagetitle } from './challenges/nj-24-build-page-title';
+import { challenge as nj25striproutegroups } from './challenges/nj-25-strip-route-groups';
+import { challenge as nj26resolveredirect } from './challenges/nj-26-resolve-redirect';
+import { challenge as nj27mergemetadata } from './challenges/nj-27-merge-metadata';
+import { challenge as nj28cachetags } from './challenges/nj-28-cache-tags';
+import { challenge as nj29matchmiddlewarepath } from './challenges/nj-29-match-middleware-path';
+import { challenge as nj30validatesegmentconfig } from './challenges/nj-30-validate-segment-config';
 export const nextjsChallenges = [
   nj01pagerouting,
   nj02serverclientcomponents,
@@ -40,4 +50,6 @@ export const nextjsChallenges = [
   nj18performancebundle,
   nj19testingnextjs,
   nj20deploymentconfig,
+  nj21normalizeslug, nj22dynamicsegment, nj23parsesearchparams, nj24buildpagetitle, nj25striproutegroups,
+  nj26resolveredirect, nj27mergemetadata, nj28cachetags, nj29matchmiddlewarepath, nj30validatesegmentconfig,
 ];

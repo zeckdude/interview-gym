@@ -5,6 +5,8 @@ export const lessonCsp: Lesson = {
   id: 'lesson-csp',
   title: 'Content Security Policy',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'advanced',
   relatedChallengeIds: ["fea-16-ssr-hydration"],
   estimatedMinutes: 10,

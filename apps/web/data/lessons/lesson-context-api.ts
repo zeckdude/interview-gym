@@ -5,6 +5,8 @@ export const lessonContextApi: Lesson = {
   id: 'lesson-context-api',
   title: 'React Context — Avoiding Prop Drilling',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["fea-03-context-api","fe-06-virtual-list"],
   estimatedMinutes: 10,

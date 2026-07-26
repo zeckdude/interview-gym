@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-06-virtual-list',
   title: 'Virtual List Renderer',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'advanced',
   comingSoon: false,
   description,

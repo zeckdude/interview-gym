@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-07-form-validation',
   title: 'Form Validation',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

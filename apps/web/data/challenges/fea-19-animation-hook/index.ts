@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-19-animation-hook',
   title: 'CSS Animation Hook',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'advanced',
   comingSoon: false,
   description,

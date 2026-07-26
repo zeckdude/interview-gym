@@ -8,13 +8,16 @@ import { useRightPanel } from '@/components/providers/RightPanelProvider';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: '📊' },
+  { href: '/playbook', label: 'My Playbook', icon: '📒' },
   { href: '/study-plan', label: 'Study Plan', icon: '📋' },
   { href: '/lessons', label: 'Lessons', icon: '📚' },
   { href: '/challenges', label: 'Challenges', icon: '💪' },
   { href: '/generate', label: 'Generate Challenge', icon: '✨' },
   { href: '/my-challenges', label: 'My Challenges', icon: '📁' },
   { href: '/questions', label: 'Questions', icon: '🧠' },
-  { href: '/simulator', label: 'Simulator', icon: '🎯' },
+  { href: '/systems-design', label: 'Systems Design', icon: '🏗️' },
+  { href: '/simulator', label: 'Code Interview', icon: '🎯' },
+  { href: '/simulator/voice', label: 'Voice Interview', icon: '🎙️' },
   { href: '/leaderboard', label: 'My Bests', icon: '🏆' },
   { href: '/notes', label: 'My Notes', icon: '📝' },
   { href: '/settings', label: 'Settings', icon: '⚙️' },
@@ -55,7 +58,14 @@ export function Sidebar() {
           const isActive =
             item.href === '/'
               ? pathname === '/'
-              : pathname.startsWith(item.href);
+              : pathname === item.href ||
+                (pathname.startsWith(`${item.href}/`) &&
+                  !navItems.some(
+                    (other) =>
+                      other.href.length > item.href.length &&
+                      other.href.startsWith(`${item.href}/`) &&
+                      (pathname === other.href || pathname.startsWith(`${other.href}/`))
+                  ));
 
           return (
             <Link

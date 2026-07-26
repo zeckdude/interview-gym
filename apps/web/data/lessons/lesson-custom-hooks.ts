@@ -5,6 +5,8 @@ export const lessonCustomHooks: Lesson = {
   id: 'lesson-custom-hooks',
   title: 'Building Custom React Hooks',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["fe-05-debounce-ui","fea-02-custom-hook"],
   estimatedMinutes: 11,

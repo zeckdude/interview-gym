@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-19-graceful-shutdown',
   title: 'Graceful Shutdown',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'advanced',
   comingSoon: false,
   description,

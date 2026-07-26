@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-20-performance-profiler',
   title: 'Performance Profiler',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

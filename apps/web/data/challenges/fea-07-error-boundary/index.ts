@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-07-error-boundary',
   title: 'Error Boundary',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

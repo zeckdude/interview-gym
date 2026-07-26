@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-02-server-client-components',
   title: 'Server vs Client Components',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'easy',
   comingSoon: false,
   description,

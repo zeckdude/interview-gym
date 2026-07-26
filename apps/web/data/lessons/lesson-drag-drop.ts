@@ -5,6 +5,8 @@ export const lessonDragDrop: Lesson = {
   id: 'lesson-drag-drop',
   title: 'HTML5 Drag and Drop API',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["fe-04-deep-clone"],
   estimatedMinutes: 10,

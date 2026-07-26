@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-11-render-props',
   title: 'Render Props Pattern',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

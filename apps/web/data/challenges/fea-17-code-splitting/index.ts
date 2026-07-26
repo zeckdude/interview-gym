@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-17-code-splitting',
   title: 'Code Splitting & Lazy Loading',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

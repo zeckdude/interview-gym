@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-10-modal-focus',
   title: 'Modal Focus Trap',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

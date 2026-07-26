@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-15-websocket-chat',
   title: 'WebSocket Chat',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'advanced',
   comingSoon: false,
   description,

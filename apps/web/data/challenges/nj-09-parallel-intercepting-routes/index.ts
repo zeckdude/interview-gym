@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-09-parallel-intercepting-routes',
   title: 'Parallel Routes and Modal Patterns',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

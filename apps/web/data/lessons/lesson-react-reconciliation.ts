@@ -5,6 +5,8 @@ export const lessonReactReconciliation: Lesson = {
   id: 'lesson-react-reconciliation',
   title: 'React Reconciliation & the Virtual DOM',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'advanced',
   relatedChallengeIds: ['fea-14-virtual-dom', 'fea-13-state-machine'],
   estimatedMinutes: 16,

@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-09-forward-ref',
   title: 'forwardRef Input',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

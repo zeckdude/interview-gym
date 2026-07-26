@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-18-group-by',
   title: 'Group By Key',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-13-streaming-suspense',
   title: 'Streaming SSR with Suspense Boundaries',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'advanced',
   comingSoon: false,
   description,

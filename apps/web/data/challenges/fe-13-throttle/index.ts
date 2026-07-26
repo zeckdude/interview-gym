@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-13-throttle',
   title: 'Throttle Function',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

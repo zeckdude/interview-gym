@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-02-read-write-file',
   title: 'Read and Write a File',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'easy',
   comingSoon: false,
   description,

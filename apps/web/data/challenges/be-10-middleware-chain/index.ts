@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-10-middleware-chain',
   title: 'Middleware Chain',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

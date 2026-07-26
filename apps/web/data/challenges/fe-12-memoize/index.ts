@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-12-memoize',
   title: 'Memoize Function',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

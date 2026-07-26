@@ -83,7 +83,14 @@ describe('legacyCategoryFromTaxonomy', () => {
       'fe-advanced'
     );
     expect(legacyCategoryFromTaxonomy({ topLevel: 'fe', subcategory: 'nextjs' })).toBe('nextjs');
-    expect(legacyCategoryFromTaxonomy({ topLevel: 'fe', subcategory: 'css' })).toBeNull();
+    expect(legacyCategoryFromTaxonomy({ topLevel: 'fe', subcategory: 'css' })).toBe('fe-css');
+    expect(legacyCategoryFromTaxonomy({ topLevel: 'fe', subcategory: 'ai' })).toBe('fe-ai');
+    expect(legacyCategoryFromTaxonomy({ topLevel: 'stack', subcategory: 'typescript' })).toBe(
+      'stack-typescript'
+    );
+    expect(legacyCategoryFromTaxonomy({ topLevel: 'stack', subcategory: 'vitest' })).toBe(
+      'stack-vitest'
+    );
   });
 });
 

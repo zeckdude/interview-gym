@@ -5,6 +5,8 @@ export const lessonAsyncPromises: Lesson = {
   id: 'lesson-async-promises',
   title: 'Async JavaScript — Promises, async/await, and Error Handling',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-03-async-file-read","be-07-json-parse"],
   estimatedMinutes: 12,

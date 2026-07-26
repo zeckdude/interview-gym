@@ -5,6 +5,8 @@ export const lessonNjTesting: Lesson = {
   id: 'lesson-nj-testing',
   title: 'Testing Next.js Applications',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   relatedChallengeIds: ['nj-19-testing-nextjs'],
   estimatedMinutes: 15,

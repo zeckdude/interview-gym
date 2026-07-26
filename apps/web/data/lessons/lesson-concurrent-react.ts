@@ -5,6 +5,8 @@ export const lessonConcurrentReact: Lesson = {
   id: 'lesson-concurrent-react',
   title: 'React 18 Concurrent Features',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
   relatedChallengeIds: ["fea-04-use-reducer","fea-05-memo-optimization","fea-06-suspense-boundary"],
   estimatedMinutes: 12,

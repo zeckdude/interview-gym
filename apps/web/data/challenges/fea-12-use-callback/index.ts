@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-12-use-callback',
   title: 'useCallback & useMemo',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

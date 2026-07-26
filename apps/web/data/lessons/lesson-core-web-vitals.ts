@@ -5,8 +5,10 @@ export const lessonCoreWebVitals: Lesson = {
   id: 'lesson-core-web-vitals',
   title: 'Core Web Vitals and Performance',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
-  relatedChallengeIds: ["fea-17-code-splitting","fea-20"],
+  relatedChallengeIds: ["fea-17-code-splitting","fea-20-performance-profiler"],
   estimatedMinutes: 11,
   concepts: ["LCP","CLS"],
   steps: [

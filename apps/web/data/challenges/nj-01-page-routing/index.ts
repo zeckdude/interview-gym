@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-01-page-routing',
   title: 'App Router: Pages and Layouts',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'easy',
   comingSoon: false,
   description,

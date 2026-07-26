@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-14-virtual-dom',
   title: 'Virtual DOM Diff',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'advanced',
   comingSoon: false,
   description,

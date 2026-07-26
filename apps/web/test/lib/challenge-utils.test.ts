@@ -34,13 +34,10 @@ describe('challenge _utils', () => {
 
 describe('data index helpers', () => {
   it('CATEGORY_TOTALS match array lengths', () => {
-    expect(allChallenges).toHaveLength(80);
-    expect(
-      CATEGORY_TOTALS.be +
-        CATEGORY_TOTALS.fe +
-        CATEGORY_TOTALS['fe-advanced'] +
-        CATEGORY_TOTALS.nextjs
-    ).toBe(80);
+    const challengeTotal = Object.entries(CATEGORY_TOTALS)
+      .filter(([key]) => !key.endsWith('-question'))
+      .reduce((sum, [, n]) => sum + n, 0);
+    expect(allChallenges).toHaveLength(challengeTotal);
   });
 
   it('getChallengeById finds known challenges', () => {
@@ -66,8 +63,10 @@ describe('data index helpers', () => {
 
   it('getCategoryLabel returns labels', () => {
     expect(getCategoryLabel('be')).toBe('Backend');
-    expect(getCategoryLabel('fe')).toBe('React');
+    expect(getCategoryLabel('fe')).toBe('Frontend');
     expect(getCategoryLabel('fe-advanced')).toBe('React');
     expect(getCategoryLabel('nextjs')).toBe('Next.js');
+    expect(getCategoryLabel('fe-css')).toBe('CSS');
+    expect(getCategoryLabel('stack-typescript')).toBe('TypeScript');
   });
 });

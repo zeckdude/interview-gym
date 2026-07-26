@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-07-json-parse',
   title: 'Safe JSON Parse',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'easy',
   comingSoon: false,
   description,

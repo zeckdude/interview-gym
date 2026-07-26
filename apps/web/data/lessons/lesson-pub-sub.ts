@@ -5,6 +5,8 @@ export const lessonPubSub: Lesson = {
   id: 'lesson-pub-sub',
   title: 'Pub/Sub Pattern — Decoupled Communication',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-08-event-emitter","be-16-queue"],
   estimatedMinutes: 10,

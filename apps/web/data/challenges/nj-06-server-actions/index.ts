@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-06-server-actions',
   title: 'Server Actions for Form Handling',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

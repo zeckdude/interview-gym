@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-14-curry',
   title: 'Function Currying',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

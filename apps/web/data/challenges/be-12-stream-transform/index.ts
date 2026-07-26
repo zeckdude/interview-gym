@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-12-stream-transform',
   title: 'Stream Transform',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

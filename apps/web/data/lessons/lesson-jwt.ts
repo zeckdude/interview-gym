@@ -5,6 +5,8 @@ export const lessonJwt: Lesson = {
   id: 'lesson-jwt',
   title: 'JSON Web Tokens — Auth the Right Way',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-20-api-client","be-05-env-config"],
   estimatedMinutes: 10,

@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-11-cache-lru',
   title: 'LRU Cache',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

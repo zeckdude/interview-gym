@@ -5,6 +5,8 @@ export const lessonNjDataFetching: Lesson = {
   id: 'lesson-nj-data-fetching',
   title: 'Data Fetching Patterns in Next.js',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   relatedChallengeIds: ['nj-10-data-fetching-patterns', 'nj-13-streaming-suspense'],
   estimatedMinutes: 16,

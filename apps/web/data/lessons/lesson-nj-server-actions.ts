@@ -5,6 +5,8 @@ export const lessonNjServerActions: Lesson = {
   id: 'lesson-nj-server-actions',
   title: 'Server Actions & Mutations',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   relatedChallengeIds: ['nj-06-server-actions', 'nj-15-optimistic-updates-server-actions'],
   estimatedMinutes: 16,

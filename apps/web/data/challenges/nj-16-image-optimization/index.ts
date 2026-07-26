@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-16-image-optimization',
   title: 'Advanced Image Optimization',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

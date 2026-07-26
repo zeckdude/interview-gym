@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-03-static-dynamic-rendering',
   title: 'Static vs Dynamic Rendering',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'easy',
   comingSoon: false,
   description,

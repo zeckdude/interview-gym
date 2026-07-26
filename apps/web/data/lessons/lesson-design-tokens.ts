@@ -5,8 +5,10 @@ export const lessonDesignTokens: Lesson = {
   id: 'lesson-design-tokens',
   title: 'Design Token Systems',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
-  relatedChallengeIds: ["fea-14"],
+  relatedChallengeIds: ["fea-14-virtual-dom"],
   estimatedMinutes: 10,
   concepts: ["design tokens","theming"],
   steps: [

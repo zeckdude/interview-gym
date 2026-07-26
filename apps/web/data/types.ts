@@ -11,7 +11,15 @@ export interface ValidationResult {
 }
 
 /** Legacy stored category on challenges/lessons — prefer explicit taxonomy when set. */
-export type ChallengeCategory = 'be' | 'fe' | 'fe-advanced' | 'nextjs';
+export type ChallengeCategory =
+  | 'be'
+  | 'fe'
+  | 'fe-advanced'
+  | 'nextjs'
+  | 'fe-css'
+  | 'fe-ai'
+  | 'stack-typescript'
+  | 'stack-vitest';
 
 export type TopLevelCategory = 'be' | 'fe' | 'stack';
 
@@ -113,4 +121,49 @@ export function gradeAnswer(
     matchedTerms,
     score,
   };
+}
+
+export interface DesignSection {
+  id: string;
+  label: string;
+  prompt: string;
+  placeholder: string;
+  scoringCriteria: string;
+  spokenPrompt: string;
+}
+
+export interface SystemDesignChallenge {
+  id: string;
+  title: string;
+  difficulty: 'intermediate' | 'advanced';
+  mostAsked: boolean;
+  mostAskedReason?: string;
+  category: 'systems-design';
+  estimatedMinutes: number;
+  scenario: string;
+  constraints: string[];
+  sections: DesignSection[];
+  sampleAnswer: Record<string, string>;
+  relatedLessonIds: string[];
+  externalResources: { label: string; url: string }[];
+  followUpQuestions: string[];
+}
+
+export interface SystemDesignSectionGrade {
+  sectionId: string;
+  score: number;
+  feedback: string;
+  strengths: string[];
+  gaps: string[];
+  firstFollowUpQuestion?: string;
+}
+
+export interface SystemDesignDialogMessage {
+  role: 'assistant' | 'user';
+  content: string;
+  audioClipUrl?: string;
+  transcript?: string;
+  fillerWordCount?: number;
+  wordsPerMinute?: number;
+  confidenceScore?: number;
 }

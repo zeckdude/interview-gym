@@ -5,6 +5,8 @@ export const lessonNjAppRouterBasics: Lesson = {
   id: 'lesson-nj-app-router-basics',
   title: 'App Router: File Conventions & Routing',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   relatedChallengeIds: ['nj-01-page-routing', 'nj-04-metadata-seo'],
   estimatedMinutes: 14,

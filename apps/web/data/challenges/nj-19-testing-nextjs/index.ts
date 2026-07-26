@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-19-testing-nextjs',
   title: 'Testing Next.js: Components and Routes',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'advanced',
   comingSoon: false,
   description,

@@ -5,6 +5,8 @@ export const lessonNjMiddlewareAuth: Lesson = {
   id: 'lesson-nj-middleware-auth',
   title: 'Middleware & Auth Patterns',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   relatedChallengeIds: ['nj-07-middleware', 'nj-14-auth-patterns'],
   estimatedMinutes: 14,

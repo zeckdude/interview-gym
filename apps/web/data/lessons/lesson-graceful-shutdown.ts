@@ -5,6 +5,8 @@ export const lessonGracefulShutdown: Lesson = {
   id: 'lesson-graceful-shutdown',
   title: 'Graceful Shutdown — Closing Cleanly',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'advanced',
   relatedChallengeIds: ["be-19-graceful-shutdown"],
   estimatedMinutes: 9,

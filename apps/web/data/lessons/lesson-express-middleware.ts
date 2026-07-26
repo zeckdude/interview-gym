@@ -5,6 +5,8 @@ export const lessonExpressMiddleware: Lesson = {
   id: 'lesson-express-middleware',
   title: 'Express Middleware — How the Chain Works',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-10-middleware-chain"],
   estimatedMinutes: 10,

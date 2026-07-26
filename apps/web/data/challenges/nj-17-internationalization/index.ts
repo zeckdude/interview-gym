@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-17-internationalization',
   title: 'Internationalization (i18n) Routing',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'advanced',
   comingSoon: false,
   description,

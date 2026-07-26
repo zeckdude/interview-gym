@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-18-performance-bundle',
   title: 'Bundle Analysis and Code Splitting',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'advanced',
   comingSoon: false,
   description,

@@ -5,6 +5,8 @@ export const lessonRestApi: Lesson = {
   id: 'lesson-rest-api',
   title: 'REST API Design and CRUD',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-13-http-router","be-20-api-client"],
   estimatedMinutes: 11,

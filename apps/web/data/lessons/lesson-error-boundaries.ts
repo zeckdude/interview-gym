@@ -5,6 +5,8 @@ export const lessonErrorBoundaries: Lesson = {
   id: 'lesson-error-boundaries',
   title: 'Error Boundaries — Catching React Errors',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["fea-07-error-boundary"],
   estimatedMinutes: 9,

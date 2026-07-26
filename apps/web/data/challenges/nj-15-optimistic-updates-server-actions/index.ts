@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-15-optimistic-updates-server-actions',
   title: 'Optimistic UI with Server Actions',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'advanced',
   comingSoon: false,
   description,

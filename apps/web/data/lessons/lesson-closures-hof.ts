@@ -5,6 +5,8 @@ export const lessonClosuresHof: Lesson = {
   id: 'lesson-closures-hof',
   title: 'Closures and Higher-Order Functions',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-04-debounce","be-17-validation-schema"],
   estimatedMinutes: 12,

@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-14-auth-patterns',
   title: 'Full Auth Flow with Middleware',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'advanced',
   comingSoon: false,
   description,

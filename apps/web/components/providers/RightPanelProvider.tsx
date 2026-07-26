@@ -1,5 +1,8 @@
 'use client';
 import { createContext, useCallback, useContext, useRef, useState } from 'react';
+import type { PlaybookCtx } from '@/lib/playbook/playbook-context';
+
+export type { PlaybookCtx, PlaybookIntent, PlaybookDraftTarget } from '@/lib/playbook/playbook-context';
 
 export type RightPanelTab = 'concepts' | 'chat';
 
@@ -16,14 +19,17 @@ interface RightPanelContextValue {
   activeTab: RightPanelTab;
   activeConcept: string | null;
   challengeCtx: ChallengeCtx | null;
+  playbookCtx: PlaybookCtx | null;
   sidebarCollapsed: boolean;
   pendingMessage: string | null;
   clearPendingMessage: () => void;
   openConcepts: (concept: string) => void;
   openChat: (initialMessage?: string) => void;
+  openPlaybookChat: (ctx: PlaybookCtx, initialMessage?: string) => void;
   close: () => void;
   setActiveTab: (tab: RightPanelTab) => void;
   setChallengeCtx: (ctx: ChallengeCtx) => void;
+  setPlaybookCtx: (ctx: PlaybookCtx | null) => void;
   toggleSidebar: () => void;
 }
 
@@ -36,14 +42,17 @@ const RightPanelContext = createContext<RightPanelContextValue>({
   activeTab: 'concepts',
   activeConcept: null,
   challengeCtx: null,
+  playbookCtx: null,
   sidebarCollapsed: false,
   pendingMessage: null,
   clearPendingMessage: () => {},
   openConcepts: () => {},
   openChat: () => {},
+  openPlaybookChat: () => {},
   close: () => {},
   setActiveTab: () => {},
   setChallengeCtx: () => {},
+  setPlaybookCtx: () => {},
   toggleSidebar: () => {},
 });
 
@@ -58,6 +67,7 @@ export function RightPanelProvider({ children }: { children: React.ReactNode }) 
   const [activeTab, setActiveTabState] = useState<RightPanelTab>('concepts');
   const [activeConcept, setActiveConcept] = useState<string | null>(null);
   const [challengeCtx, setChallengeCtxState] = useState<ChallengeCtx | null>(null);
+  const [playbookCtx, setPlaybookCtxState] = useState<PlaybookCtx | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [pendingMessage, setPendingMessage] = useState<string | null>(null);
   const autoCollapsedRef = useRef(false);
@@ -82,6 +92,19 @@ export function RightPanelProvider({ children }: { children: React.ReactNode }) 
       setActiveConcept(concept);
       setActiveTabState('concepts');
       setIsOpen(true);
+      setVar('--right-panel-width', `${PANEL_WIDTH}px`);
+      collapseSidebarIfNeeded();
+    },
+    [collapseSidebarIfNeeded]
+  );
+
+  const openPlaybookChat = useCallback(
+    (ctx: PlaybookCtx, initialMessage?: string) => {
+      setPlaybookCtxState(ctx);
+      setChallengeCtxState(null);
+      setActiveTabState('chat');
+      setIsOpen(true);
+      if (initialMessage) setPendingMessage(initialMessage);
       setVar('--right-panel-width', `${PANEL_WIDTH}px`);
       collapseSidebarIfNeeded();
     },
@@ -113,6 +136,10 @@ export function RightPanelProvider({ children }: { children: React.ReactNode }) 
     setChallengeCtxState(ctx);
   }, []);
 
+  const setPlaybookCtx = useCallback((ctx: PlaybookCtx | null) => {
+    setPlaybookCtxState(ctx);
+  }, []);
+
   const toggleSidebar = useCallback(() => {
     setSidebarCollapsed((prev) => {
       const next = !prev;
@@ -131,14 +158,17 @@ export function RightPanelProvider({ children }: { children: React.ReactNode }) 
         activeTab,
         activeConcept,
         challengeCtx,
+        playbookCtx,
         sidebarCollapsed,
         pendingMessage,
         clearPendingMessage,
         openConcepts,
         openChat,
+        openPlaybookChat,
         close,
         setActiveTab,
         setChallengeCtx,
+        setPlaybookCtx,
         toggleSidebar,
       }}
     >

@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.113.0",
+    "@aws-sdk/client-s3": "^3.1095.0",
     "@clerk/nextjs": "^7.5.9",
     "@clerk/types": "^4.101.25",
     "@codesandbox/sandpack-react": "^2.20.0",

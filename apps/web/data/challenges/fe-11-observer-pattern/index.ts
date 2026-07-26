@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-11-observer-pattern',
   title: 'Observer Pattern',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

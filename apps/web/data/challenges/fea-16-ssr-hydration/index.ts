@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-16-ssr-hydration',
   title: 'SSR Hydration',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'advanced',
   comingSoon: false,
   description,

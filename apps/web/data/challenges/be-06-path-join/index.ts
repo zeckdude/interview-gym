@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-06-path-join',
   title: 'Path Join Utility',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'easy',
   comingSoon: false,
   description,

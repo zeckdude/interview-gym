@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-15-retry-logic',
   title: 'Retry with Backoff',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

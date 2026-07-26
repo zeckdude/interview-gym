@@ -5,6 +5,8 @@ export const lessonErrorHandling: Lesson = {
   id: 'lesson-error-handling',
   title: 'Error Handling in Node.js and Express',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'easy',
   relatedChallengeIds: ["be-07-json-parse","be-15-retry-logic"],
   estimatedMinutes: 10,

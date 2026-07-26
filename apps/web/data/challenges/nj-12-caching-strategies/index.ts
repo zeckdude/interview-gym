@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-12-caching-strategies',
   title: 'Next.js Caching Deep Dive',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

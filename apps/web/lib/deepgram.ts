@@ -54,6 +54,79 @@ export async function synthesizeSpeech(
   return response.arrayBuffer();
 }
 
+export interface TranscriptionAnalytics {
+  transcript: string;
+  fillerWordCount: number;
+  wordsPerMinute: number;
+  confidenceScore: number;
+  durationSeconds: number;
+}
+
+const FILLER_WORDS = ['um', 'uh', 'like', 'you know', 'basically', 'literally'];
+
+export async function transcribeAudioWithAnalytics(
+  audio: ArrayBuffer,
+  contentType: string
+): Promise<TranscriptionAnalytics> {
+  const apiKey = requireDeepgramApiKey();
+
+  const url = new URL('https://api.deepgram.com/v1/listen');
+  url.searchParams.set('model', STT_MODEL);
+  url.searchParams.set('smart_format', 'true');
+  url.searchParams.set('filler_words', 'true');
+  url.searchParams.set('utterances', 'true');
+  url.searchParams.set('punctuate', 'true');
+
+  const normalizedType = contentType.split(';')[0].trim() || 'audio/webm';
+
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    headers: {
+      Authorization: `Token ${apiKey}`,
+      'Content-Type': normalizedType,
+    },
+    body: audio,
+  });
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => '');
+    throw new Error(`Deepgram STT failed (${response.status}): ${detail.slice(0, 300)}`);
+  }
+
+  const data = (await response.json()) as {
+    metadata?: { duration?: number };
+    results?: {
+      channels?: Array<{
+        alternatives?: Array<{
+          transcript?: string;
+          confidence?: number;
+          words?: Array<{ word?: string }>;
+        }>;
+      }>;
+    };
+  };
+
+  const alternative = data.results?.channels?.[0]?.alternatives?.[0];
+  const transcript = alternative?.transcript?.trim() ?? '';
+  const words = alternative?.words ?? [];
+  const fillerWordCount = words.filter((w) =>
+    FILLER_WORDS.includes((w.word ?? '').toLowerCase())
+  ).length;
+  const durationSeconds = data.metadata?.duration ?? 0;
+  const wordCount = words.length;
+  const wordsPerMinute =
+    durationSeconds > 0 ? Math.round((wordCount / durationSeconds) * 60) : 0;
+  const confidenceScore = alternative?.confidence ?? 0;
+
+  return {
+    transcript,
+    fillerWordCount,
+    wordsPerMinute,
+    confidenceScore,
+    durationSeconds,
+  };
+}
+
 export async function transcribeAudio(
   audio: ArrayBuffer,
   contentType: string

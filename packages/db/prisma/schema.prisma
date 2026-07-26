@@ -30,6 +30,129 @@ model User {
   pushSubscriptions PushSubscription[]
   mostAskedOverrides MostAskedOverride[]
   studyPlanItems     StudyPlanItem[]
+  systemDesignSessions SystemDesignSession[]
+  voiceInterviewSessions VoiceInterviewSession[]
+  playbookProfile       PlaybookProfile?
+  jobSearchCriteria     JobSearchCriteria?
+  playbookEntries       PlaybookEntry[]
+  playbookQuestions     PlaybookQuestion[]
+  simulatorCompanyContexts SimulatorCompanyContext[]
+}
+
+model PlaybookProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id])
+  linkedInUrl        String?
+  linkedInText       String?
+  resumeText         String?
+  portfolioUrl       String?
+  githubUrl          String?
+  personalWebsite    String?
+  additionalContext  String?
+  onboardingComplete Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model JobSearchCriteria {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id])
+  targetRoles        String[]
+  targetCompanyStage String[]
+  targetIndustries   String[]
+  preferredStack     String[]
+  locationPreference String?
+  salaryMin          Int?
+  salaryMax          Int?
+  mustHaves          String[]
+  dealBreakers       String[]
+  additionalNotes    String?
+  updatedAt          DateTime @updatedAt
+}
+
+model PlaybookEntry {
+  id             String               @id @default(cuid())
+  userId         String
+  user           User                 @relation(fields: [userId], references: [id])
+  category       String
+  title          String
+  summary        String?
+  order          Int                  @default(0)
+  isSeeded       Boolean              @default(false)
+  questionPrompt String?
+  subsections    PlaybookSubsection[]
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  @@index([userId, category])
+}
+
+model PlaybookSubsection {
+  id              String        @id @default(cuid())
+  entryId         String
+  entry           PlaybookEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  label           String
+  textContent     String?
+  audioUrl        String?
+  transcript      String?
+  fillerWordCount Int?
+  wordsPerMinute  Float?
+  aiFeedback      String?
+  aiSummary       String?
+  order           Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([entryId])
+}
+
+model PlaybookQuestion {
+  id              String   @id @default(cuid())
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id])
+  category        String
+  questionText    String
+  isSystemDefault Boolean  @default(false)
+  mostAsked       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  @@index([category, isSystemDefault])
+}
+
+model SimulatorCompanyContext {
+  id              String                 @id @default(cuid())
+  userId          String
+  user            User                   @relation(fields: [userId], references: [id])
+  companyName     String?
+  companyWebsite  String?
+  jobListingUrl   String?
+  jobListingText  String?
+  additionalNotes String?
+  researchSummary String?
+  researchedAt    DateTime?
+  interviewers    SimulatorInterviewer[]
+  voiceSessions   VoiceInterviewSession[]
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  @@index([userId])
+}
+
+model SimulatorInterviewer {
+  id              String                  @id @default(cuid())
+  contextId       String
+  context         SimulatorCompanyContext @relation(fields: [contextId], references: [id], onDelete: Cascade)
+  name            String
+  title           String?
+  linkedInUrl     String?
+  linkedInText    String?
+  researchSummary String?
+  rapportPoints   String[]
+  researchedAt    DateTime?
+
+  @@index([contextId])
 }
 
 model UserChallenge {
@@ -316,4 +439,87 @@ model StudyPlanItem {
 
   @@unique([userId, itemType, itemId])
   @@index([userId, sortOrder])
+}
+
+model SystemDesignSession {
+  id              String               @id @default(cuid())
+  userId          String
+  user            User                 @relation(fields: [userId], references: [id])
+  challengeId     String
+  challengeTitle  String
+  startedAt       DateTime             @default(now())
+  completedAt     DateTime?
+  overallScore    Float?
+  sectionScores   Json?
+  aiFeedback      String?
+  dialogHistory   Json?
+  answers         SystemDesignAnswer[]
+
+  @@index([userId, startedAt])
+}
+
+model SystemDesignAnswer {
+  id              String              @id @default(cuid())
+  sessionId       String
+  session         SystemDesignSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  section         String
+  questionText    String              @default("")
+  textContent     String?
+  audioUrl        String?
+  transcript      String?
+  fillerWordCount Int?
+  wordsPerMinute  Float?
+  confidenceScore Float?
+  createdAt       DateTime            @default(now())
+
+  @@index([sessionId])
+}
+
+model VoiceInterviewSession {
+  id                   String                   @id @default(cuid())
+  userId               String
+  user                 User                     @relation(fields: [userId], references: [id])
+  category             String
+  difficulty           String
+  questionIds          Json
+  sessionQuestionCount Int                      @default(1)
+  includeFollowUps     Boolean                  @default(true)
+  mostAskedOnly        Boolean                  @default(false)
+  presetId             String?
+  playbookCategories   Json?
+  interviewType        String                   @default("voice")
+  customQuestionTexts  Json?
+  companyContextId     String?
+  companyContext       SimulatorCompanyContext? @relation(fields: [companyContextId], references: [id])
+  startedAt            DateTime                 @default(now())
+  completedAt          DateTime?
+  overallScore         Float?
+  contentScore         Float?
+  communicationScore   Float?
+  aiFeedback           String?
+  exchanges            VoiceExchange[]
+
+  @@index([userId, startedAt])
+}
+
+model VoiceExchange {
+  id                 String                @id @default(cuid())
+  sessionId          String
+  session            VoiceInterviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionId         String?
+  order              Int
+  questionText       String
+  questionType       String
+  answerTranscript   String?
+  answerAudioUrl     String?
+  answerDurationSec  Float?
+  fillerWordCount    Int?
+  wordsPerMinute     Float?
+  deepgramConfidence Float?
+  aiContentScore     Float?
+  aiContentFeedback  String?
+  aiGaps             Json?
+  createdAt          DateTime              @default(now())
+
+  @@index([sessionId])
 }

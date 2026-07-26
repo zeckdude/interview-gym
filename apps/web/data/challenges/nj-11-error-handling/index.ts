@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-11-error-handling',
   title: 'Error and Loading UI',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

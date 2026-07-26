@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-16-flat-array',
   title: 'Flatten Nested Array',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'easy',
   comingSoon: false,
   description,

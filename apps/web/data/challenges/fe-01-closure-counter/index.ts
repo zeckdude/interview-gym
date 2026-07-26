@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fe-01-closure-counter',
   title: 'Closure Counter',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'easy',
   comingSoon: false,
   description,

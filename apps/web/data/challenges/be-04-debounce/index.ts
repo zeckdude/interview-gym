@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-04-debounce',
   title: 'Debounce Function from Scratch',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

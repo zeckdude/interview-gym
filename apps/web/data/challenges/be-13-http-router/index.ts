@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-13-http-router',
   title: 'HTTP Router',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

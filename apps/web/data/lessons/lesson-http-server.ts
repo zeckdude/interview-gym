@@ -5,6 +5,8 @@ export const lessonHttpServer: Lesson = {
   id: 'lesson-http-server',
   title: 'Building HTTP Servers in Node.js',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-13-http-router","be-05-env-config"],
   estimatedMinutes: 12,

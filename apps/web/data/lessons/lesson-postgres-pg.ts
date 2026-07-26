@@ -5,6 +5,8 @@ export const lessonPostgresPg: Lesson = {
   id: 'lesson-postgres-pg',
   title: 'PostgreSQL with node-postgres',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-18-singleton-db"],
   estimatedMinutes: 11,

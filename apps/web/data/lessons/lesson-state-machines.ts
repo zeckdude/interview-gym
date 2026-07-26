@@ -5,8 +5,10 @@ export const lessonStateMachines: Lesson = {
   id: 'lesson-state-machines',
   title: 'Finite State Machines for UI',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
-  relatedChallengeIds: ["fea-13"],
+  relatedChallengeIds: ["fea-13-state-machine"],
   estimatedMinutes: 11,
   concepts: ["FSM","transitions"],
   steps: [

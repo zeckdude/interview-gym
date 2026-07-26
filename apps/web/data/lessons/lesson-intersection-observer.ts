@@ -5,6 +5,8 @@ export const lessonIntersectionObserver: Lesson = {
   id: 'lesson-intersection-observer',
   title: 'Intersection Observer — Scroll-Based UI',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["fe-09-infinite-scroll","fe-02-event-delegation"],
   estimatedMinutes: 10,

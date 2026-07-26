@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-08-portal-modal',
   title: 'Portal Modal',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

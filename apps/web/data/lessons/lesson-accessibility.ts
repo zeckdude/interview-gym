@@ -5,8 +5,10 @@ export const lessonAccessibility: Lesson = {
   id: 'lesson-accessibility',
   title: 'Accessibility — Building Inclusive UIs',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
-  relatedChallengeIds: ["fe-10-modal-focus","fea-18"],
+  relatedChallengeIds: ["fe-10-modal-focus","fea-18-accessible-dropdown"],
   estimatedMinutes: 11,
   concepts: ["ARIA","keyboard navigation"],
   steps: [

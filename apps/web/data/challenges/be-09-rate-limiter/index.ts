@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-09-rate-limiter',
   title: 'Rate Limiter',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

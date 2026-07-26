@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-05-env-config',
   title: 'Environment Variable Config Module',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'easy',
   comingSoon: false,
   description,

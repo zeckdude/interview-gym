@@ -5,6 +5,8 @@ export const lessonNjCaching: Lesson = {
   id: 'lesson-nj-caching',
   title: 'Next.js Caching — All Four Layers Explained',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   relatedChallengeIds: ['nj-12-caching-strategies'],
   estimatedMinutes: 18,

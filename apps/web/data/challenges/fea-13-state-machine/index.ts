@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'fea-13-state-machine',
   title: 'Finite State Machine',
   category: 'fe-advanced',
+  topLevel: 'fe',
+  subcategory: 'react',
   difficulty: 'advanced',
   comingSoon: false,
   description,

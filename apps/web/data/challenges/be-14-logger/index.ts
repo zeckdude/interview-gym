@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-14-logger',
   title: 'Structured Logger',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

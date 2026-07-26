@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'be-03-async-file-read',
   title: 'Async File Read with Promises',
   category: 'be',
+  topLevel: 'be',
+  subcategory: null,
   difficulty: 'intermediate',
   comingSoon: false,
   description,

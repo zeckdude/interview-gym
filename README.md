@@ -308,13 +308,16 @@ Your Railway PostgreSQL database is already accessible from anywhere — Railway
 
 | Phase | Status | What It Adds |
 |-------|--------|-------------|
-| Phase 1 | ✅ Done | Foundation, design system, auth, dashboard, 5 challenges |
-| Phase 2 | ⏳ Next | All 60 challenges + 40 questions, full content |
-| Phase 3 | 🔒 Locked | Interactive lessons with mini-challenges |
-| Phase 4 | 🔒 Locked | Streaks, badges, spaced repetition |
-| Phase 5 | 🔒 Locked | AI coach, code review, improvement suggestions |
-| Phase 6 | 🔒 Locked | Interview prep simulator |
-| Phase 7 | 🔒 Locked | Leaderboard, weak spot analyzer, export |
-| Phase 8 | 🔒 Locked | Email reminders, Railway cron |
-| Phase 9 | 🔒 Locked | Notes, annotations, hint mechanic |
-| Phase 10 | 🔒 Locked | User-generated challenges via AI |
+| Phase 1 | ✅ Done | Foundation, design system, auth, dashboard |
+| Phase 2 | ✅ Done | Full challenge + question content |
+| Phase 3 | ✅ Done | Interactive lessons with mini-challenges |
+| Phase 4 | ✅ Done | Streaks, badges, spaced repetition |
+| Phase 5 | ✅ Done | AI coach, code review, improvement suggestions |
+| Phase 6 | ✅ Done | Interview prep simulator |
+| Phase 7 | ✅ Done | Leaderboard, weak spot analyzer, export |
+| Phase 8 | ✅ Done | Email reminders, Railway cron |
+| Phase 9 | ✅ Done | Notes, annotations, hint mechanic |
+| Phase 10 | ✅ Done | User-generated challenges via AI |
+| Phase 11 | ✅ Done | Push notifications |
+| Phase 12 | ✅ Done | Next.js content expansion, live preview |
+| Content roadmap | ✅ Done | Taxonomy, study plan, audio, 243 challenges — see `phases/PHASE-CONTENT-ROADMAP-COMPLETE.md` |

@@ -185,4 +185,5 @@ npm run dev          # Start dev server
 npm run setup        # Symlink .env.local into apps/web
 npm run db:migrate   # Apply database migrations
 npm run type-check   # TypeScript check
+npm run content:audit # Report per-bucket easy/int/advanced counts vs 10/10/10
 ```

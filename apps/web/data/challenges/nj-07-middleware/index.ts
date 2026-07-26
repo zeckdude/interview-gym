@@ -9,6 +9,8 @@ export const challenge: Challenge = {
   id: 'nj-07-middleware',
   title: 'Middleware for Auth & Redirects',
   category: 'nextjs',
+  topLevel: 'fe',
+  subcategory: 'nextjs',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

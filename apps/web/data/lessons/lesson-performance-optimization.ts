@@ -5,6 +5,8 @@ export const lessonPerformanceOptimization: Lesson = {
   id: 'lesson-performance-optimization',
   title: 'React Performance — memo, useMemo, useCallback',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'intermediate',
   relatedChallengeIds: ["fe-12-memoize","fea-05-memo-optimization"],
   estimatedMinutes: 12,

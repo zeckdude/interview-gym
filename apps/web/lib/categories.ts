@@ -72,6 +72,10 @@ const LEGACY_CHALLENGE_TO_TAXONOMY: Record<StoredChallengeCategory, ContentTaxon
   fe: { topLevel: 'fe', subcategory: null },
   'fe-advanced': { topLevel: 'fe', subcategory: 'react' },
   nextjs: { topLevel: 'fe', subcategory: 'nextjs' },
+  'fe-css': { topLevel: 'fe', subcategory: 'css' },
+  'fe-ai': { topLevel: 'fe', subcategory: 'ai' },
+  'stack-typescript': { topLevel: 'stack', subcategory: 'typescript' },
+  'stack-vitest': { topLevel: 'stack', subcategory: 'vitest' },
 };
 
 const LEGACY_QUESTION_TO_TAXONOMY: Record<LegacyQuestionCategory, ContentTaxonomy> = {
@@ -376,6 +380,14 @@ export function getCategoryLabelForChallengeType(challengeType: string): string 
       return 'React';
     case 'nextjs':
       return 'Next.js';
+    case 'fe-css':
+      return 'CSS';
+    case 'fe-ai':
+      return 'AI';
+    case 'stack-typescript':
+      return 'TypeScript';
+    case 'stack-vitest':
+      return 'Vitest';
     case 'be-question':
       return 'Backend';
     case 'fe-question':
@@ -392,6 +404,14 @@ export function legacyCategoryFromTaxonomy(taxonomy: ContentTaxonomy): StoredCha
   if (taxonomy.topLevel === 'fe' && taxonomy.subcategory === null) return 'fe';
   if (taxonomy.topLevel === 'fe' && taxonomy.subcategory === 'react') return 'fe-advanced';
   if (taxonomy.topLevel === 'fe' && taxonomy.subcategory === 'nextjs') return 'nextjs';
+  if (taxonomy.topLevel === 'fe' && taxonomy.subcategory === 'css') return 'fe-css';
+  if (taxonomy.topLevel === 'fe' && taxonomy.subcategory === 'ai') return 'fe-ai';
+  if (taxonomy.topLevel === 'stack' && taxonomy.subcategory === 'typescript') {
+    return 'stack-typescript';
+  }
+  if (taxonomy.topLevel === 'stack' && taxonomy.subcategory === 'vitest') {
+    return 'stack-vitest';
+  }
   return null;
 }
 

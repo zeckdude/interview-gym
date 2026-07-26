@@ -5,6 +5,8 @@ export const lessonSse: Lesson = {
   id: 'lesson-sse',
   title: 'Server-Sent Events — Real-Time Without WebSockets',
   category: 'fe',
+  topLevel: 'fe',
+  subcategory: null,
   difficulty: 'advanced',
   relatedChallengeIds: ["fea-15-websocket-chat"],
   estimatedMinutes: 10,
