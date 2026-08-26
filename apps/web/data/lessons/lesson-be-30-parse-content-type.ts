@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonBe30ParseContentType: Lesson = {
   id: 'lesson-be-30-parse-content-type',
   title: 'Parse Content-Type Header',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'advanced',
   relatedChallengeIds: ['be-30-parse-content-type'],
   estimatedMinutes: 10,

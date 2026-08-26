@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonBe22PadString: Lesson = {
   id: 'lesson-be-22-pad-string',
   title: 'Pad String to Length',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'easy',
   relatedChallengeIds: ['be-22-pad-string'],
   estimatedMinutes: 10,

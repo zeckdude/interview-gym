@@ -87,30 +87,11 @@ A **higher-order function** takes or returns another function. debounce, map, an
   ]`;
   }
   const topic = lesson.title.split('—')[0].trim();
-  return `[
-    {
-      type: 'explanation',
-      title: 'Why This Matters',
-      content: \`
-**${topic}** is a core interview topic. Understanding it deeply means you can explain trade-offs, not just recite syntax.
-
-**Key concepts:** ${lesson.concepts.join(', ')}
-      \`,
-    },
-    {
-      type: 'code-example',
-      title: 'Example',
-      language: 'javascript',
-      content: \`${esc(lesson.jsSolution)}\`,
-    },
-    {
-      type: 'gotcha',
-      title: '⚠️ Common Interview Trap',
-      content: \`
-Interviewers love asking about edge cases for **${lesson.concepts[0]}**. Always mention error handling and when NOT to use this pattern.
-      \`,
-    },
-  ]`;
+  throw new Error(
+    `[generate-lessons] Refusing to generate thin template steps for "${lesson.id}". ` +
+      `Author lesson content manually following docs/lesson-content-guide.md. ` +
+      `Topic: ${topic}; concepts: ${lesson.concepts.join(', ')}`
+  );
 }
 
 for (const l of lessons) {

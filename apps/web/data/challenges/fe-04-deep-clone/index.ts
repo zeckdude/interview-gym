@@ -8,9 +8,9 @@ import type { Challenge } from '../../types';
 export const challenge: Challenge = {
   id: 'fe-04-deep-clone',
   title: 'Deep Clone Object',
-  category: 'fe',
-  topLevel: 'fe',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'advanced',
   comingSoon: false,
   description,

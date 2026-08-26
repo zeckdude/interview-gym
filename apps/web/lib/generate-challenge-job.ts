@@ -180,6 +180,17 @@ export async function runGenerationJob(jobId: string): Promise<void> {
       body: `"${challenge.title}" is ready to practice.`,
       url: href,
     });
+
+    const { evaluateAndSlotContentAsync } = await import('@/lib/paths/auto-evaluate');
+    evaluateAndSlotContentAsync({
+      id: challenge.id,
+      type: 'challenge',
+      title: challenge.title,
+      description: challenge.description,
+      concepts: challenge.concepts,
+      difficulty: challenge.difficulty,
+      category: challenge.category,
+    });
   } catch (err) {
     const message =
       err instanceof Error ? err.message : 'Failed to generate challenge. Please try again.';

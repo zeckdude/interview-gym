@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonAsyncPromises: Lesson = {
   id: 'lesson-async-promises',
   title: 'Async JavaScript — Promises, async/await, and Error Handling',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-03-async-file-read","be-07-json-parse"],
   estimatedMinutes: 12,

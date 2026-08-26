@@ -166,6 +166,19 @@ import { lessonAi30DedupeVectors } from './lesson-ai-30-dedupe-vectors';
 import { lessonAi31StripCot } from './lesson-ai-31-strip-cot';
 import { lessonAi32GuardrailBlock } from './lesson-ai-32-guardrail-block';
 import { lessonAi33EvalMetrics } from './lesson-ai-33-eval-metrics';
+import { lessonJs01VariablesTypes } from './lesson-js-01-variables-types';
+import { lessonJs02FunctionsBasics } from './lesson-js-02-functions-basics';
+import { lessonJs03ArraysBasics } from './lesson-js-03-arrays-basics';
+import { lessonJs04ObjectsBasics } from './lesson-js-04-objects-basics';
+import { lessonJs05ArrayMethods } from './lesson-js-05-array-methods';
+import { lessonJs06ClassesPrototypes } from './lesson-js-06-classes-prototypes';
+import { lessonFe01ClosureCounter } from './lesson-fe-01-closure-counter';
+import { lessonFe03PromiseAll } from './lesson-fe-03-promise-all';
+import { lessonFe14Curry } from './lesson-fe-14-curry';
+import { lessonFe15PipeCompose } from './lesson-fe-15-pipe-compose';
+import { lessonFe16FlatArray } from './lesson-fe-16-flat-array';
+import { lessonFe17UniqueArray } from './lesson-fe-17-unique-array';
+import { lessonFe18GroupBy } from './lesson-fe-18-group-by';
 import { lessonBe21TrimString } from './lesson-be-21-trim-string';
 import { lessonBe22PadString } from './lesson-be-22-pad-string';
 import { lessonBe23SafeParseInt } from './lesson-be-23-safe-parse-int';
@@ -237,6 +250,19 @@ export const allLessons = [
   lessonFe23FlattenToDepth,
   lessonFe22ChunkArray,
   lessonFe21ClampNumber,
+  lessonFe18GroupBy,
+  lessonFe17UniqueArray,
+  lessonFe16FlatArray,
+  lessonFe15PipeCompose,
+  lessonFe14Curry,
+  lessonFe03PromiseAll,
+  lessonFe01ClosureCounter,
+  lessonJs06ClassesPrototypes,
+  lessonJs05ArrayMethods,
+  lessonJs04ObjectsBasics,
+  lessonJs03ArraysBasics,
+  lessonJs02FunctionsBasics,
+  lessonJs01VariablesTypes,
   lessonBe30ParseContentType,
   lessonBe29BackoffJitter,
   lessonBe28OncePerKey,

@@ -3,6 +3,7 @@ import { beQuestions } from './be-questions';
 import { feAdvancedChallenges } from './fe-advanced';
 import { feChallenges } from './fe-challenges';
 import { feQuestions } from './fe-questions';
+import { javascriptChallenges } from './javascript-challenges';
 import { nextjsChallenges } from './nextjs-challenges';
 import { aiChallenges } from './ai-challenges';
 import { vitestChallenges } from './vitest-challenges';
@@ -17,6 +18,7 @@ export * from './types';
 export const allChallenges: Challenge[] = [
   ...beChallenges,
   ...feChallenges,
+  ...javascriptChallenges,
   ...feAdvancedChallenges,
   ...nextjsChallenges,
   ...aiChallenges,
@@ -28,8 +30,9 @@ export const allChallenges: Challenge[] = [
 export const allQuestions = [...beQuestions, ...feQuestions, ...nextjsQuestions];
 
 export const CATEGORY_TOTALS = {
-  be: beChallenges.length,
-  fe: feChallenges.length,
+  'be-nodejs': beChallenges.length,
+  'fe-web-apis': feChallenges.length,
+  'stack-javascript': javascriptChallenges.length,
   'fe-advanced': feAdvancedChallenges.length,
   nextjs: nextjsChallenges.length,
   'fe-ai': aiChallenges.length,

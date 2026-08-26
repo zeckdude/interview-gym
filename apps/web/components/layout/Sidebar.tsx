@@ -8,6 +8,7 @@ import { useRightPanel } from '@/components/providers/RightPanelProvider';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: '📊' },
+  { href: '/my-path', label: 'My Path', icon: '🗺️' },
   { href: '/playbook', label: 'My Playbook', icon: '📒' },
   { href: '/study-plan', label: 'Study Plan', icon: '📋' },
   { href: '/lessons', label: 'Lessons', icon: '📚' },

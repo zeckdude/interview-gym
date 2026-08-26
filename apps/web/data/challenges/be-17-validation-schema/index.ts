@@ -8,9 +8,9 @@ import type { Challenge } from '../../types';
 export const challenge: Challenge = {
   id: 'be-17-validation-schema',
   title: 'Validation Schema',
-  category: 'be',
+  category: 'be-nodejs',
   topLevel: 'be',
-  subcategory: null,
+  subcategory: 'nodejs',
   difficulty: 'advanced',
   comingSoon: false,
   description,

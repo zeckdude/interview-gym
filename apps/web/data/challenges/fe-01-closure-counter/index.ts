@@ -8,9 +8,9 @@ import type { Challenge } from '../../types';
 export const challenge: Challenge = {
   id: 'fe-01-closure-counter',
   title: 'Closure Counter',
-  category: 'fe',
-  topLevel: 'fe',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'easy',
   comingSoon: false,
   description,

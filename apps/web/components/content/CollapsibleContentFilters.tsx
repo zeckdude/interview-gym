@@ -37,9 +37,7 @@ export function CollapsibleContentFilters({
   const hasActive = hasNonDefaultContentFilters(filters);
 
   const subcategoryOptions =
-    filters.topLevel === 'all' || filters.topLevel === 'be'
-      ? []
-      : SUBCATEGORY_OPTIONS[filters.topLevel];
+    filters.topLevel === 'all' ? [] : SUBCATEGORY_OPTIONS[filters.topLevel];
 
   return (
     <div className="rounded-lg border border-border-subtle dark:border-[#2A2A2A] bg-bg-surface dark:bg-[#141414] overflow-hidden">

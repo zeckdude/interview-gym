@@ -8,9 +8,9 @@ import type { Challenge } from '../../types';
 export const challenge: Challenge = {
   id: 'fe-14-curry',
   title: 'Function Currying',
-  category: 'fe',
-  topLevel: 'fe',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

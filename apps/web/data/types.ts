@@ -18,12 +18,18 @@ export type ChallengeCategory =
   | 'nextjs'
   | 'fe-css'
   | 'fe-ai'
+  | 'fe-web-apis'
+  | 'be-nodejs'
+  | 'stack-javascript'
   | 'stack-typescript'
   | 'stack-vitest';
 
 export type TopLevelCategory = 'be' | 'fe' | 'stack';
 
 export type ContentSubcategory =
+  | 'javascript'
+  | 'web-apis'
+  | 'nodejs'
   | 'react'
   | 'nextjs'
   | 'css'

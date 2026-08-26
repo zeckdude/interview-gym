@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonGracefulShutdown: Lesson = {
   id: 'lesson-graceful-shutdown',
   title: 'Graceful Shutdown — Closing Cleanly',
-  category: 'be',
+  category: 'be-nodejs',
   topLevel: 'be',
-  subcategory: null,
+  subcategory: 'nodejs',
   difficulty: 'advanced',
   relatedChallengeIds: ["be-19-graceful-shutdown"],
   estimatedMinutes: 9,

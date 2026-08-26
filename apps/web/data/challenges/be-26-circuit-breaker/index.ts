@@ -8,9 +8,9 @@ import type { Challenge } from '../../types';
 export const challenge: Challenge = {
   id: 'be-26-circuit-breaker',
   title: 'Circuit Breaker Factory',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'advanced',
   comingSoon: false,
   description,

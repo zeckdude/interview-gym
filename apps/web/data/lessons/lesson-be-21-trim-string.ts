@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonBe21TrimString: Lesson = {
   id: 'lesson-be-21-trim-string',
   title: 'Trim Whitespace',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'easy',
   relatedChallengeIds: ['be-21-trim-string'],
   estimatedMinutes: 10,

@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonBe24ShallowMerge: Lesson = {
   id: 'lesson-be-24-shallow-merge',
   title: 'Shallow Merge Objects',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'easy',
   relatedChallengeIds: ['be-24-shallow-merge'],
   estimatedMinutes: 10,

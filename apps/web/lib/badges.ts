@@ -40,6 +40,9 @@ export async function checkAndAwardBadges(userId: string): Promise<AwardedBadge[
     passedByType.set(a.challengeType, set);
   }
 
+  const passedCountForTypes = (types: string[]) =>
+    types.reduce((sum, type) => sum + (passedByType.get(type)?.size ?? 0), 0);
+
   const checks: Array<{ slug: string; condition: boolean }> = [
     { slug: 'first-pass', condition: passedAttempts.length >= 1 },
     { slug: 'first-lesson', condition: lessonProgress.length >= 1 },
@@ -56,11 +59,14 @@ export async function checkAndAwardBadges(userId: string): Promise<AwardedBadge[
 
     {
       slug: 'all-be-passed',
-      condition: (passedByType.get('be')?.size ?? 0) >= CATEGORY_TOTALS.be,
+      condition:
+        passedCountForTypes(['be', 'be-nodejs']) >= CATEGORY_TOTALS['be-nodejs'],
     },
     {
       slug: 'all-fe-passed',
-      condition: (passedByType.get('fe')?.size ?? 0) >= CATEGORY_TOTALS.fe,
+      condition:
+        passedCountForTypes(['fe', 'stack-javascript', 'fe-web-apis']) >=
+        CATEGORY_TOTALS['stack-javascript'] + CATEGORY_TOTALS['fe-web-apis'],
     },
     {
       slug: 'all-advanced-passed',
@@ -76,8 +82,9 @@ export async function checkAndAwardBadges(userId: string): Promise<AwardedBadge[
     {
       slug: 'full-sweep',
       condition:
-        (passedByType.get('be')?.size ?? 0) >= CATEGORY_TOTALS.be &&
-        (passedByType.get('fe')?.size ?? 0) >= CATEGORY_TOTALS.fe &&
+        passedCountForTypes(['be', 'be-nodejs']) >= CATEGORY_TOTALS['be-nodejs'] &&
+        passedCountForTypes(['fe', 'stack-javascript', 'fe-web-apis']) >=
+          CATEGORY_TOTALS['stack-javascript'] + CATEGORY_TOTALS['fe-web-apis'] &&
         (passedByType.get('fe-advanced')?.size ?? 0) >= CATEGORY_TOTALS['fe-advanced'] &&
         (passedByType.get('be-question')?.size ?? 0) +
           (passedByType.get('fe-question')?.size ?? 0) >=

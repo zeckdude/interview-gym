@@ -8,9 +8,9 @@ import type { Challenge } from '../../types';
 export const challenge: Challenge = {
   id: 'fe-11-observer-pattern',
   title: 'Observer Pattern',
-  category: 'fe',
-  topLevel: 'fe',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

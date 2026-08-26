@@ -4,12 +4,28 @@ import { ReviewToday } from '@/components/dashboard/ReviewToday';
 import { BadgesPreview } from '@/components/dashboard/BadgesPreview';
 import { StreakFreezePrompt } from '@/components/dashboard/StreakFreezePrompt';
 import { StatsBar } from '@/components/dashboard/StatsBar';
+import { ActivePathBanner } from '@/components/dashboard/ActivePathBanner';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { CATEGORY_TOTALS } from '@/data';
 import { getDashboardData } from '@/lib/dashboard';
+import { getActivePathSummary } from '@/lib/paths/view';
+import { auth } from '@clerk/nextjs/server';
+import { prisma } from '@/lib/prisma';
 
 export default async function DashboardPage() {
   const data = await getDashboardData();
+  const { userId } = await auth();
+
+  let activePath = null;
+  if (userId) {
+    const user = await prisma.user.findUnique({
+      where: { clerkId: userId },
+      select: { id: true },
+    });
+    if (user) {
+      activePath = await getActivePathSummary(user.id);
+    }
+  }
 
   const stats = data ?? {
     totalAttempts: 0,
@@ -18,15 +34,9 @@ export default async function DashboardPage() {
     cleanPasses: 0,
     currentStreak: 0,
     thisWeekAttempts: 0,
-    categoryStats: {
-      be: { completed: 0, passRate: 0 },
-      fe: { completed: 0, passRate: 0 },
-      'fe-advanced': { completed: 0, passRate: 0 },
-      nextjs: { completed: 0, passRate: 0 },
-      'be-question': { completed: 0, passRate: 0 },
-      'fe-question': { completed: 0, passRate: 0 },
-      'nextjs-question': { completed: 0, passRate: 0 },
-    },
+    categoryStats: Object.fromEntries(
+      Object.keys(CATEGORY_TOTALS).map((key) => [key, { completed: 0, passRate: 0 }])
+    ) as Record<keyof typeof CATEGORY_TOTALS, { completed: number; passRate: number }>,
     recentAttempts: [],
     recentBadges: [],
     reviewItems: [],
@@ -50,6 +60,17 @@ export default async function DashboardPage() {
           <StreakFreezePrompt freezesAvailable={stats.freezesAvailable ?? 1} />
         )}
 
+        {activePath && activePath.isActive && (
+          <ActivePathBanner
+            name={activePath.name}
+            type={activePath.type}
+            interviewDate={activePath.interviewDate}
+            currentStage={activePath.currentStage}
+            totalComplete={activePath.totalComplete}
+            totalItems={activePath.totalItems}
+          />
+        )}
+
         <StatsBar
           totalAttempts={stats.totalAttempts}
           challengesPassed={stats.challengesPassed}
@@ -65,21 +86,27 @@ export default async function DashboardPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <CategoryCard
-              name="Backend Coding"
-              category="be"
-              completed={stats.categoryStats.be.completed}
-              total={CATEGORY_TOTALS.be}
-              passRate={stats.categoryStats.be.passRate}
+              name="JavaScript"
+              category="stack-javascript"
+              completed={stats.categoryStats['stack-javascript'].completed}
+              total={CATEGORY_TOTALS['stack-javascript']}
+              passRate={stats.categoryStats['stack-javascript'].passRate}
+              href="/challenges?category=stack&sub=javascript"
+            />
+            <CategoryCard
+              name="Node.js"
+              category="be-nodejs"
+              completed={stats.categoryStats['be-nodejs'].completed}
+              total={CATEGORY_TOTALS['be-nodejs']}
+              passRate={stats.categoryStats['be-nodejs'].passRate}
               href="/challenges?category=be"
             />
             <CategoryCard
               name="React"
-              category="fe"
-              completed={stats.categoryStats.fe.completed + stats.categoryStats['fe-advanced'].completed}
-              total={CATEGORY_TOTALS.fe + CATEGORY_TOTALS['fe-advanced']}
-              passRate={Math.round(
-                (stats.categoryStats.fe.passRate + stats.categoryStats['fe-advanced'].passRate) / 2
-              )}
+              category="fe-advanced"
+              completed={stats.categoryStats['fe-advanced'].completed}
+              total={CATEGORY_TOTALS['fe-advanced']}
+              passRate={stats.categoryStats['fe-advanced'].passRate}
               href="/challenges?category=react"
             />
             <CategoryCard

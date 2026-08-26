@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonSse: Lesson = {
   id: 'lesson-sse',
   title: 'Server-Sent Events — Real-Time Without WebSockets',
-  category: 'fe',
+  category: 'fe-web-apis',
   topLevel: 'fe',
-  subcategory: null,
+  subcategory: 'web-apis',
   difficulty: 'advanced',
   relatedChallengeIds: ["fea-15-websocket-chat"],
   estimatedMinutes: 10,

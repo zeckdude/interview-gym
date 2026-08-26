@@ -4,47 +4,90 @@ import { runUserCode } from './_utils';
 export const lessonFe28FlattenObject: Lesson = {
   id: 'lesson-fe-28-flatten-object',
   title: 'Flatten Nested Object',
-  category: 'fe',
-  topLevel: 'fe',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'advanced',
   relatedChallengeIds: ['fe-28-flatten-object'],
-  estimatedMinutes: 10,
-  concepts: ["objects","recursion","paths"],
+  estimatedMinutes: 14,
+  concepts: ['objects', 'recursion', 'paths'],
   steps: [
     {
       type: 'explanation',
       title: 'Why This Matters',
       content: `
-**Flatten Nested Object** shows up often in interviews. You need to explain the idea clearly, not just memorize syntax.
+Your app receives nested config from the backend: \`{ database: { host: "localhost", port: 5432 } }\`. Your env-var override system expects flat keys: \`{ "database.host": "localhost", "database.port": 5432 }\`.
 
-**Key concepts:** objects, recursion, paths
+**Flattening nested objects** into dot-path keys is common in config systems, form libraries, and i18n tools. Interviewers use it to test recursion and \`Object.entries\`.
+      `,
+    },
+    {
+      type: 'explanation',
+      title: 'How Object Flattening Works',
+      content: `
+Walk every key-value pair recursively:
+
+- If the value is a **plain object** (not null, not array) → recurse with an updated prefix: \`prefix.key\`
+- Otherwise → assign \`result[prefix] = value\`
+
+**Plain object check:** \`value != null && typeof value === 'object' && !Array.isArray(value)\`
+
+Build the path as you go: \`""\` → \`"a"\` → \`"a.b"\` → \`"a.b.c"\`
       `,
     },
     {
       type: 'code-example',
-      title: 'Example',
+      title: 'Basic Example',
       language: 'javascript',
       content: `function flattenObject(obj) {
   const result = {};
-    const walk = (value, prefix) => {
-      if (value != null && typeof value === 'object' && !Array.isArray(value)) {
-        for (const [key, nested] of Object.entries(value)) {
-          walk(nested, prefix ? \`\${prefix}.\${key}\` : key);
-        }
-      } else {
-        result[prefix] = value;
+  const walk = (value, prefix) => {
+    if (value != null && typeof value === 'object' && !Array.isArray(value)) {
+      for (const [key, nested] of Object.entries(value)) {
+        walk(nested, prefix ? \`\${prefix}.\${key}\` : key);
       }
-    };
-    walk(obj, '');
-    return result;
-}`,
+    } else {
+      result[prefix] = value;
+    }
+  };
+  walk(obj, '');
+  return result;
+}
+
+flattenObject({ a: { b: 1 }, c: 2 });
+// => { "a.b": 1, "c": 2 }`,
+    },
+    {
+      type: 'code-example',
+      title: 'Interview Variation',
+      language: 'javascript',
+      content: `// Interviewer: "What about arrays?"
+flattenObject({ items: [1, 2, 3] });
+// With our plain-object check, arrays become leaf values:
+// => { "items": [1, 2, 3] }
+// Mention you'd add array indexing (items.0, items.1) if required
+
+// Interviewer: "What about empty nested objects?"
+flattenObject({ a: {} });
+// => {} — no leaf values to assign
+// Or assign "a": undefined depending on requirements`,
     },
     {
       type: 'gotcha',
       title: '⚠️ Common Interview Trap',
       content: `
-Interviewers probe edge cases for **objects**. Mention invalid inputs, empty values, and when this pattern is the wrong tool.
+**Treating arrays as objects to recurse into.** \`typeof []\` is \`"object"\` — you must exclude arrays with \`!Array.isArray(value)\` or you'll get numeric keys like \`"0"\`, \`"1"\`.
+
+**Forgetting null.** \`typeof null === 'object'\` in JavaScript — check \`value != null\` before recursing.
+      `,
+    },
+    {
+      type: 'gotcha',
+      title: 'When NOT to Flatten',
+      content: `
+**Don't flatten for display** — nested JSON is more readable for humans. Flatten only when a flat key space is required (env vars, CSS variables, query params).
+
+**Don't flatten deeply nested config at runtime on every request** — cache the flattened result.
       `,
     },
   ],
@@ -107,6 +150,8 @@ Interviewers probe edge cases for **objects**. Mention invalid inputs, empty val
     },
   },
   mdnLinks: [
-    { label: 'Flatten Nested Object', url: 'https://developer.mozilla.org/' }
+    { label: 'Object.entries — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries' },
+    { label: 'Working with objects — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_objects' },
+    { label: 'Exercism JavaScript Track (MIT)', url: 'https://github.com/exercism/javascript' },
   ],
 };

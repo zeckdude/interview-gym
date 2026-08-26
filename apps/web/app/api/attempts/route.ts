@@ -10,6 +10,8 @@ import {
 import { getChallengeDifficulty } from '@/lib/challenge-lookup';
 import { prisma } from '@/lib/prisma';
 import { updatePersonalBest } from '@/lib/personal-bests';
+import { recordPathItemAttempt } from '@/lib/paths/progress';
+import { inferPathItemType } from '@/lib/paths/infer-item-type';
 import { updateStreak } from '@/lib/streak';
 import { updateWeakSpot } from '@/lib/weak-spots';
 
@@ -118,6 +120,12 @@ export async function POST(request: Request) {
       parsed.data.passed
     ),
     updateWeakSpot(user.id, parsed.data.challengeId, parsed.data.passed),
+    recordPathItemAttempt(
+      user.id,
+      parsed.data.challengeId,
+      inferPathItemType(parsed.data.challengeId),
+      parsed.data.passed
+    ),
   ]);
 
   const newBadges = await checkAndAwardBadges(user.id);

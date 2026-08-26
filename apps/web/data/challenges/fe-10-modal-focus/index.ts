@@ -8,9 +8,9 @@ import type { Challenge } from '../../types';
 export const challenge: Challenge = {
   id: 'fe-10-modal-focus',
   title: 'Modal Focus Trap',
-  category: 'fe',
+  category: 'fe-web-apis',
   topLevel: 'fe',
-  subcategory: null,
+  subcategory: 'web-apis',
   difficulty: 'intermediate',
   comingSoon: false,
   description,

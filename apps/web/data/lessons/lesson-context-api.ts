@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonContextApi: Lesson = {
   id: 'lesson-context-api',
   title: 'React Context — Avoiding Prop Drilling',
-  category: 'fe',
+  category: 'fe-advanced',
   topLevel: 'fe',
-  subcategory: null,
+  subcategory: 'react',
   difficulty: 'intermediate',
   relatedChallengeIds: ["fea-03-context-api","fe-06-virtual-list"],
   estimatedMinutes: 10,

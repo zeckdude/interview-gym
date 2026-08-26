@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonPostgresPg: Lesson = {
   id: 'lesson-postgres-pg',
   title: 'PostgreSQL with node-postgres',
-  category: 'be',
+  category: 'be-nodejs',
   topLevel: 'be',
-  subcategory: null,
+  subcategory: 'nodejs',
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-18-singleton-db"],
   estimatedMinutes: 11,

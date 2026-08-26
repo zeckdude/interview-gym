@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonWebWorkers: Lesson = {
   id: 'lesson-web-workers',
   title: 'Web Workers — Non-Blocking UI',
-  category: 'fe',
+  category: 'fe-web-apis',
   topLevel: 'fe',
-  subcategory: null,
+  subcategory: 'web-apis',
   difficulty: 'intermediate',
   relatedChallengeIds: ["fe-20-fetch-retry"],
   estimatedMinutes: 10,

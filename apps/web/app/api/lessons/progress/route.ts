@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getClerkUserEmail } from '@/lib/auth';
 import { checkAndAwardBadges } from '@/lib/badges';
+import { recordPathItemAttempt } from '@/lib/paths/progress';
 import { prisma } from '@/lib/prisma';
 
 const progressSchema = z.object({
@@ -125,6 +126,8 @@ export async function POST(request: Request) {
     miniChallengePassed && !existing?.completed
       ? await checkAndAwardBadges(user.id)
       : [];
+
+  await recordPathItemAttempt(user.id, lessonId, 'lesson', miniChallengePassed);
 
   return NextResponse.json({
     success: true,

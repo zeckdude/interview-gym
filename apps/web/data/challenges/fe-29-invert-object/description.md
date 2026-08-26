@@ -7,18 +7,28 @@ Implement `invertObject(obj)` — swap keys and values (values must be stringifi
 ## Requirements
 
 - Export a function named `invertObject`
+- Each value becomes a key (coerced with `String(value)`)
+- Each original key becomes the new value
+- Values must be string or number
 
 ## Example
 
 ```js
-invertObject(/* args */)
+invertObject({ a: '1', b: '2' })
+// => { "1": "a", "2": "b" }
 ```
 
 ## Why This Comes Up in Interviews
 
-Interviewers use small pure functions to test whether you reason about types, edge cases, and clean APIs.
+Status code maps, enum lookups, and bidirectional dictionaries all need key-value inversion. Tests `Object.entries` and key coercion rules.
 
 ## What You Need to Know
 
-- Understand objects
-- Understand maps
+- Iterate with `Object.entries(obj)`
+- Coerce values: `result[String(value)] = key`
+- Object keys are always strings
+
+## Edge Cases to Mention
+
+- Duplicate values overwrite earlier keys — mention collision handling
+- Non-stringifiable values (objects) produce `"[object Object]"` keys

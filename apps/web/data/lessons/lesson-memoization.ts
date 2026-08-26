@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonMemoization: Lesson = {
   id: 'lesson-memoization',
   title: 'Memoization and Caching',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-11-cache-lru","be-04-debounce"],
   estimatedMinutes: 10,

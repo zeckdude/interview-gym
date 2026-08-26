@@ -8,9 +8,9 @@ import type { Challenge } from '../../types';
 export const challenge: Challenge = {
   id: 'be-19-graceful-shutdown',
   title: 'Graceful Shutdown',
-  category: 'be',
+  category: 'be-nodejs',
   topLevel: 'be',
-  subcategory: null,
+  subcategory: 'nodejs',
   difficulty: 'advanced',
   comingSoon: false,
   description,

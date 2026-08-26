@@ -3,12 +3,19 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { CollapsibleContentFilters } from '@/components/content/CollapsibleContentFilters';
+import { ContentListSections } from '@/components/content/ContentListSections';
 import { ContentListToolbar } from '@/components/content/ContentListToolbar';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { allQuestions } from '@/data';
 import { useContentFilters } from '@/hooks/useContentFilters';
 import { useMostAskedOptional } from '@/components/providers/MostAskedProvider';
-import { getQuestionDisplayLabel, questionMatchesContentFilters } from '@/lib/categories';
+import {
+  getQuestionDisplayLabel,
+  groupContentBySubcategorySection,
+  questionMatchesContentFilters,
+  resolveQuestionTaxonomy,
+  shouldGroupContentBySubcategory,
+} from '@/lib/categories';
 import { getCuratedMostAskedForQuestion } from '@/lib/most-asked';
 import type { ConceptualQuestion } from '@/data/types';
 
@@ -129,6 +136,72 @@ export function QuestionsList({ attemptStats }: QuestionsListProps) {
     return questions;
   }, [filters, search, attemptStats, mostAsked]);
 
+  const sections = useMemo(() => {
+    if (!shouldGroupContentBySubcategory(filters.topLevel, filters.subcategories)) {
+      return null;
+    }
+    return groupContentBySubcategorySection(filtered, resolveQuestionTaxonomy, filters.topLevel);
+  }, [filtered, filters.topLevel, filters.subcategories]);
+
+  const renderQuestion = (question: ConceptualQuestion) => {
+    const stats = attemptStats[question.id];
+    const preview =
+      question.question.length > 120
+        ? question.question.slice(0, 120) + '…'
+        : question.question;
+
+    const effectiveMostAsked = getEffectiveMostAsked(question);
+
+    return (
+      <Link
+        href={`/questions/${question.id}`}
+        className="relative block bg-bg-surface dark:bg-[#141414] border border-border-subtle dark:border-[#2A2A2A] rounded-lg p-5 hover:border-brand hover:shadow-card transition-all duration-150 group"
+      >
+        {effectiveMostAsked.mostAsked && (
+          <span
+            className="absolute top-3 right-3 bg-error-light text-error text-xs font-body font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
+            title={
+              effectiveMostAsked.isPersonalOverride
+                ? 'Marked as Most Asked by you'
+                : effectiveMostAsked.reason ?? 'Commonly asked in senior interviews'
+            }
+          >
+            🔥 Most Asked
+            {effectiveMostAsked.isPersonalOverride && (
+              <span className="opacity-70">· You</span>
+            )}
+          </span>
+        )}
+        <div className="flex flex-col gap-3 pr-24">
+          <div className="flex items-start justify-between gap-4">
+            <p className="font-body text-text-primary dark:text-[#F0EDE8] text-base leading-relaxed group-hover:text-brand transition-colors duration-150 flex-1">
+              {preview}
+            </p>
+            <svg
+              className="w-4 h-4 text-text-muted group-hover:text-brand shrink-0 mt-1 transition-colors duration-150"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <CategoryBadge category={question.category} />
+            <DifficultyBadge difficulty={question.difficulty} />
+            <span className="text-border-subtle dark:text-[#2A2A2A]">·</span>
+            <StatusBadge stats={stats} />
+          </div>
+        </div>
+      </Link>
+    );
+  };
+
   return (
     <PageWrapper title="Conceptual Questions">
       <div className="space-y-6">
@@ -171,67 +244,13 @@ export function QuestionsList({ attemptStats }: QuestionsListProps) {
           sortOptions={[]}
         />
 
-        <div className="space-y-3">
-          {filtered.map((question) => {
-            const stats = attemptStats[question.id];
-            const preview =
-              question.question.length > 120
-                ? question.question.slice(0, 120) + '…'
-                : question.question;
-
-            const effectiveMostAsked = getEffectiveMostAsked(question);
-
-            return (
-              <Link
-                key={question.id}
-                href={`/questions/${question.id}`}
-                className="relative block bg-bg-surface dark:bg-[#141414] border border-border-subtle dark:border-[#2A2A2A] rounded-lg p-5 hover:border-brand hover:shadow-card transition-all duration-150 group"
-              >
-                {effectiveMostAsked.mostAsked && (
-                  <span
-                    className="absolute top-3 right-3 bg-error-light text-error text-xs font-body font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
-                    title={
-                      effectiveMostAsked.isPersonalOverride
-                        ? 'Marked as Most Asked by you'
-                        : effectiveMostAsked.reason ?? 'Commonly asked in senior interviews'
-                    }
-                  >
-                    🔥 Most Asked
-                    {effectiveMostAsked.isPersonalOverride && (
-                      <span className="opacity-70">· You</span>
-                    )}
-                  </span>
-                )}
-                <div className="flex flex-col gap-3 pr-24">
-                  <div className="flex items-start justify-between gap-4">
-                    <p className="font-body text-text-primary dark:text-[#F0EDE8] text-base leading-relaxed group-hover:text-brand transition-colors duration-150 flex-1">
-                      {preview}
-                    </p>
-                    <svg
-                      className="w-4 h-4 text-text-muted group-hover:text-brand shrink-0 mt-1 transition-colors duration-150"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <CategoryBadge category={question.category} />
-                    <DifficultyBadge difficulty={question.difficulty} />
-                    <span className="text-border-subtle dark:text-[#2A2A2A]">·</span>
-                    <StatusBadge stats={stats} />
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+        <ContentListSections
+          sections={sections}
+          items={filtered}
+          getItemKey={(question) => question.id}
+          gridClassName="space-y-3"
+          renderItem={renderQuestion}
+        />
 
         {filtered.length === 0 && (
           <div className="text-center py-16 space-y-3">

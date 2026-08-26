@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonEventEmitter: Lesson = {
   id: 'lesson-event-emitter',
   title: 'Node.js EventEmitter — Custom Events',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-08-event-emitter"],
   estimatedMinutes: 10,

@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonIntersectionObserver: Lesson = {
   id: 'lesson-intersection-observer',
   title: 'Intersection Observer — Scroll-Based UI',
-  category: 'fe',
+  category: 'fe-web-apis',
   topLevel: 'fe',
-  subcategory: null,
+  subcategory: 'web-apis',
   difficulty: 'intermediate',
   relatedChallengeIds: ["fe-09-infinite-scroll","fe-02-event-delegation"],
   estimatedMinutes: 10,

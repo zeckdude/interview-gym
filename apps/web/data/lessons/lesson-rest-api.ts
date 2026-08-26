@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonRestApi: Lesson = {
   id: 'lesson-rest-api',
   title: 'REST API Design and CRUD',
-  category: 'be',
+  category: 'be-nodejs',
   topLevel: 'be',
-  subcategory: null,
+  subcategory: 'nodejs',
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-13-http-router","be-20-api-client"],
   estimatedMinutes: 11,

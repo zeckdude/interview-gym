@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { ChallengeCard } from '@/components/challenges/ChallengeCard';
 import { CollapsibleContentFilters } from '@/components/content/CollapsibleContentFilters';
+import { ContentListSections } from '@/components/content/ContentListSections';
 import { ContentListToolbar } from '@/components/content/ContentListToolbar';
 import { ContentProgressSummary } from '@/components/content/ContentProgressSummary';
 import { PageWrapper } from '@/components/layout/PageWrapper';
@@ -10,7 +11,7 @@ import { allChallenges } from '@/data';
 import { useContentFilters } from '@/hooks/useContentFilters';
 import { useContentFilterQuery } from '@/hooks/useContentFilterQuery';
 import { useMostAskedOptional } from '@/components/providers/MostAskedProvider';
-import { challengeMatchesContentFilters } from '@/lib/categories';
+import { challengeMatchesContentFilters, groupContentBySubcategorySection, resolveTaxonomy, shouldGroupContentBySubcategory } from '@/lib/categories';
 import { getCuratedMostAskedForChallenge } from '@/lib/most-asked';
 import type { Challenge } from '@/data/types';
 
@@ -121,6 +122,13 @@ export function ChallengesList({ attemptStats, weakSpots = {} }: ChallengesListP
     return sorted;
   }, [filters, search, sort, attemptStats, weakSpots, mostAsked]);
 
+  const sections = useMemo(() => {
+    if (!shouldGroupContentBySubcategory(filters.topLevel, filters.subcategories)) {
+      return null;
+    }
+    return groupContentBySubcategorySection(filtered, resolveTaxonomy, filters.topLevel);
+  }, [filtered, filters.topLevel, filters.subcategories]);
+
   return (
     <PageWrapper title="Challenges">
       <div className="space-y-6">
@@ -161,24 +169,26 @@ export function ChallengesList({ attemptStats, weakSpots = {} }: ChallengesListP
           sortOptions={SORT_OPTIONS}
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((challenge) => {
+        <ContentListSections
+          sections={sections}
+          items={filtered}
+          getItemKey={(challenge) => challenge.id}
+          renderItem={(challenge) => {
             const effectiveMostAsked = getEffectiveMostAsked(challenge);
             return (
-            <ChallengeCard
-              key={challenge.id}
-              challenge={challenge}
-              attemptCount={attemptStats[challenge.id]?.count ?? 0}
-              hasPassed={attemptStats[challenge.id]?.passed ?? false}
-              isWeakSpot={(weakSpots[challenge.id] ?? 0) > 0}
-              filterQuery={filterQuery}
-              showMostAsked={effectiveMostAsked.mostAsked}
-              mostAskedIsPersonal={effectiveMostAsked.isPersonalOverride}
-              mostAskedReason={effectiveMostAsked.reason}
-            />
+              <ChallengeCard
+                challenge={challenge}
+                attemptCount={attemptStats[challenge.id]?.count ?? 0}
+                hasPassed={attemptStats[challenge.id]?.passed ?? false}
+                isWeakSpot={(weakSpots[challenge.id] ?? 0) > 0}
+                filterQuery={filterQuery}
+                showMostAsked={effectiveMostAsked.mostAsked}
+                mostAskedIsPersonal={effectiveMostAsked.isPersonalOverride}
+                mostAskedReason={effectiveMostAsked.reason}
+              />
             );
-          })}
-        </div>
+          }}
+        />
 
         {filtered.length === 0 && (
           <div className="text-center py-16 space-y-3">

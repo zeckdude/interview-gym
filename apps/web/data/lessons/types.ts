@@ -40,6 +40,11 @@ export interface Lesson {
   topLevel?: TopLevelCategory;
   subcategory?: ContentSubcategory | null;
   difficulty: ChallengeDifficulty;
+  /**
+   * Position within difficulty band for stack:javascript curriculum (lower = earlier).
+   * Used by the default "Learning path" sort on the lessons list.
+   */
+  sequenceOrder?: number;
   /** Agent-curated interview frequency flag — defaults to false when omitted. */
   mostAsked?: boolean;
   mostAskedReason?: string;

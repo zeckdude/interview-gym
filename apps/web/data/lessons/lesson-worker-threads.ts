@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonWorkerThreads: Lesson = {
   id: 'lesson-worker-threads',
   title: 'CPU-Intensive Work — Worker Threads',
-  category: 'be',
+  category: 'be-nodejs',
   topLevel: 'be',
-  subcategory: null,
+  subcategory: 'nodejs',
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-16-queue"],
   estimatedMinutes: 10,

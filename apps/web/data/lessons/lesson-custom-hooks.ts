@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonCustomHooks: Lesson = {
   id: 'lesson-custom-hooks',
   title: 'Building Custom React Hooks',
-  category: 'fe',
+  category: 'fe-advanced',
   topLevel: 'fe',
-  subcategory: null,
+  subcategory: 'react',
   difficulty: 'intermediate',
   relatedChallengeIds: ["fe-05-debounce-ui","fea-02-custom-hook"],
   estimatedMinutes: 11,

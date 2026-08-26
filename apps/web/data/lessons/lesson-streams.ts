@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonStreams: Lesson = {
   id: 'lesson-streams',
   title: 'Node.js Streams — Pipes and Transform',
-  category: 'be',
+  category: 'be-nodejs',
   topLevel: 'be',
-  subcategory: null,
+  subcategory: 'nodejs',
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-12-stream-transform","be-15-retry-logic"],
   estimatedMinutes: 11,

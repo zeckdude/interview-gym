@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonBe26CircuitBreaker: Lesson = {
   id: 'lesson-be-26-circuit-breaker',
   title: 'Circuit Breaker Factory',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'advanced',
   relatedChallengeIds: ['be-26-circuit-breaker'],
   estimatedMinutes: 10,

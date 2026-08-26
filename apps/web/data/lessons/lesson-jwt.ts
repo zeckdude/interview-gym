@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonJwt: Lesson = {
   id: 'lesson-jwt',
   title: 'JSON Web Tokens — Auth the Right Way',
-  category: 'be',
+  category: 'be-nodejs',
   topLevel: 'be',
-  subcategory: null,
+  subcategory: 'nodejs',
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-20-api-client","be-05-env-config"],
   estimatedMinutes: 10,

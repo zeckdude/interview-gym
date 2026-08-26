@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonReactHooks: Lesson = {
   id: 'lesson-react-hooks',
   title: 'React Hooks Deep Dive — useState, useEffect, useRef',
-  category: 'fe',
+  category: 'fe-advanced',
   topLevel: 'fe',
-  subcategory: null,
+  subcategory: 'react',
   difficulty: 'easy',
   relatedChallengeIds: ["fe-01-closure-counter","fe-02-event-delegation","fe-03-promise-all","fe-04-deep-clone","fe-05-debounce-ui","fe-06-virtual-list"],
   estimatedMinutes: 15,

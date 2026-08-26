@@ -12,7 +12,7 @@ export const challenge: Challenge = {
   topLevel: 'be',
   subcategory: null,
   difficulty: 'intermediate',
-  comingSoon: false,
+  comingSoon: true,
   description,
   concepts: ['async/await', 'exponential backoff', 'error handling', 'resilience'],
   hints: parseHints(hintsRaw),

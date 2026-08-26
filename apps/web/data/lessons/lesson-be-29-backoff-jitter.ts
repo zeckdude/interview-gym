@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonBe29BackoffJitter: Lesson = {
   id: 'lesson-be-29-backoff-jitter',
   title: 'Exponential Backoff With Jitter',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'advanced',
   relatedChallengeIds: ['be-29-backoff-jitter'],
   estimatedMinutes: 10,

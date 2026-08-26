@@ -128,37 +128,54 @@ export async function getDashboardData() {
   }
 }
 
-function emptyCategoryStats() {
-  return {
-    be: { completed: 0, passRate: 0 },
-    fe: { completed: 0, passRate: 0 },
-    'fe-advanced': { completed: 0, passRate: 0 },
-    nextjs: { completed: 0, passRate: 0 },
-    'be-question': { completed: 0, passRate: 0 },
-    'fe-question': { completed: 0, passRate: 0 },
-    'nextjs-question': { completed: 0, passRate: 0 },
-  };
+function emptyCategoryStats(): Record<
+  keyof typeof CATEGORY_TOTALS,
+  { completed: number; passRate: number }
+> {
+  return Object.fromEntries(
+    Object.keys(CATEGORY_TOTALS).map((key) => [key, { completed: 0, passRate: 0 }])
+  ) as Record<keyof typeof CATEGORY_TOTALS, { completed: number; passRate: number }>;
+}
+
+const LEGACY_CHALLENGE_TYPE_ALIASES: Partial<
+  Record<string, keyof typeof CATEGORY_TOTALS>
+> = {
+  be: 'be-nodejs',
+  fe: 'stack-javascript',
+};
+
+function normalizeChallengeType(
+  challengeType: string
+): keyof typeof CATEGORY_TOTALS | null {
+  if (challengeType in CATEGORY_TOTALS) {
+    return challengeType as keyof typeof CATEGORY_TOTALS;
+  }
+  return LEGACY_CHALLENGE_TYPE_ALIASES[challengeType] ?? null;
 }
 
 function computeCategoryStats(
   attempts: { challengeId: string; challengeType: string; passed: boolean }[]
 ) {
-  const types = ['be', 'fe', 'fe-advanced', 'nextjs', 'be-question', 'fe-question', 'nextjs-question'] as const;
+  const stats = emptyCategoryStats();
 
-  return Object.fromEntries(
-    types.map((type) => {
-      const typeAttempts = attempts.filter((a) => a.challengeType === type);
-      const passedIds = new Set(typeAttempts.filter((a) => a.passed).map((a) => a.challengeId));
-      const passRate =
+  for (const type of Object.keys(CATEGORY_TOTALS) as Array<keyof typeof CATEGORY_TOTALS>) {
+    const typeAttempts = attempts.filter((attempt) => {
+      const normalized = normalizeChallengeType(attempt.challengeType);
+      return normalized === type;
+    });
+    const passedIds = new Set(typeAttempts.filter((a) => a.passed).map((a) => a.challengeId));
+    stats[type] = {
+      completed: passedIds.size,
+      passRate:
         typeAttempts.length > 0
           ? Math.round(
               (typeAttempts.filter((a) => a.passed).length / typeAttempts.length) * 100
             )
-          : 0;
+          : 0,
+    };
+  }
 
-      return [type, { completed: passedIds.size, passRate }];
-    })
-  ) as Record<keyof typeof CATEGORY_TOTALS, { completed: number; passRate: number }>;
+  return stats;
 }
 
 export async function getChallengeAttemptStats() {

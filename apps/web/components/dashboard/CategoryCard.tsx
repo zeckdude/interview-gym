@@ -6,7 +6,14 @@ import { ProgressRing } from '@/components/ui/ProgressRing';
 
 interface CategoryCardProps {
   name: string;
-  category: 'be' | 'fe' | 'fe-advanced' | 'nextjs' | 'be-question' | 'fe-question' | 'nextjs-question';
+  category:
+    | 'be-nodejs'
+    | 'stack-javascript'
+    | 'fe-advanced'
+    | 'nextjs'
+    | 'be-question'
+    | 'fe-question'
+    | 'nextjs-question';
   completed: number;
   total: number;
   passRate: number;

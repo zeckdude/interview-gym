@@ -26,20 +26,55 @@ export const SUBCATEGORY_OPTIONS: Record<
   Exclude<TopLevelCategory, never>,
   { value: ContentSubcategory; label: string }[]
 > = {
-  be: [],
+  be: [{ value: 'nodejs', label: 'Node.js' }],
   fe: [
+    { value: 'javascript', label: 'JavaScript' },
+    { value: 'web-apis', label: 'Web APIs' },
     { value: 'react', label: 'React' },
     { value: 'nextjs', label: 'Next.js' },
     { value: 'css', label: 'CSS' },
     { value: 'ai', label: 'AI' },
   ],
   stack: [
+    { value: 'javascript', label: 'JavaScript' },
     { value: 'typescript', label: 'TypeScript' },
     { value: 'vitest', label: 'Vitest' },
   ],
 };
 
-/** Minimum lessons and challenges per difficulty when launching a new bucket. */
+/** Subcategories bundled with framework/platform picks (replaces old null-general behavior). */
+export const PLATFORM_GENERAL_SUBCATEGORIES: Partial<
+  Record<TopLevelCategory, ContentSubcategory>
+> = {
+  fe: 'web-apis',
+  be: 'nodejs',
+};
+
+const FE_FRAMEWORK_SUBCATEGORIES: ContentSubcategory[] = ['react', 'nextjs', 'css', 'ai'];
+
+export function isPlatformGeneralSubcategory(
+  topLevel: TopLevelCategory,
+  subcategory: ContentSubcategory | null
+): boolean {
+  if (subcategory === null) return false;
+  return PLATFORM_GENERAL_SUBCATEGORIES[topLevel] === subcategory;
+}
+
+function shouldIncludePlatformGeneral(
+  topLevel: TopLevelCategory,
+  selectedSubcategories: ContentSubcategory[]
+): boolean {
+  if (topLevel === 'fe') {
+    return selectedSubcategories.some((sub) => FE_FRAMEWORK_SUBCATEGORIES.includes(sub));
+  }
+  return false;
+}
+
+export const SUBCATEGORY_SECTION_ORDER: Record<TopLevelCategory, ContentSubcategory[]> = {
+  be: ['nodejs'],
+  fe: ['javascript', 'web-apis', 'react', 'nextjs', 'css', 'ai'],
+  stack: ['javascript', 'typescript', 'vitest'],
+};
 export const CONTENT_LAUNCH_MIN_PER_DIFFICULTY = 10;
 
 export const CONTENT_LAUNCH_DIFFICULTIES: ChallengeDifficulty[] = [
@@ -68,19 +103,22 @@ export const DIFFICULTY_FILTER_OPTIONS: {
 ];
 
 const LEGACY_CHALLENGE_TO_TAXONOMY: Record<StoredChallengeCategory, ContentTaxonomy> = {
-  be: { topLevel: 'be', subcategory: null },
-  fe: { topLevel: 'fe', subcategory: null },
+  be: { topLevel: 'be', subcategory: 'nodejs' },
+  fe: { topLevel: 'stack', subcategory: 'javascript' },
   'fe-advanced': { topLevel: 'fe', subcategory: 'react' },
   nextjs: { topLevel: 'fe', subcategory: 'nextjs' },
   'fe-css': { topLevel: 'fe', subcategory: 'css' },
   'fe-ai': { topLevel: 'fe', subcategory: 'ai' },
+  'fe-web-apis': { topLevel: 'fe', subcategory: 'web-apis' },
+  'be-nodejs': { topLevel: 'be', subcategory: 'nodejs' },
+  'stack-javascript': { topLevel: 'stack', subcategory: 'javascript' },
   'stack-typescript': { topLevel: 'stack', subcategory: 'typescript' },
   'stack-vitest': { topLevel: 'stack', subcategory: 'vitest' },
 };
 
 const LEGACY_QUESTION_TO_TAXONOMY: Record<LegacyQuestionCategory, ContentTaxonomy> = {
-  'be-question': { topLevel: 'be', subcategory: null },
-  'fe-question': { topLevel: 'fe', subcategory: null },
+  'be-question': { topLevel: 'be', subcategory: 'nodejs' },
+  'fe-question': { topLevel: 'stack', subcategory: 'javascript' },
   'nextjs-question': { topLevel: 'fe', subcategory: 'nextjs' },
 };
 
@@ -168,6 +206,12 @@ export function getTopLevelLabel(topLevel: TopLevelCategory): string {
 
 export function getSubcategoryLabel(subcategory: ContentSubcategory): string {
   switch (subcategory) {
+    case 'javascript':
+      return 'JavaScript';
+    case 'web-apis':
+      return 'Web APIs';
+    case 'nodejs':
+      return 'Node.js';
     case 'react':
       return 'React';
     case 'nextjs':
@@ -207,6 +251,9 @@ export function normalizeSubcategoryFilters(
 ): ContentSubcategory[] {
   const values = Array.isArray(raw) ? raw : raw ? [raw] : [];
   const allowed = new Set<ContentSubcategory>([
+    'javascript',
+    'web-apis',
+    'nodejs',
     'react',
     'nextjs',
     'css',
@@ -259,14 +306,23 @@ export function matchesTopLevelFilter(
   topLevelFilter: TopLevelFilter
 ): boolean {
   if (topLevelFilter === 'all') return true;
-  return taxonomy.topLevel === topLevelFilter;
+  if (taxonomy.topLevel === topLevelFilter) return true;
+  if (
+    topLevelFilter === 'fe' &&
+    taxonomy.topLevel === 'stack' &&
+    taxonomy.subcategory === 'javascript'
+  ) {
+    return true;
+  }
+  return false;
 }
 
 /**
  * Subcategory filter rules:
  * - Top level "all" → subcategory toggles ignored.
- * - No subcategories selected under a top level → show general + all subcategories for that top level.
- * - One or more subcategories selected → show general (null) + selected subcategories only.
+ * - No subcategories selected under a top level → show all subcategories for that top level.
+ * - One or more subcategories selected → show platform-general (Web APIs / Node.js) + selected only.
+ * - JavaScript on Frontend is a virtual alias for stack/javascript content shown under FE filter.
  */
 export function matchesSubcategoryFilters(
   taxonomy: ContentTaxonomy,
@@ -274,12 +330,37 @@ export function matchesSubcategoryFilters(
   selectedSubcategories: ContentSubcategory[]
 ): boolean {
   if (topLevelFilter === 'all') return true;
-  if (taxonomy.topLevel !== topLevelFilter) return false;
+
+  const effectiveTopLevel =
+    topLevelFilter === 'fe' &&
+    taxonomy.topLevel === 'stack' &&
+    taxonomy.subcategory === 'javascript'
+      ? 'fe'
+      : taxonomy.topLevel;
+
+  if (effectiveTopLevel !== topLevelFilter) return false;
   if (selectedSubcategories.length === 0) return true;
 
-  if (taxonomy.subcategory === null) return true;
+  const effectiveSubcategory =
+    taxonomy.topLevel === 'stack' &&
+    taxonomy.subcategory === 'javascript' &&
+    topLevelFilter === 'fe'
+      ? 'javascript'
+      : taxonomy.subcategory;
 
-  return selectedSubcategories.includes(taxonomy.subcategory);
+  if (
+    effectiveSubcategory &&
+    isPlatformGeneralSubcategory(topLevelFilter as TopLevelCategory, effectiveSubcategory)
+  ) {
+    return shouldIncludePlatformGeneral(
+      topLevelFilter as TopLevelCategory,
+      selectedSubcategories
+    );
+  }
+
+  if (!effectiveSubcategory) return false;
+
+  return selectedSubcategories.includes(effectiveSubcategory);
 }
 
 export function matchesContentFilters(
@@ -325,6 +406,9 @@ export type DisplayCategory =
   | 'be'
   | 'fe'
   | 'stack'
+  | 'javascript'
+  | 'web-apis'
+  | 'nodejs'
   | 'react'
   | 'nextjs'
   | 'css'
@@ -354,10 +438,19 @@ export function storedCategoriesForFilter(
   filter: ContentFilterCategory | 'mixed'
 ): StoredChallengeCategory[] | null {
   if (filter === 'mixed' || filter === 'all') return null;
-  if (filter === 'be') return ['be'];
+  if (filter === 'be') return ['be-nodejs', 'stack-javascript'];
   if (filter === 'nextjs') return ['nextjs'];
   if (filter === 'react') return ['fe-advanced'];
-  if (filter === 'frontend') return ['fe', 'fe-advanced', 'nextjs'];
+  if (filter === 'frontend') {
+    return [
+      'fe-web-apis',
+      'stack-javascript',
+      'fe-advanced',
+      'nextjs',
+      'fe-css',
+      'fe-ai',
+    ];
+  }
   return null;
 }
 
@@ -386,8 +479,14 @@ export function getCategoryLabelForChallengeType(challengeType: string): string 
       return 'AI';
     case 'stack-typescript':
       return 'TypeScript';
+    case 'stack-javascript':
+      return 'JavaScript';
     case 'stack-vitest':
       return 'Vitest';
+    case 'fe-web-apis':
+      return 'Web APIs';
+    case 'be-nodejs':
+      return 'Node.js';
     case 'be-question':
       return 'Backend';
     case 'fe-question':
@@ -400,8 +499,11 @@ export function getCategoryLabelForChallengeType(challengeType: string): string 
 }
 
 export function legacyCategoryFromTaxonomy(taxonomy: ContentTaxonomy): StoredChallengeCategory | null {
-  if (taxonomy.topLevel === 'be' && taxonomy.subcategory === null) return 'be';
-  if (taxonomy.topLevel === 'fe' && taxonomy.subcategory === null) return 'fe';
+  if (taxonomy.topLevel === 'be' && taxonomy.subcategory === 'nodejs') return 'be-nodejs';
+  if (taxonomy.topLevel === 'fe' && taxonomy.subcategory === 'web-apis') return 'fe-web-apis';
+  if (taxonomy.topLevel === 'stack' && taxonomy.subcategory === 'javascript') {
+    return 'stack-javascript';
+  }
   if (taxonomy.topLevel === 'fe' && taxonomy.subcategory === 'react') return 'fe-advanced';
   if (taxonomy.topLevel === 'fe' && taxonomy.subcategory === 'nextjs') return 'nextjs';
   if (taxonomy.topLevel === 'fe' && taxonomy.subcategory === 'css') return 'fe-css';
@@ -517,7 +619,56 @@ export function subcategoriesValidForTopLevel(
   topLevel: TopLevelFilter,
   subcategories: ContentSubcategory[]
 ): ContentSubcategory[] {
-  if (topLevel === 'all' || topLevel === 'be') return [];
+  if (topLevel === 'all') return [];
   const allowed = new Set(subcategoriesForTopLevel(topLevel));
   return subcategories.filter((subcategory) => allowed.has(subcategory));
+}
+
+export interface ContentSection<T> {
+  label: string;
+  subcategory: ContentSubcategory;
+  items: T[];
+}
+
+/** Group list items into labeled subcategory sections for a top-level browse view. */
+export function groupContentBySubcategorySection<T>(
+  items: T[],
+  getTaxonomy: (item: T) => ContentTaxonomy,
+  topLevel: TopLevelFilter
+): ContentSection<T>[] | null {
+  if (topLevel === 'all') return null;
+
+  const order = SUBCATEGORY_SECTION_ORDER[topLevel];
+  const grouped = new Map<ContentSubcategory, T[]>();
+
+  for (const item of items) {
+    const taxonomy = getTaxonomy(item);
+    let subcategory = taxonomy.subcategory;
+    if (
+      topLevel === 'fe' &&
+      taxonomy.topLevel === 'stack' &&
+      taxonomy.subcategory === 'javascript'
+    ) {
+      subcategory = 'javascript';
+    }
+    if (!subcategory || !order.includes(subcategory)) continue;
+    const bucket = grouped.get(subcategory) ?? [];
+    bucket.push(item);
+    grouped.set(subcategory, bucket);
+  }
+
+  return order
+    .filter((subcategory) => grouped.has(subcategory))
+    .map((subcategory) => ({
+      subcategory,
+      label: getSubcategoryLabel(subcategory),
+      items: grouped.get(subcategory)!,
+    }));
+}
+
+export function shouldGroupContentBySubcategory(
+  topLevel: TopLevelFilter,
+  selectedSubcategories: ContentSubcategory[]
+): boolean {
+  return topLevel !== 'all' && selectedSubcategories.length === 0;
 }

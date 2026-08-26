@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonExpressMiddleware: Lesson = {
   id: 'lesson-express-middleware',
   title: 'Express Middleware — How the Chain Works',
-  category: 'be',
+  category: 'be-nodejs',
   topLevel: 'be',
-  subcategory: null,
+  subcategory: 'nodejs',
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-10-middleware-chain"],
   estimatedMinutes: 10,

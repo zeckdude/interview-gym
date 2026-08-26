@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonPerformanceOptimization: Lesson = {
   id: 'lesson-performance-optimization',
   title: 'React Performance — memo, useMemo, useCallback',
-  category: 'fe',
+  category: 'fe-advanced',
   topLevel: 'fe',
-  subcategory: null,
+  subcategory: 'react',
   difficulty: 'intermediate',
   relatedChallengeIds: ["fe-12-memoize","fea-05-memo-optimization"],
   estimatedMinutes: 12,

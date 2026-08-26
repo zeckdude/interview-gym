@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonBe27TokenBucket: Lesson = {
   id: 'lesson-be-27-token-bucket',
   title: 'Token Bucket Rate Limiter',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'advanced',
   relatedChallengeIds: ['be-27-token-bucket'],
   estimatedMinutes: 10,

@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonErrorBoundaries: Lesson = {
   id: 'lesson-error-boundaries',
   title: 'Error Boundaries — Catching React Errors',
-  category: 'fe',
+  category: 'fe-advanced',
   topLevel: 'fe',
-  subcategory: null,
+  subcategory: 'react',
   difficulty: 'intermediate',
   relatedChallengeIds: ["fea-07-error-boundary"],
   estimatedMinutes: 9,

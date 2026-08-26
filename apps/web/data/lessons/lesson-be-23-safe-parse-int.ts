@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonBe23SafeParseInt: Lesson = {
   id: 'lesson-be-23-safe-parse-int',
   title: 'Safe Parse Integer',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'easy',
   relatedChallengeIds: ['be-23-safe-parse-int'],
   estimatedMinutes: 10,

@@ -29,6 +29,9 @@ const displayCategoryStyles: Record<DisplayCategory, { bg: string; text: string 
   be: { bg: 'bg-cat-be-light', text: 'text-cat-be' },
   fe: { bg: 'bg-cat-fe-light', text: 'text-cat-fe' },
   stack: { bg: 'bg-bg-subtle', text: 'text-text-secondary' },
+  javascript: { bg: 'bg-cat-fe-light', text: 'text-cat-fe' },
+  'web-apis': { bg: 'bg-cat-fe-light', text: 'text-cat-fe' },
+  nodejs: { bg: 'bg-cat-be-light', text: 'text-cat-be' },
   react: { bg: 'bg-cat-fe-light', text: 'text-cat-fe' },
   nextjs: { bg: 'bg-cat-nextjs-light', text: 'text-cat-nextjs' },
   css: { bg: 'bg-cat-fe-light', text: 'text-cat-fe' },
@@ -45,8 +48,8 @@ function getDisplayCategoryLabelFromKey(display: DisplayCategory): string {
 }
 
 const questionCategoryStyles: Record<string, { bg: string; text: string; label: string }> = {
-  'be-question': { bg: 'bg-cat-be-light', text: 'text-cat-be', label: 'Backend' },
-  'fe-question': { bg: 'bg-cat-fe-light', text: 'text-cat-fe', label: 'Frontend' },
+  'be-question': { bg: 'bg-cat-be-light', text: 'text-cat-be', label: 'Node.js' },
+  'fe-question': { bg: 'bg-cat-fe-light', text: 'text-cat-fe', label: 'JavaScript' },
   'nextjs-question': { bg: 'bg-cat-nextjs-light', text: 'text-cat-nextjs', label: 'Next.js' },
 };
 
@@ -63,15 +66,24 @@ function getCategoryStyles(value: string) {
   if (value in questionCategoryStyles) {
     return questionCategoryStyles[value];
   }
-  if (value === 'be' || value === 'fe' || value === 'fe-advanced' || value === 'nextjs') {
+  if (
+    value === 'be' ||
+    value === 'fe' ||
+    value === 'fe-advanced' ||
+    value === 'nextjs' ||
+    value === 'fe-css' ||
+    value === 'fe-ai' ||
+    value === 'fe-web-apis' ||
+    value === 'be-nodejs' ||
+    value === 'stack-javascript' ||
+    value === 'stack-typescript' ||
+    value === 'stack-vitest'
+  ) {
     const display = getDisplayCategory(value as ChallengeCategory);
     const colors = displayCategoryStyles[display];
     return {
       ...colors,
-      label:
-        display === 'fe'
-          ? getDisplayCategoryLabel(value as ChallengeCategory)
-          : getDisplayCategoryLabelFromKey(display),
+      label: getDisplayCategoryLabel(value as ChallengeCategory),
     };
   }
   return { bg: 'bg-bg-subtle', text: 'text-text-secondary', label: value };

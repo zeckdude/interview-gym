@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonErrorHandling: Lesson = {
   id: 'lesson-error-handling',
   title: 'Error Handling in Node.js and Express',
-  category: 'be',
+  category: 'be-nodejs',
   topLevel: 'be',
-  subcategory: null,
+  subcategory: 'nodejs',
   difficulty: 'easy',
   relatedChallengeIds: ["be-07-json-parse","be-15-retry-logic"],
   estimatedMinutes: 10,

@@ -12,7 +12,7 @@ export const challenge: Challenge = {
   topLevel: 'be',
   subcategory: null,
   difficulty: 'intermediate',
-  comingSoon: false,
+  comingSoon: true,
   description,
   concepts: ['debounce', 'setTimeout', 'clearTimeout', 'closures', 'higher-order functions'],
   hints: parseHints(hintsRaw),

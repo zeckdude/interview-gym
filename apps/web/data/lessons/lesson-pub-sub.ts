@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonPubSub: Lesson = {
   id: 'lesson-pub-sub',
   title: 'Pub/Sub Pattern — Decoupled Communication',
-  category: 'be',
+  category: 'be-nodejs',
   topLevel: 'be',
-  subcategory: null,
+  subcategory: 'nodejs',
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-08-event-emitter","be-16-queue"],
   estimatedMinutes: 10,

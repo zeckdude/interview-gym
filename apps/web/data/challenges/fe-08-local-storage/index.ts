@@ -8,9 +8,9 @@ import type { Challenge } from '../../types';
 export const challenge: Challenge = {
   id: 'fe-08-local-storage',
   title: 'LocalStorage Hook',
-  category: 'fe',
+  category: 'fe-web-apis',
   topLevel: 'fe',
-  subcategory: null,
+  subcategory: 'web-apis',
   difficulty: 'easy',
   comingSoon: false,
   description,

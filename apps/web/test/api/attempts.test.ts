@@ -41,6 +41,10 @@ vi.mock('@/lib/weak-spots', () => ({
   updateWeakSpot: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock('@/lib/paths/progress', () => ({
+  recordPathItemAttempt: vi.fn().mockResolvedValue(undefined),
+}));
+
 describe('POST /api/attempts', () => {
   beforeEach(() => {
     vi.clearAllMocks();

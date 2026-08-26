@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonBe28OncePerKey: Lesson = {
   id: 'lesson-be-28-once-per-key',
   title: 'Idempotent oncePerKey',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'advanced',
   relatedChallengeIds: ['be-28-once-per-key'],
   estimatedMinutes: 10,

@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonHttpServer: Lesson = {
   id: 'lesson-http-server',
   title: 'Building HTTP Servers in Node.js',
-  category: 'be',
+  category: 'be-nodejs',
   topLevel: 'be',
-  subcategory: null,
+  subcategory: 'nodejs',
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-13-http-router","be-05-env-config"],
   estimatedMinutes: 12,

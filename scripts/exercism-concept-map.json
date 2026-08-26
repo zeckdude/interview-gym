@@ -1,0 +1,85 @@
+{
+  "$schema": "Interview Gym mapping from fe-* lessons to Exercism JavaScript track concepts",
+  "repo": "https://github.com/exercism/javascript",
+  "license": "MIT",
+  "baseUrl": "https://raw.githubusercontent.com/exercism/javascript/main/concepts",
+  "lessons": {
+    "lesson-fe-21-clamp-number": {
+      "challengeId": "fe-21-clamp-number",
+      "concepts": ["numbers", "comparison"],
+      "sources": [
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/numbers/about.md",
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/comparison/about.md"
+      ]
+    },
+    "lesson-fe-22-chunk-array": {
+      "challengeId": "fe-22-chunk-array",
+      "concepts": ["arrays"],
+      "sources": [
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/arrays/about.md",
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/arrays/introduction.md"
+      ]
+    },
+    "lesson-fe-23-flatten-to-depth": {
+      "challengeId": "fe-23-flatten-to-depth",
+      "concepts": ["arrays", "recursion"],
+      "sources": [
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/arrays/about.md",
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/recursion/about.md"
+      ]
+    },
+    "lesson-fe-24-format-bytes": {
+      "challengeId": "fe-24-format-bytes",
+      "concepts": ["numbers", "strings"],
+      "sources": [
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/numbers/about.md",
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/strings/about.md"
+      ]
+    },
+    "lesson-fe-25-partition-array": {
+      "challengeId": "fe-25-partition-array",
+      "concepts": ["arrays"],
+      "sources": [
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/arrays/about.md"
+      ]
+    },
+    "lesson-fe-26-deep-equal": {
+      "challengeId": "fe-26-deep-equal",
+      "concepts": ["objects", "recursion"],
+      "sources": [
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/objects/about.md",
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/recursion/about.md"
+      ]
+    },
+    "lesson-fe-27-run-with-concurrency": {
+      "challengeId": "fe-27-run-with-concurrency",
+      "concepts": ["promises"],
+      "sources": [
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/promises/about.md",
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/promises/introduction.md"
+      ]
+    },
+    "lesson-fe-28-flatten-object": {
+      "challengeId": "fe-28-flatten-object",
+      "concepts": ["objects", "recursion"],
+      "sources": [
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/objects/about.md",
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/recursion/about.md"
+      ]
+    },
+    "lesson-fe-29-invert-object": {
+      "challengeId": "fe-29-invert-object",
+      "concepts": ["objects"],
+      "sources": [
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/objects/about.md"
+      ]
+    },
+    "lesson-fe-30-stable-sort-by": {
+      "challengeId": "fe-30-stable-sort-by",
+      "concepts": ["arrays"],
+      "sources": [
+        "https://raw.githubusercontent.com/exercism/javascript/main/concepts/arrays/about.md"
+      ]
+    }
+  }
+}

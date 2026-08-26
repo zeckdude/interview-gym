@@ -11,16 +11,17 @@ import { prisma } from '@/lib/prisma';
 import { getWeakSpotsForUser } from '@/lib/weak-spots';
 
 const CATEGORY_LABELS: Record<keyof typeof CATEGORY_TOTALS, string> = {
-  be: 'Backend Coding',
-  fe: 'React Essential',
-  'fe-advanced': 'React Advanced',
+  'be-nodejs': 'Node.js',
+  'fe-web-apis': 'Web APIs',
+  'stack-javascript': 'JavaScript',
+  'fe-advanced': 'React',
   nextjs: 'Next.js Coding',
   'fe-css': 'CSS',
   'fe-ai': 'AI',
   'stack-typescript': 'TypeScript',
   'stack-vitest': 'Vitest',
   'be-question': 'Backend Questions',
-  'fe-question': 'React Questions',
+  'fe-question': 'JavaScript Questions',
   'nextjs-question': 'Next.js Questions',
 };
 

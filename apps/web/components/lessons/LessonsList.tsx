@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { CollapsibleContentFilters } from '@/components/content/CollapsibleContentFilters';
+import { ContentListSections } from '@/components/content/ContentListSections';
 import { ContentListToolbar } from '@/components/content/ContentListToolbar';
 import { ContentProgressSummary } from '@/components/content/ContentProgressSummary';
 import { LessonCard } from '@/components/lessons/LessonCard';
@@ -10,12 +11,13 @@ import { allLessons } from '@/data/lessons';
 import { useContentFilters } from '@/hooks/useContentFilters';
 import { useContentFilterQuery } from '@/hooks/useContentFilterQuery';
 import { useMostAskedOptional } from '@/components/providers/MostAskedProvider';
-import { lessonMatchesContentFilters } from '@/lib/categories';
+import { compareJavascriptCurriculum, getCurriculumSortLabel } from '@/lib/curriculum';
+import { groupContentBySubcategorySection, lessonMatchesContentFilters, resolveTaxonomy, shouldGroupContentBySubcategory } from '@/lib/categories';
 import { getCuratedMostAskedForLesson } from '@/lib/most-asked';
 import type { ChallengeDifficulty } from '@/data/types';
 import type { LessonProgressRecord } from '@/data/lessons';
 
-type SortOption = 'difficulty-asc' | 'difficulty-desc' | 'most-attempted' | 'least-attempted' | 'az';
+type SortOption = 'curriculum' | 'difficulty-asc' | 'difficulty-desc' | 'most-attempted' | 'least-attempted' | 'az';
 
 const DIFFICULTY_ORDER: Record<ChallengeDifficulty, number> = {
   easy: 0,
@@ -23,7 +25,8 @@ const DIFFICULTY_ORDER: Record<ChallengeDifficulty, number> = {
   advanced: 2,
 };
 
-const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+const BASE_SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'curriculum', label: 'Learning path (recommended)' },
   { value: 'difficulty-asc', label: 'Difficulty (easy first)' },
   { value: 'difficulty-desc', label: 'Difficulty (advanced first)' },
   { value: 'most-attempted', label: 'Most Attempted' },
@@ -49,7 +52,17 @@ export function LessonsList({ progressMap }: LessonsListProps) {
     };
   };
   const [search, setSearch] = useState('');
-  const [sort, setSort] = useState<SortOption>('difficulty-asc');
+  const [sort, setSort] = useState<SortOption>('curriculum');
+
+  const sortOptions = useMemo(
+    () =>
+      BASE_SORT_OPTIONS.map((option) =>
+        option.value === 'curriculum'
+          ? { ...option, label: getCurriculumSortLabel(filters.topLevel, filters.subcategories) }
+          : option
+      ),
+    [filters.topLevel, filters.subcategories]
+  );
 
   const completedCount = useMemo(
     () => allLessons.filter((lesson) => progressMap[lesson.id]?.completed).length,
@@ -88,6 +101,9 @@ export function LessonsList({ progressMap }: LessonsListProps) {
 
     const sorted = [...lessons];
     switch (sort) {
+      case 'curriculum':
+        sorted.sort(compareJavascriptCurriculum);
+        break;
       case 'difficulty-asc':
         sorted.sort((a, b) => DIFFICULTY_ORDER[a.difficulty] - DIFFICULTY_ORDER[b.difficulty]);
         break;
@@ -111,6 +127,13 @@ export function LessonsList({ progressMap }: LessonsListProps) {
 
     return sorted;
   }, [filters, search, sort, progressMap, mostAsked]);
+
+  const sections = useMemo(() => {
+    if (!shouldGroupContentBySubcategory(filters.topLevel, filters.subcategories)) {
+      return null;
+    }
+    return groupContentBySubcategorySection(filtered, resolveTaxonomy, filters.topLevel);
+  }, [filtered, filters.topLevel, filters.subcategories]);
 
   return (
     <PageWrapper title="Lessons">
@@ -150,25 +173,27 @@ export function LessonsList({ progressMap }: LessonsListProps) {
           searchPlaceholder="Search by title or concept..."
           sort={sort}
           onSortChange={(value) => setSort(value as SortOption)}
-          sortOptions={SORT_OPTIONS}
+          sortOptions={sortOptions}
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((lesson) => {
+        <ContentListSections
+          sections={sections}
+          items={filtered}
+          getItemKey={(lesson) => lesson.id}
+          renderItem={(lesson) => {
             const effectiveMostAsked = getEffectiveMostAsked(lesson);
             return (
-            <LessonCard
-              key={lesson.id}
-              lesson={lesson}
-              progress={progressMap[lesson.id] ?? null}
-              filterQuery={filterQuery}
-              showMostAsked={effectiveMostAsked.mostAsked}
-              mostAskedIsPersonal={effectiveMostAsked.isPersonalOverride}
-              mostAskedReason={effectiveMostAsked.reason}
-            />
+              <LessonCard
+                lesson={lesson}
+                progress={progressMap[lesson.id] ?? null}
+                filterQuery={filterQuery}
+                showMostAsked={effectiveMostAsked.mostAsked}
+                mostAskedIsPersonal={effectiveMostAsked.isPersonalOverride}
+                mostAskedReason={effectiveMostAsked.reason}
+              />
             );
-          })}
-        </div>
+          }}
+        />
 
         {filtered.length === 0 && (
           <div className="text-center py-16 space-y-3">

@@ -4,45 +4,102 @@ import { runUserCode } from './_utils';
 export const lessonFe26DeepEqual: Lesson = {
   id: 'lesson-fe-26-deep-equal',
   title: 'Deep Equal Comparison',
-  category: 'fe',
-  topLevel: 'fe',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'advanced',
   relatedChallengeIds: ['fe-26-deep-equal'],
-  estimatedMinutes: 10,
-  concepts: ["objects","recursion","equality"],
+  estimatedMinutes: 14,
+  concepts: ['objects', 'recursion', 'equality'],
   steps: [
     {
       type: 'explanation',
       title: 'Why This Matters',
       content: `
-**Deep Equal Comparison** shows up often in interviews. You need to explain the idea clearly, not just memorize syntax.
+React's \`useEffect\` dependency array uses shallow comparison — \`{ a: 1 }\` !== \`{ a: 1 }\` even when the contents match. Testing libraries need to know if two state snapshots are truly equal.
 
-**Key concepts:** objects, recursion, equality
+**Deep equality** is a staple senior-level question. It tests recursion, type checking, and knowing why \`===\` fails for nested structures.
+      `,
+    },
+    {
+      type: 'explanation',
+      title: 'How Deep Equality Works',
+      content: `
+**Shallow equality** (\`===\`) compares references for objects — two \`{ a: 1 }\` literals are never equal.
+
+**Deep equality** recursively compares:
+
+1. Primitives → use \`===\`
+2. \`null\` / non-objects → \`false\` if types differ
+3. Objects → same keys, recursively equal values
+
+The recursive pattern:
+
+- Base case: \`a === b\` → \`true\`
+- Guard: if either is null or not an object → \`false\`
+- Compare key counts and each key's value recursively
       `,
     },
     {
       type: 'code-example',
-      title: 'Example',
+      title: 'Basic Example',
       language: 'javascript',
       content: `function deepEqual(a, b) {
   if (a === b) return true;
-    if (a == null || b == null || typeof a !== 'object' || typeof b !== 'object') return false;
-    const keysA = Object.keys(a);
-    const keysB = Object.keys(b);
-    if (keysA.length !== keysB.length) return false;
-    for (const key of keysA) {
-      if (!keysB.includes(key)) return false;
-      if (!deepEqual(a[key], b[key])) return false;
-    }
-    return true;
-}`,
+  if (a == null || b == null || typeof a !== 'object' || typeof b !== 'object') {
+    return false;
+  }
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  for (const key of keysA) {
+    if (!keysB.includes(key)) return false;
+    if (!deepEqual(a[key], b[key])) return false;
+  }
+  return true;
+}
+
+deepEqual({ a: { b: 1 } }, { a: { b: 1 } }); // true
+deepEqual({ a: 1 }, { a: 2 });               // false`,
+    },
+    {
+      type: 'code-example',
+      title: 'Interview Variation',
+      language: 'javascript',
+      content: `// Interviewer: "What about arrays?"
+function deepEqual(a, b) {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+
+  // Handle arrays
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return false;
+    return a.every((item, i) => deepEqual(item, b[i]));
+  }
+
+  if (typeof a !== 'object' || typeof b !== 'object') return false;
+  // ... object comparison as above
+}
+
+// Interviewer: "What about Date objects, Maps, Sets?"
+// Mention you'd add type-specific branches or use a library like lodash.isEqual`,
     },
     {
       type: 'gotcha',
       title: '⚠️ Common Interview Trap',
       content: `
-Interviewers probe edge cases for **objects**. Mention invalid inputs, empty values, and when this pattern is the wrong tool.
+**Using \`JSON.stringify(a) === JSON.stringify(b)\`.** Key order isn't guaranteed, \`undefined\` values are dropped, and circular references throw. Always mention why this shortcut fails.
+
+**Not handling arrays separately from plain objects.** Arrays are objects in JS — \`Object.keys([1,2])\` returns \`["0","1"]\`, which works but \`Array.isArray\` checks are clearer.
+      `,
+    },
+    {
+      type: 'gotcha',
+      title: 'When NOT to Deep Equal',
+      content: `
+**Don't deep-equal on every render** — it's O(n) and expensive. Use shallow compare, memoization, or immutable data structures with reference equality.
+
+**Don't implement from scratch in production** — use \`lodash.isEqual\`, Node's \`util.isDeepStrictEqual\`, or a tested utility.
       `,
     },
   ],
@@ -101,6 +158,8 @@ Interviewers probe edge cases for **objects**. Mention invalid inputs, empty val
     },
   },
   mdnLinks: [
-    { label: 'Deep Equal Comparison', url: 'https://developer.mozilla.org/' }
+    { label: 'Equality comparisons — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness' },
+    { label: 'Object.keys — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys' },
+    { label: 'Exercism JavaScript Track (MIT)', url: 'https://github.com/exercism/javascript' },
   ],
 };

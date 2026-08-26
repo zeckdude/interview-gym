@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonDragDrop: Lesson = {
   id: 'lesson-drag-drop',
   title: 'HTML5 Drag and Drop API',
-  category: 'fe',
+  category: 'fe-web-apis',
   topLevel: 'fe',
-  subcategory: null,
+  subcategory: 'web-apis',
   difficulty: 'intermediate',
   relatedChallengeIds: ["fe-04-deep-clone"],
   estimatedMinutes: 10,

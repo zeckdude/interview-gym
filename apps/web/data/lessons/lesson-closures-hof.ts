@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonClosuresHof: Lesson = {
   id: 'lesson-closures-hof',
   title: 'Closures and Higher-Order Functions',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'intermediate',
   relatedChallengeIds: ["be-04-debounce","be-17-validation-schema"],
   estimatedMinutes: 12,

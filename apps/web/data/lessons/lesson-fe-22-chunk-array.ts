@@ -4,40 +4,89 @@ import { runUserCode } from './_utils';
 export const lessonFe22ChunkArray: Lesson = {
   id: 'lesson-fe-22-chunk-array',
   title: 'Chunk Array',
-  category: 'fe',
-  topLevel: 'fe',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'easy',
   relatedChallengeIds: ['fe-22-chunk-array'],
-  estimatedMinutes: 10,
-  concepts: ["arrays","slicing"],
+  estimatedMinutes: 12,
+  concepts: ['arrays', 'slicing'],
   steps: [
     {
       type: 'explanation',
       title: 'Why This Matters',
       content: `
-**Chunk Array** shows up often in interviews. You need to explain the idea clearly, not just memorize syntax.
+You have 1,000 user IDs to delete via an API that accepts batches of 50. You need to split the array into fixed-size groups before sending each request.
 
-**Key concepts:** arrays, slicing
+**Pagination, batch processing, and rate-limited API calls** all use chunking. Interviewers ask this to see if you understand array iteration and non-mutating methods like \`slice\`.
+      `,
+    },
+    {
+      type: 'explanation',
+      title: 'How Array Slicing Works',
+      content: `
+\`arr.slice(start, end)\` returns a **new array** with elements from \`start\` up to (but not including) \`end\`. It does **not** mutate the original.
+
+Key differences interviewers probe:
+
+- **\`slice\`** — non-mutating, returns a shallow copy of a portion
+- **\`splice\`** — mutates the original array in place
+
+For chunking, use \`slice\` inside a loop that jumps by \`size\` each iteration: \`i = 0, size, 2*size, …\`
+
+The **last chunk** is often smaller than \`size\` — \`slice\` handles this automatically.
       `,
     },
     {
       type: 'code-example',
-      title: 'Example',
+      title: 'Basic Example',
       language: 'javascript',
       content: `function chunk(arr, size) {
   const result = [];
-    for (let i = 0; i < arr.length; i += size) {
-      result.push(arr.slice(i, i + size));
-    }
-    return result;
-}`,
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
+chunk([1, 2, 3, 4, 5], 2);
+// => [[1, 2], [3, 4], [5]]`,
+    },
+    {
+      type: 'code-example',
+      title: 'Interview Variation',
+      language: 'javascript',
+      content: `// Interviewer: "What about empty input or size <= 0?"
+function chunk(arr, size) {
+  if (size <= 0) return [];  // or throw — state your choice
+  if (arr.length === 0) return [];
+
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
+// Alternative one-liner style (mention you know it exists):
+// Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+//   arr.slice(i * size, i * size + size)
+// );`,
     },
     {
       type: 'gotcha',
-      title: '⚠️ Common Interview Trap',
+      title: '⚠️ The size=0 Trap',
       content: `
-Interviewers probe edge cases for **arrays**. Mention invalid inputs, empty values, and when this pattern is the wrong tool.
+If \`size\` is 0, a loop like \`i += size\` **never advances** — infinite loop. Always handle \`size <= 0\` explicitly: return \`[]\`, throw an error, or ask the interviewer what the expected behavior is.
+      `,
+    },
+    {
+      type: 'gotcha',
+      title: 'When NOT to Chunk',
+      content: `
+**Don't materialize chunks when you can stream.** Processing a 10 GB log file? Iterate lazily — don't load it all into memory and chunk it.
+
+**Don't chunk when \`Array.prototype.reduce\` or a generator** gives you the same result with less memory overhead for large datasets.
       `,
     },
   ],
@@ -86,6 +135,8 @@ Interviewers probe edge cases for **arrays**. Mention invalid inputs, empty valu
     },
   },
   mdnLinks: [
-    { label: 'Chunk Array', url: 'https://developer.mozilla.org/' }
+    { label: 'Array.prototype.slice — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice' },
+    { label: 'Array — MDN', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array' },
+    { label: 'Exercism JavaScript Track (MIT)', url: 'https://github.com/exercism/javascript' },
   ],
 };

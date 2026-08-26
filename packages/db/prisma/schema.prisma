@@ -37,6 +37,7 @@ model User {
   playbookEntries       PlaybookEntry[]
   playbookQuestions     PlaybookQuestion[]
   simulatorCompanyContexts SimulatorCompanyContext[]
+  learningPaths           LearningPath[]
 }
 
 model PlaybookProfile {
@@ -500,6 +501,60 @@ model VoiceInterviewSession {
   exchanges            VoiceExchange[]
 
   @@index([userId, startedAt])
+}
+
+model LearningPath {
+  id            String             @id @default(cuid())
+  userId        String
+  user          User               @relation(fields: [userId], references: [id])
+  type          String
+  name          String
+  isActive      Boolean            @default(false)
+  interviewDate DateTime?
+  dailyHours    Float?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  progress      PathItemProgress[]
+
+  @@index([userId])
+  @@index([userId, isActive])
+}
+
+model PathItemProgress {
+  id               String       @id @default(cuid())
+  pathId           String
+  path             LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  userId           String
+  itemId           String
+  itemType         String
+  stage            Int
+  status           String
+  attempts         Int          @default(0)
+  markedUnderstood Boolean      @default(false)
+  passedAt         DateTime?
+  understoodAt     DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@unique([pathId, itemId])
+  @@index([pathId, stage])
+  @@index([userId, pathId])
+}
+
+model PathStageItem {
+  id          String   @id @default(cuid())
+  pathType    String
+  stage       Int
+  itemId      String
+  itemType    String
+  mostAsked   Boolean  @default(false)
+  order       Int
+  aiEvaluated Boolean  @default(false)
+  aiReasoning String?
+  createdAt   DateTime @default(now())
+
+  @@unique([pathType, itemId])
+  @@index([pathType, stage])
 }
 
 model VoiceExchange {

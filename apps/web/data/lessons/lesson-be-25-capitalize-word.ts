@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonBe25CapitalizeWord: Lesson = {
   id: 'lesson-be-25-capitalize-word',
   title: 'Capitalize First Letter',
-  category: 'be',
-  topLevel: 'be',
-  subcategory: null,
+  category: 'stack-javascript',
+  topLevel: 'stack',
+  subcategory: 'javascript',
   difficulty: 'easy',
   relatedChallengeIds: ['be-25-capitalize-word'],
   estimatedMinutes: 10,

@@ -4,9 +4,9 @@ import { runUserCode } from './_utils';
 export const lessonAccessibility: Lesson = {
   id: 'lesson-accessibility',
   title: 'Accessibility — Building Inclusive UIs',
-  category: 'fe',
+  category: 'fe-web-apis',
   topLevel: 'fe',
-  subcategory: null,
+  subcategory: 'web-apis',
   difficulty: 'intermediate',
   relatedChallengeIds: ["fe-10-modal-focus","fea-18-accessible-dropdown"],
   estimatedMinutes: 11,
