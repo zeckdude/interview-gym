@@ -12,6 +12,11 @@ export interface ThemeTokens {
   textMuted: string;
   borderSubtle: string;
   borderStrong: string;
+  codeBg: string;
+  /** Muted backgrounds for status callouts — always pair with text-text-primary. */
+  successLight: string;
+  errorLight: string;
+  warningLight: string;
   fontDisplay: string;
   fontBody: string;
   shadowCard: string;

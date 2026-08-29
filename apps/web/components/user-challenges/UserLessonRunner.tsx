@@ -8,6 +8,10 @@ import { ContentDetailMenu } from '@/components/content/ContentDetailMenu';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { Badge } from '@/components/ui/Badge';
 import type { ChallengeCategory, ChallengeDifficulty } from '@/data/types';
+import {
+  HighlightedCodeBlock,
+  extractCodeFromMarkdownPre,
+} from '@/components/code/HighlightedCodeBlock';
 
 interface UserLessonRunnerProps {
   record: UserChallenge;
@@ -89,14 +93,20 @@ export function UserLessonRunner({ record }: UserLessonRunnerProps) {
               ),
               code: ({ children, className }) => {
                 const isBlock = className?.includes('language-');
-                return isBlock ? (
-                  <code className="block bg-bg-inverse text-text-inverse font-mono text-sm rounded-lg p-4 my-4 overflow-x-auto">
+                if (isBlock) return <code className={className}>{children}</code>;
+                return (
+                  <code className="font-mono text-sm bg-code-bg border border-border-subtle px-1.5 py-0.5 rounded">
                     {children}
                   </code>
-                ) : (
-                  <code className="font-mono text-sm bg-bg-subtle px-1.5 py-0.5 rounded">
-                    {children}
-                  </code>
+                );
+              },
+              pre: ({ children }) => {
+                const code = extractCodeFromMarkdownPre(children).trim();
+                if (!code) return null;
+                return (
+                  <div className="my-4">
+                    <HighlightedCodeBlock code={code} compact showLineNumbers={false} />
+                  </div>
                 );
               },
               blockquote: ({ children }) => (

@@ -48,7 +48,7 @@ export const clerkAppearance: Appearance = {
     formFieldInput:
       'border border-border-subtle rounded-md font-body text-base focus:ring-2 focus:ring-brand focus:border-transparent',
     formButtonPrimary:
-      'bg-brand hover:bg-brand-dark font-body font-semibold text-sm shadow-brand normal-case transition-all duration-150 h-12',
+      'btn-primary font-body font-semibold text-sm normal-case transition-all duration-150 h-12',
     footerActionText: 'font-body text-sm text-text-secondary',
     footerActionLink:
       'font-body font-semibold text-brand hover:text-brand-dark',

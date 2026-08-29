@@ -53,9 +53,19 @@ When changing the overall design aesthetic, update **all** of these files:
 | File | What it controls |
 |------|------------------|
 | `tailwind.config.ts` | Semantic color, font, radius, shadow, and spacing tokens for the entire app |
+| `apps/web/app/globals.css` | CSS-var utility classes that override Tailwind static colors at runtime |
+| `apps/web/lib/themes/the-zen.ts` + `the-grind.ts` | Per-look light/dark token values (including callout backgrounds) |
 | `apps/web/lib/clerk-appearance.ts` | Clerk sign-in/sign-up UI — colors, fonts, buttons, inputs |
 
 **Rule:** Values in `clerk-appearance.ts` must mirror the tokens in `tailwind.config.ts`. If you change `brand` from `#FF6B35` to something else in Tailwind, update `colorPrimary` (and related Clerk variables) to the same hex value.
+
+### Theme-aware vs static colors
+
+**Always theme-aware (CSS vars via `applyTheme()`):** `bg-bg-*`, `text-text-*`, `border-border-*`, `bg-brand-light`, `bg-success-light`, `bg-error-light`, `bg-warning-light`.
+
+**Still static in Tailwind (avoid as full callout backgrounds with `text-text-primary`):** difficulty badges (`easy-light`, `medium-light`, `hard-light`), category badges (`cat-*-light`). These are fine for small chips with matching accent text (`text-easy`, etc.) but not for readable body copy.
+
+**Never** pair a static light-mode pastel background with `text-text-primary` without verifying dark mode. Status callouts (`success-light`, `error-light`, `warning-light`) are theme-aware — use those for warning/error/success boxes with body text.
 
 ### Component rules
 
@@ -66,9 +76,10 @@ When changing the overall design aesthetic, update **all** of these files:
 ### Design swap checklist
 
 1. Edit token values in `tailwind.config.ts` (`theme.extend.colors`, `fontFamily`, `borderRadius`, `boxShadow`).
-2. Sync matching hex/font values in `apps/web/lib/clerk-appearance.ts` (`variables` and `elements` classes).
-3. Restart the dev server and verify: dashboard, challenge pages, and `/sign-in`.
-4. No component files should need changes if tokens are used correctly.
+2. Sync matching values in `apps/web/lib/themes/the-zen.ts` and `the-grind.ts` (light + dark for each look).
+3. Sync matching hex/font values in `apps/web/lib/clerk-appearance.ts` (`variables` and `elements` classes).
+4. Restart the dev server and verify: dashboard, challenge pages, and `/sign-in` in **both light and dark mode**.
+5. No component files should need changes if tokens are used correctly.
 
 See swap examples in the comments at the bottom of `tailwind.config.ts`.
 

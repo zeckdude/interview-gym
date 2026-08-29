@@ -7,6 +7,10 @@ import type { Components } from 'react-markdown';
 import { CodeEditor } from '@/components/editor/CodeEditor';
 import { LanguageToggle } from '@/components/editor/LanguageToggle';
 import type { MiniChallenge } from '@/data/lessons';
+import {
+  HighlightedCodeBlock,
+  extractCodeFromMarkdownPre,
+} from '@/components/code/HighlightedCodeBlock';
 import { cn } from '@/lib/utils';
 
 const promptComponents: Components = {
@@ -18,17 +22,19 @@ const promptComponents: Components = {
     );
   },
   pre({ children }) {
+    const code = extractCodeFromMarkdownPre(children).trim();
+    if (!code) return null;
     return (
-      <pre className="bg-bg-inverse dark:bg-black text-text-inverse font-mono text-sm rounded-lg p-4 overflow-x-auto my-3">
-        {children}
-      </pre>
+      <div className="my-3">
+        <HighlightedCodeBlock code={code} compact showLineNumbers={false} />
+      </div>
     );
   },
   code({ children, className }) {
     const isBlock = className?.includes('language-');
     if (isBlock) return <code className={className}>{children}</code>;
     return (
-      <code className="font-mono text-sm bg-white/70 dark:bg-black/30 px-1.5 py-0.5 rounded-sm">
+      <code className="font-mono text-sm bg-code-bg text-text-primary border border-border-subtle px-1.5 py-0.5 rounded-sm">
         {children}
       </code>
     );

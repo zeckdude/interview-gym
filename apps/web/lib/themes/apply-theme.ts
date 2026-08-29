@@ -15,6 +15,10 @@ export function applyTheme(tokens: ThemeTokens): void {
   root.style.setProperty('--color-text-muted', tokens.textMuted);
   root.style.setProperty('--color-border-subtle', tokens.borderSubtle);
   root.style.setProperty('--color-border-strong', tokens.borderStrong);
+  root.style.setProperty('--color-code-bg', tokens.codeBg);
+  root.style.setProperty('--color-success-light', tokens.successLight);
+  root.style.setProperty('--color-error-light', tokens.errorLight);
+  root.style.setProperty('--color-warning-light', tokens.warningLight);
   root.style.setProperty('--font-display', tokens.fontDisplay);
   root.style.setProperty('--font-body', tokens.fontBody);
   root.style.setProperty('--shadow-card', tokens.shadowCard);

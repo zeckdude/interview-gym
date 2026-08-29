@@ -10,6 +10,10 @@ import { VoiceLevelBars } from '@/components/audio/VoiceLevelBars';
 import { useListenButtonsPreference } from '@/hooks/useListenButtonsPreference';
 import { prepareTextForSpeech, splitPreparedSentences } from '@/lib/markdown-to-speech';
 import {
+  HighlightedCodeBlock,
+  extractCodeFromMarkdownPre,
+} from '@/components/code/HighlightedCodeBlock';
+import {
   cancelActiveTtsPlayback,
   getActivePlaybackGeneration,
   prefetchTtsFirstSentence,
@@ -406,17 +410,24 @@ export function AiChat() {
                     em: ({ children }) => <em className="italic">{children}</em>,
                     code: ({ children, className }) => {
                       const isBlock = className?.includes('language-');
-                      return isBlock ? (
-                        <code className="block bg-bg-inverse text-text-inverse font-mono text-xs rounded-lg p-3 my-2 overflow-x-auto whitespace-pre">
-                          {children}
-                        </code>
-                      ) : (
-                        <code className="font-mono text-xs bg-border-subtle px-1 py-0.5 rounded">
+                      if (isBlock) {
+                        return <code className={className}>{children}</code>;
+                      }
+                      return (
+                        <code className="font-mono text-xs bg-code-bg text-text-primary border border-border-subtle px-1 py-0.5 rounded">
                           {children}
                         </code>
                       );
                     },
-                    pre: ({ children }) => <>{children}</>,
+                    pre: ({ children }) => {
+                      const code = extractCodeFromMarkdownPre(children).trim();
+                      if (!code) return null;
+                      return (
+                        <div className="my-2">
+                          <HighlightedCodeBlock code={code} compact showLineNumbers={false} />
+                        </div>
+                      );
+                    },
                     ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
                     ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
                     li: ({ children }) => <li>{children}</li>,

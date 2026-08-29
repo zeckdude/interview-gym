@@ -5,6 +5,9 @@ import path from 'path';
 // bg-[#0F0F0F] = bg-base dark  | bg-[#1A1A1A] = bg-surface dark  | bg-[#252525] = bg-subtle dark
 // text-[#F0EDE8] = text-primary dark | text-[#9B9590] = text-secondary dark | text-[#5A5550] = text-muted dark
 // border-[#2A2A2A] = border-subtle dark | border-[#3A3A3A] = border-strong dark
+//
+// Status callouts (success-light, error-light, warning-light) use CSS vars via globals.css + applyTheme().
+// Always pair *-light backgrounds with text-text-primary — never assume static Tailwind pastels.
 
 const config: Config = {
   darkMode: 'class',
@@ -22,7 +25,7 @@ const config: Config = {
 
         'brand': '#FF6B35',
         'brand-light': '#FFE8DF',
-        'brand-dark': '#D94F1E',
+        'brand-dark': 'var(--color-brand-dark)',
 
         'text-primary': '#1A1714',
         'text-secondary': '#6B6560',
@@ -33,11 +36,11 @@ const config: Config = {
         'border-strong': '#C4BDB4',
 
         'success': '#2ECC71',
-        'success-light': '#D4F5E3',
+        'success-light': 'var(--color-success-light)',
         'error': '#E74C3C',
-        'error-light': '#FDECEA',
+        'error-light': 'var(--color-error-light)',
         'warning': '#F39C12',
-        'warning-light': '#FEF3DA',
+        'warning-light': 'var(--color-warning-light)',
 
         'easy': '#27AE60',
         'easy-light': '#D5F5E3',
@@ -113,6 +116,7 @@ const config: Config = {
     'bg-brand',
     'hover:bg-brand-dark',
     'bg-bg-surface',
+    'bg-code-bg',
     'hover:bg-bg-subtle',
     'bg-border-subtle',
     'text-text-primary',

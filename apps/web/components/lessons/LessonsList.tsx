@@ -155,6 +155,20 @@ export function LessonsList({ progressMap }: LessonsListProps) {
           />
         </div>
 
+        <div className="rounded-xl border-l-4 border-brand bg-brand/10 p-4 space-y-2">
+          <p className="font-display font-bold text-lg text-text-primary">
+            Advanced follow-up lessons
+          </p>
+          <p className="font-body text-base text-text-primary">
+            These lessons assume solid JavaScript fundamentals. For the best experience, work
+            through the{' '}
+            <a href="/" className="text-brand font-semibold hover:underline">
+              Modern JavaScript learn path
+            </a>{' '}
+            first — especially before intermediate and advanced topics here.
+          </p>
+        </div>
+
         <CollapsibleContentFilters
           filters={filters}
           setFilters={setFilters}

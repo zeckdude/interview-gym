@@ -15,6 +15,10 @@ import {
   splitMarkdownIntoSections,
   type MarkdownSection,
 } from '@/lib/markdown-to-speech';
+import {
+  HighlightedCodeBlock,
+  extractCodeFromMarkdownPre,
+} from '@/components/code/HighlightedCodeBlock';
 import { cn } from '@/lib/utils';
 
 interface ChallengeDescriptionProps {
@@ -70,24 +74,22 @@ const bodyComponents: Components = {
   code({ children, className }) {
     const isBlock = className?.includes('language-');
     if (isBlock) {
-      return (
-        <code className={`${className ?? ''} font-mono text-sm`}>
-          {children}
-        </code>
-      );
+      return <code className={className}>{children}</code>;
     }
     return (
-      <code className="font-mono text-sm bg-bg-subtle dark:bg-[#252525] text-brand-dark dark:text-brand px-1.5 py-0.5 rounded-sm border border-border-subtle dark:border-[#3A3A3A]">
+      <code className="font-mono text-sm bg-code-bg text-text-primary px-1.5 py-0.5 rounded-sm border border-border-subtle">
         {children}
       </code>
     );
   },
 
   pre({ children }) {
+    const code = extractCodeFromMarkdownPre(children).trim();
+    if (!code) return null;
     return (
-      <pre className="bg-bg-inverse dark:bg-black text-text-inverse font-mono text-sm rounded-lg p-4 overflow-x-auto my-3">
-        {children}
-      </pre>
+      <div className="my-4">
+        <HighlightedCodeBlock code={code} compact showLineNumbers={false} />
+      </div>
     );
   },
 

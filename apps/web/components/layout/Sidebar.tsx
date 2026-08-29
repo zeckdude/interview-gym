@@ -7,20 +7,10 @@ import { cn } from '@/lib/utils';
 import { useRightPanel } from '@/components/providers/RightPanelProvider';
 
 const navItems = [
-  { href: '/', label: 'Dashboard', icon: '📊' },
-  { href: '/my-path', label: 'My Path', icon: '🗺️' },
-  { href: '/playbook', label: 'My Playbook', icon: '📒' },
-  { href: '/study-plan', label: 'Study Plan', icon: '📋' },
-  { href: '/lessons', label: 'Lessons', icon: '📚' },
+  { href: '/', label: 'Learn', icon: '🛤️' },
+  { href: '/review', label: 'Review', icon: '🔁' },
+  { href: '/lessons', label: 'Lessons', icon: '📚', subtitle: 'Advanced' },
   { href: '/challenges', label: 'Challenges', icon: '💪' },
-  { href: '/generate', label: 'Generate Challenge', icon: '✨' },
-  { href: '/my-challenges', label: 'My Challenges', icon: '📁' },
-  { href: '/questions', label: 'Questions', icon: '🧠' },
-  { href: '/systems-design', label: 'Systems Design', icon: '🏗️' },
-  { href: '/simulator', label: 'Code Interview', icon: '🎯' },
-  { href: '/simulator/voice', label: 'Voice Interview', icon: '🎙️' },
-  { href: '/leaderboard', label: 'My Bests', icon: '🏆' },
-  { href: '/notes', label: 'My Notes', icon: '📝' },
   { href: '/settings', label: 'Settings', icon: '⚙️' },
 ];
 
@@ -43,7 +33,6 @@ export function Sidebar() {
 
   return (
     <aside className="app-sidebar fixed left-0 top-0 h-screen bg-bg-inverse flex flex-col z-20 overflow-hidden">
-      {/* Logo */}
       <div className={cn('flex items-center gap-2 py-5 flex-shrink-0', sidebarCollapsed ? 'justify-center px-2' : 'px-6')}>
         <span className="text-2xl flex-shrink-0">🏋️</span>
         {!sidebarCollapsed && (
@@ -53,7 +42,6 @@ export function Sidebar() {
         )}
       </div>
 
-      {/* Nav */}
       <nav className={cn('flex-1 py-4 space-y-1', sidebarCollapsed ? 'px-2' : 'px-3')}>
         {navItems.map((item) => {
           const isActive =
@@ -82,13 +70,19 @@ export function Sidebar() {
               )}
             >
               <span className="flex-shrink-0">{item.icon}</span>
-              {!sidebarCollapsed && <span>{item.label}</span>}
+              {!sidebarCollapsed && (
+                <span className="flex flex-col">
+                  <span>{item.label}</span>
+                  {'subtitle' in item && item.subtitle && (
+                    <span className="text-[10px] opacity-70 font-normal">{item.subtitle}</span>
+                  )}
+                </span>
+              )}
             </Link>
           );
         })}
       </nav>
 
-      {/* Collapse toggle */}
       <button
         onClick={toggleSidebar}
         title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -101,7 +95,6 @@ export function Sidebar() {
         {!sidebarCollapsed && <span className="font-body text-xs">Collapse</span>}
       </button>
 
-      {/* Streak */}
       <div className={cn('border-t border-white/10 py-4 mt-auto', sidebarCollapsed ? 'px-2 flex justify-center' : 'px-4')}>
         {sidebarCollapsed ? (
           <span className="text-xl" title={`${streak} day streak`}>{streakEmoji}</span>

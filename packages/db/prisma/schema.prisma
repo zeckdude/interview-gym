@@ -38,6 +38,10 @@ model User {
   playbookQuestions     PlaybookQuestion[]
   simulatorCompanyContexts SimulatorCompanyContext[]
   learningPaths           LearningPath[]
+  learnModuleProgress     LearnModuleProgress[]
+  learnConceptReviews     LearnConceptReview[]
+  learnConceptWeights     LearnConceptWeight[]
+  learnHintEvents         LearnHintEvent[]
 }
 
 model PlaybookProfile {
@@ -539,6 +543,77 @@ model PathItemProgress {
   @@unique([pathId, itemId])
   @@index([pathId, stage])
   @@index([userId, pathId])
+}
+
+model LearnModuleProgress {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id])
+  moduleId         String
+  status           String    @default("in_progress")
+  currentStepIndex Int       @default(0)
+  completedAt      DateTime?
+  timeSpentMs      Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@unique([userId, moduleId])
+  @@index([userId])
+}
+
+model LearnConceptReview {
+  id             String    @id @default(cuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id])
+  conceptTag     String
+  moduleId       String
+  stepId         String
+  reviewType     String
+  reviewData     Json
+  lastReviewedAt DateTime?
+  nextReviewAt   DateTime
+  intervalDays   Float     @default(1)
+  easeFactor     Float     @default(2.5)
+  repetitions    Int       @default(0)
+  timesCorrect   Int       @default(0)
+  timesIncorrect Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([userId, stepId])
+  @@index([userId, nextReviewAt])
+  @@index([userId, conceptTag])
+}
+
+model LearnConceptWeight {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  conceptTag String
+  weight     Int      @default(0)
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, conceptTag])
+}
+
+model LearnHintEvent {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  moduleId          String
+  stepId            String
+  stepType          String
+  eventType         String
+  mistakeKind       String?
+  answerFingerprint String?
+  hintsShown        Int      @default(0)
+  revealed          Boolean  @default(false)
+  eventuallyCorrect Boolean  @default(false)
+  createdAt         DateTime @default(now())
+
+  @@index([stepId, eventType])
+  @@index([moduleId, stepId])
+  @@index([createdAt])
 }
 
 model PathStageItem {
