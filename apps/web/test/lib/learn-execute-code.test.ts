@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  formatQuotedDisplayOutput,
   formatRunError,
   outputsMatch,
   predictOutputsMatch,
@@ -86,19 +87,61 @@ console.log('third');`
     ).toBe(true);
   });
 
-  it('accepts comma-separated multi-arg console.log guesses', () => {
-    expect(predictOutputsMatch('Paris, 2', 'Paris 2')).toBe(true);
-    expect(
-      validatePredictOutput(
-        'Paris, 2',
-        'Paris 2',
-        'var-6',
-        `const city = 'Paris';
+  it('accepts comma-separated multi-arg console.log guesses when quoted', () => {
+    const code = `const city = 'Paris';
 let count = 1;
 count = 2;
-console.log(city, count);`
-      ).passed
+console.log(city, count);`;
+
+    expect(predictOutputsMatch('Paris, 2', 'Paris 2')).toBe(true);
+    expect(
+      validatePredictOutput('Paris, 2', 'Paris 2', 'var-6', code).needsStringQuotes
     ).toBe(true);
+    expect(
+      validatePredictOutput("'Paris' 2", 'Paris 2', 'var-6', code).passed
+    ).toBe(true);
+    expect(
+      validatePredictOutput('"Paris" 2', 'Paris 2', 'var-6', code).passed
+    ).toBe(true);
+  });
+
+  it('requires quotes for string console.log output', () => {
+    const code = `console.log('Hello, world!');`;
+    const unquoted = validatePredictOutput('Hello, world!', 'Hello, world!', undefined, code);
+    expect(unquoted.passed).toBe(false);
+    expect(unquoted.needsStringQuotes).toBe(true);
+    expect(unquoted.message).toContain('needs quotes');
+
+    expect(
+      validatePredictOutput("'Hello, world!'", 'Hello, world!', undefined, code).passed
+    ).toBe(true);
+  });
+
+  it('does not require quotes for numeric output', () => {
+    expect(validatePredictOutput('6', '6', undefined, `console.log(10 - 4);`).passed).toBe(
+      true
+    );
+  });
+
+  it('formats display output with quoted strings', () => {
+    const code = `const city = 'Paris';
+let count = 1;
+count = 2;
+console.log(city, count);`;
+    expect(formatQuotedDisplayOutput(code, 'Paris 2')).toBe("'Paris' 2");
+    expect(formatQuotedDisplayOutput(code, 'TypeError')).toBe('TypeError');
+    expect(
+      formatQuotedDisplayOutput(`console.log('Hello, world!');`, 'Hello, world!')
+    ).toBe("'Hello, world!'");
+  });
+
+  it('formats validation failure messages with quoted strings', () => {
+    const reference = `console.log('Interview Gym');`;
+    const wrong = `console.log('Wrong');`;
+    const result = validateCodeChallenge(wrong, 'Interview Gym', undefined, 'output', reference);
+    expect(result.passed).toBe(false);
+    expect(result.message).toContain("'Interview Gym'");
+    expect(result.message).toContain("'Wrong'");
   });
 
   it('accepts flexible intro-10 answers', () => {
@@ -149,6 +192,56 @@ f();`;
 console.log(f());`;
     const result = validateCodeChallenge(code, 'TypeError', undefined, 'error');
     expect(result.passed).toBe(false);
+  });
+
+  it('accepts any const name for intro-errors-4', () => {
+    const code = `const name = 'Chris';
+console.log(name);`;
+    const result = validateCodeChallenge(
+      code,
+      'Alex',
+      'intro-errors-4',
+      'output',
+      undefined,
+      'logged-const-name'
+    );
+    expect(result.passed).toBe(true);
+    expect(result.actual).toBe('Chris');
+  });
+
+  it('rejects intro-errors-4 when name is not declared with const name', () => {
+    const code = `const myName = 'Chris';
+console.log(myName);`;
+    const result = validateCodeChallenge(
+      code,
+      'Alex',
+      'intro-errors-4',
+      'output',
+      undefined,
+      'logged-const-name'
+    );
+    expect(result.passed).toBe(false);
+  });
+
+  it('accepts flexible intro-10 code challenge output', () => {
+    const code = `console.log('Jamie');
+console.log(2026);`;
+    const result = validateCodeChallenge(
+      code,
+      'Alex\n2026',
+      'intro-10',
+      'output',
+      undefined,
+      'name-then-2026'
+    );
+    expect(result.passed).toBe(true);
+  });
+
+  it('returns full error message when output challenge throws', () => {
+    const code = `const name\nconsole.log(name);`;
+    const result = validateCodeChallenge(code, 'Alex', 'intro-errors-4', 'output');
+    expect(result.passed).toBe(false);
+    expect(result.actual).toContain('Missing initializer');
   });
 });
 

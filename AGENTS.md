@@ -96,6 +96,158 @@ See swap examples in the comments at the bottom of `tailwind.config.ts`.
 - `packages/db/` — Prisma schema
 - `phases/` — Phase completion docs
 
+## Learn modules — cross-device continuity
+
+**Driving factor:** Signed-in users must resume learn modules on any device with the same step answers, code drafts, pass/fail status, hints shown, and reveal state.
+
+- **Source of truth:** PostgreSQL (`LearnModuleProgress`, `LearnStepState`, `LearnConceptReview`, …).
+- **localStorage:** Cache and offline fallback only (`step-storage.ts`). Never the sole store for learner state.
+- **On module load:** Server state hydrates local cache via `hydrateLearnModuleStepStates()`.
+- **On step save:** Write local immediately; debounce remote sync (immediate on pass/reveal/complete).
+- **On reset / step back:** Clear both local and remote state.
+- **Device-local OK:** Reference panel width, theme, audio — not learning progress.
+
+When adding new learn persistence, ask: “Would the user expect this on another device?” If yes → DB.
+
+## Learn modules — string output convention
+
+Predict-output steps require learners to type what `console.log` would print. **String values must be quoted in their answer** (`'Paris' 2` or `"Paris" 2` — both accepted). Numbers, booleans, and errors stay unquoted.
+
+**Display the same way everywhere else** — use **single quotes** for string log values in all UI and authored copy:
+
+| Context | Rule |
+|---------|------|
+| Result panels, reveal answers, demos, review goals | Call `formatQuotedDisplayOutput(sourceCode, rawOutput)` from `apps/web/lib/learn/execute-code.ts` — never render raw `expectedOutput` for string logs |
+| Reference panel “Result:” | Same helper (already wired in `LearnReferencePanel`) |
+| Validation failure messages | `validateCodeChallenge(..., displayReferenceCode)` formats expected/got with quoted strings |
+| `hints`, `revealExplanation`, mistake hints | Write string log output in backticks with single quotes: `` `'Paris' 2` ``, `` `'JavaScript'` ``, `` `'boolean'` `` |
+| `expectedOutput` in step data | Keep **raw runtime text** (no quotes) — matching only; not for direct display |
+
+When adding learn steps or UI that shows console output, follow this convention. See `validatePredictStringQuotes` and `STRING_QUOTES_MESSAGE` for answer validation.
+
+## Learn modules — error picker (`predict-output` + `expectsError`)
+
+When a predict step throws at runtime, learners pick from **`getErrorPickerOptions()`** in `apps/web/lib/learn/learned-errors.ts` — not a free-text field.
+
+**Hard rule:** If the step’s runtime reference matches a catalog option (`LEARN_ERROR_OPTIONS`), that option **must always appear in the picker**, even when:
+- The module is not yet in `coveredModuleIds` (first visit / in-progress),
+- The error is excluded from “decoys” because it is the correct answer,
+- Only generic decoys would otherwise fill the list.
+
+Use `ensureCorrectOptionInPicker()` when changing picker logic. Add a test whenever you add a new taught error or change decoy padding.
+
+**Catalog vs runtime text:** Catalog labels are fallbacks (e.g. `ReferenceError: <name> is not defined`). On predict-error steps, **`applyRuntimeLabelsToPickerOptions()`** replaces the correct option’s label with the **exact runtime string** from `getPredictRuntimeReference()` so the picker matches the RESULT panel. Hints for a step should quote that runtime text, not the generic catalog label.
+
+When adding a new error type: add to `LEARN_ERROR_OPTIONS` with `introducedAt`, `matchValues`, and confusion scores; extend `referenceMatchesOption` if the pattern is not covered by `matchValues` alone.
+
+## Learn modules — code challenge prompts vs validation
+
+**Prompts and the test runner must agree.** If copy says the learner may use their own value (name, wording, etc.), validation must accept any valid answer — not only the canonical `expectedOutput` / `solutionCode` example.
+
+- Set **`outputFlex`** on `code-challenge` steps when multiple outputs are valid:
+  - `logged-const-name` — `const name = '…'` + `console.log(name)`; any non-empty logged string passes.
+  - `name-then-2026` — line 1: any name; line 2: exactly `2026`.
+- Keep **`expectedOutput`** / **`solutionCode`** as the **example** for reveal and recommended answers.
+- Diff / failure copy uses `getCodeChallengeGoalDisplay()` — not a hard-coded example string when `outputFlex` is set.
+
+Before shipping a challenge, read the prompt, hints, and text steps leading into it. If any say “your own name” or “replace with yours”, you must add `outputFlex` (or exact-output copy only).
+
+## Learn modules — Challenge Yourself
+
+Every authored module **after Introduction** should include **two** optional **Challenge Yourself** sections (Introduction is exempt — learners are still onboarding).
+
+**Structure:**
+
+1. A **text** step with `title: CHALLENGE_YOURSELF_SECTION_TITLE` (`'Challenge Yourself'`), `sectionKind: 'challenge-yourself'`, and copy explaining the block is optional.
+2. One or more **interactive** steps with `optional: true` immediately after each intro.
+
+Import the title from `apps/web/data/learn/challenge-yourself.ts`.
+
+**Rules:**
+
+- **Optional to proceed** — learners can use **Skip challenge →** without solving. Do not gate module completion on these steps.
+- **Extra hard** — gotchas and stretch problems tightly relevant to the module topic.
+- **No hints, no reveal, no starter code** on optional steps — omit `hints`, `revealExplanation`, `setupCode`, and `starterCode` (empty strings are fine for code challenges).
+- **Prefer `code-challenge`** from a blank editor when the learner must write code. Use **`predict-output`** (single typed answer) when a gotcha is best shown as “what happens when this runs?” Avoid **`choice`** for Challenge Yourself — too easy.
+- Place sections at **meaningful breakpoints** (mid-module and near the end), not clustered together.
+- **Required `challengeDebrief`** on every optional step — shown after **pass or skip**, before the learner continues. Three fields:
+  - **`gotcha`** — what made this hard / the trap
+  - **`greatSolution`** — how to reason through it (not just the raw answer)
+  - **`watchFor`** — what to notice in similar real-world code
+  - Optional **`solutionCode`** on code-challenge debriefs (reference implementation)
+  - Optional **`evaluationSteps`** — `{ expression, yields }[]` rendered as a numbered trace (prefer over long prose for predict-style challenges)
+
+The UI renders this as a **Challenge breakdown** panel (`LearnChallengeDebriefPanel`) — learners must click **Got it — Continue →** after reading, whether they solved it or skipped.
+
+**Example:**
+
+```typescript
+{
+  id: 'mod-cy-1-intro',
+  type: 'text',
+  title: CHALLENGE_YOURSELF_SECTION_TITLE,
+  sectionKind: 'challenge-yourself',
+  conceptTags: ['typeof'],
+  content: 'Optional extra-hard typeof gotchas. Skip anytime.',
+},
+{
+  id: 'mod-cy-1',
+  type: 'predict-output',
+  optional: true,
+  conceptTags: ['typeof'],
+  prompt: 'What gets logged?',
+  code: `console.log(typeof typeof 1);`,
+  expectedOutput: 'string',
+  challengeDebrief: {
+    gotcha: '`typeof` always returns a string — even when applied to another typeof result.',
+    greatSolution: 'Evaluate inside out: `typeof 1` → `"number"`, then `typeof "number"` → `"string"`.',
+    watchFor: 'When you see nested typeof, evaluate one layer at a time.',
+  },
+},
+```
+
+## Learn modules — scannable reference tables
+
+For type lists, operator comparisons, or other reference material that would become a wall of text as markdown bullets, use **`typeReference`** on a `text` step.
+
+- Short intro in **`content`**, closing note in **`footer`**
+- Each row: `name`, `description`, optional `example`, optional `accent` (`fe` | `brand` | `success` | `warning` | `muted`)
+- Rendered by `LearnTypeReferenceTable` — type badge plus description; **example code on its own line** with full width (never a cramped third column)
+
+## Learn modules — dev step labels
+
+The **Jump** menu (development builds only) uses `devTitle` and `devDescription` on every step. These help you navigate modules without opening each step — they must **describe the topic**, not the problem or answer.
+
+**Required:** Set both fields on **every** step when authoring or editing a learn module. A test fails if any authored step is missing them.
+
+**Do:**
+
+- Name the concept: `Predict: TDZ error`, `Demo: typeof on variables`, `Challenge: typeLabel function`
+- One-line topic summary: `What happens when you log a variable before it is declared.`
+- Use `CY:` prefix on optional Challenge Yourself interactive steps; use `Challenge Yourself` for the section intro text step
+- Keep titles under ~40 characters; descriptions under ~100 characters
+
+**Do not:**
+
+- Copy the step `prompt` (`What gets logged?`, `What happens when this runs?`)
+- Quote code from the step (`console.log(x)`, `let x = 1`)
+- Reveal `expectedOutput`, error names, correct choice text, or solution hints
+- Repeat the learner-facing `title` verbatim when it is generic (`Here's a code problem:`)
+
+**Examples:**
+
+| Step type | Good devTitle | Good devDescription |
+|-----------|---------------|---------------------|
+| `text` | `Temporal dead zone` | `Using const/let before its line throws ReferenceError.` |
+| `code-demo` | `Demo: mutating an array` | `Runnable example — push to a const array binding.` |
+| `predict-output` | `Predict: typeof null` | `What typeof returns for null.` |
+| `code-challenge` | `Challenge: declare then log` | `Add a const declaration so logging a name succeeds.` |
+| `choice` | `Choice: dynamic typing` | `Can the same let hold a number and later a string?` |
+
+Fallback inference in `dev-tools.ts` is generic and topic-only — never rely on it instead of writing explicit labels.
+
+**Dev jump behavior** (development builds): Jumping to step *N* clears saved state for step *N* and every step after it. Jumping **forward** (target > current) also auto-fills steps from current through *N − 1* with recommended answers. Jumping backward only clears — it does not fill.
+
 ## Challenge content — file-per-challenge convention
 
 **Every real (non-stub) challenge lives in its own folder under `apps/web/data/challenges/`.**

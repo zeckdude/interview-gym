@@ -6,6 +6,17 @@ import {
 } from '@/lib/learn/mistake-classifier';
 
 describe('classifyPredictMistake', () => {
+  it('detects missing string quotes when content is otherwise correct', () => {
+    const code = `const city = 'Paris';
+let count = 1;
+count = 2;
+console.log(city, count);`;
+
+    expect(
+      classifyPredictMistake('Paris 2', 'Paris 2', 'Paris 2', { sourceCode: code })
+    ).toBe('missing_string_quotes');
+  });
+
   it('detects comma separator mistakes', () => {
     expect(
       classifyPredictMistake('Paris, London', 'Paris 2', 'Paris 2')
@@ -33,8 +44,15 @@ describe('classifyPredictMistake', () => {
     ).toBe('missing_line');
   });
 
-  it('returns correct for matching answers', () => {
-    expect(classifyPredictMistake('Paris 2', 'Paris 2', 'Paris 2')).toBe('correct');
+  it('returns correct for matching answers with quoted strings', () => {
+    const code = `const city = 'Paris';
+let count = 1;
+count = 2;
+console.log(city, count);`;
+
+    expect(
+      classifyPredictMistake("'Paris' 2", 'Paris 2', 'Paris 2', { sourceCode: code })
+    ).toBe('correct');
   });
 });
 

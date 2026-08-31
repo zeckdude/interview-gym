@@ -2,9 +2,10 @@ import type { LearnModule } from '../types';
 import { LEARN_GRAPH_NODES, LEVEL_LABELS } from '../graph';
 import { moduleIntroduction } from './js-01-introduction';
 import { moduleVariables } from './js-02-variables';
+import { moduleTypes } from './js-03-types';
 
 /** Authored modules with full step content. */
-const AUTHORED_MODULES: LearnModule[] = [moduleIntroduction, moduleVariables];
+const AUTHORED_MODULES: LearnModule[] = [moduleIntroduction, moduleVariables, moduleTypes];
 
 const authoredById = new Map(AUTHORED_MODULES.map((m) => [m.id, m]));
 
@@ -38,4 +39,4 @@ export function getAuthoredModuleIds(): string[] {
   return AUTHORED_MODULES.map((m) => m.id);
 }
 
-export { moduleIntroduction, moduleVariables };
+export { moduleIntroduction, moduleVariables, moduleTypes };

@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { ModuleRunner } from '@/components/learn/ModuleRunner';
 import { getLearnModule } from '@/data/learn/modules';
 import { prisma } from '@/lib/prisma';
+import type { LearnStepStoredState } from '@/lib/learn/step-storage';
 import { computeModuleStatus } from '@/lib/learn/unlock';
 import { buildModuleProgressViews } from '@/lib/learn/unlock';
 
@@ -59,11 +60,21 @@ export default async function LearnModulePage({ params }: PageProps) {
   const moduleProgress = views.find((p) => p.moduleId === moduleId) ?? null;
   const coveredModuleIds = buildCoveredModuleIds(progressRecords, moduleId);
 
+  const stepStateRecords = await prisma.learnStepState.findMany({
+    where: { userId: user.id, moduleId },
+    select: { stepId: true, state: true },
+  });
+  const initialStepStates: Record<string, LearnStepStoredState> = {};
+  for (const record of stepStateRecords) {
+    initialStepStates[record.stepId] = record.state as LearnStepStoredState;
+  }
+
   return (
     <ModuleRunner
       module={mod}
       initialProgress={moduleProgress}
       coveredModuleIds={coveredModuleIds}
+      initialStepStates={initialStepStates}
     />
   );
 }

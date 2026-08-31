@@ -10,36 +10,40 @@ import {
 } from 'react';
 import { cn } from '@/lib/utils';
 import { HighlightedCodeBlock } from '@/components/code/HighlightedCodeBlock';
+import {
+  LearnCodeEditorHandle,
+  LearnCodeEditorShell,
+} from '@/components/learn/LearnCodeEditor';
+import { OutputDiffView } from '@/components/learn/OutputDiffView';
+import { isErrorLabel } from '@/lib/learn/execute-code';
+import type { OutputDiffMode } from '@/lib/learn/learning-preferences';
+import type { ResolvedLearningSettings } from '@/lib/learn/learning-preferences';
+
+export type { LearnCodeEditorHandle };
 
 interface LearnCodeBlockProps {
   code: string;
   editable?: boolean;
   value?: string;
   onChange?: (value: string) => void;
-  onKeyDown?: React.KeyboardEventHandler<HTMLTextAreaElement>;
+  setupCode?: string;
+  onRun?: () => void;
+  onHint?: () => void;
+  showHintButton?: boolean;
   highlightLine?: number;
+  editorSettings?: ResolvedLearningSettings;
   className?: string;
   /** Rendered inside the editor card at the bottom-right (Run, Hint, etc.). */
   actions?: ReactNode;
 }
 
-function syncTextareaHeight(el: HTMLTextAreaElement) {
-  el.style.height = '0px';
-  el.style.height = `${el.scrollHeight}px`;
-}
-
-function focusTextareaAtEnd(el: HTMLTextAreaElement) {
-  el.focus();
-  el.selectionStart = el.selectionEnd = el.value.length;
-}
-
 function handleEditorShellClick(
   e: React.MouseEvent<HTMLDivElement>,
-  textareaRef: React.RefObject<HTMLTextAreaElement | null>
+  focusEditor: () => void
 ) {
   const target = e.target as HTMLElement;
-  if (target.closest('textarea, button, a, input, label')) return;
-  if (textareaRef.current) focusTextareaAtEnd(textareaRef.current);
+  if (target.closest('textarea, button, a, input, label, .monaco-editor')) return;
+  focusEditor();
 }
 
 interface LearnGrowTextareaProps {
@@ -56,6 +60,16 @@ interface LearnGrowTextareaProps {
   disabled?: boolean;
   /** Visual state when the field is disabled but actions stay active. */
   mutedShell?: boolean;
+}
+
+function syncTextareaHeight(el: HTMLTextAreaElement) {
+  el.style.height = '0px';
+  el.style.height = `${el.scrollHeight}px`;
+}
+
+function focusTextareaAtEnd(el: HTMLTextAreaElement) {
+  el.focus();
+  el.selectionStart = el.selectionEnd = el.value.length;
 }
 
 export const LearnGrowTextarea = forwardRef<HTMLTextAreaElement, LearnGrowTextareaProps>(
@@ -89,7 +103,9 @@ export const LearnGrowTextarea = forwardRef<HTMLTextAreaElement, LearnGrowTextar
         )}
         onClick={(e) => {
           if (disabled) return;
-          handleEditorShellClick(e, textareaRef);
+          handleEditorShellClick(e, () => {
+            if (textareaRef.current) focusTextareaAtEnd(textareaRef.current);
+          });
         }}
       >
         {header && <div className="px-4 pt-3">{header}</div>}
@@ -121,55 +137,48 @@ export const LearnGrowTextarea = forwardRef<HTMLTextAreaElement, LearnGrowTextar
   }
 );
 
-export const LearnCodeBlock = forwardRef<HTMLTextAreaElement, LearnCodeBlockProps>(
+export const LearnCodeBlock = forwardRef<LearnCodeEditorHandle, LearnCodeBlockProps>(
   function LearnCodeBlock(
-    { code, editable = false, value, onChange, onKeyDown, className, actions },
+    {
+      code,
+      editable = false,
+      value,
+      onChange,
+      setupCode,
+      onRun,
+      onHint,
+      showHintButton,
+      highlightLine,
+      editorSettings,
+      className,
+      actions,
+    },
     ref
   ) {
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const editorRef = useRef<LearnCodeEditorHandle>(null);
 
-    useImperativeHandle(ref, () => textareaRef.current as HTMLTextAreaElement);
-
-    useLayoutEffect(() => {
-      if (editable && textareaRef.current) {
-        syncTextareaHeight(textareaRef.current);
-      }
-    }, [editable, value]);
-
-    const handleChange = useCallback(
-      (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        onChange?.(e.target.value);
-        syncTextareaHeight(e.target);
-      },
-      [onChange]
-    );
+    useImperativeHandle(ref, () => ({
+      focus: () => editorRef.current?.focus(),
+      focusAtEnd: () => editorRef.current?.focusAtEnd(),
+      getValue: () => editorRef.current?.getValue() ?? value ?? '',
+      insertSpaces: (spaces: string) => editorRef.current?.insertSpaces(spaces),
+    }));
 
     if (editable) {
       return (
-        <div
-          className={cn(
-            'rounded-xl border-2 border-border-strong bg-code-bg transition-[border-color,box-shadow]',
-            'focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/20',
-            className
-          )}
-          onClick={(e) => handleEditorShellClick(e, textareaRef)}
-        >
-          <textarea
-            ref={textareaRef}
-            value={value}
-            onChange={handleChange}
-            onKeyDown={onKeyDown}
-            spellCheck={false}
-            rows={1}
-            className="block w-full px-5 pt-4 pb-2 font-mono text-[17px] leading-relaxed text-text-primary bg-transparent resize-none overflow-hidden min-h-[2.75rem] focus:outline-none"
-            aria-label="Code editor"
-          />
-          {actions && (
-            <div className="flex flex-wrap justify-end gap-2 px-4 pb-4 pt-1">
-              {actions}
-            </div>
-          )}
-        </div>
+        <LearnCodeEditorShell
+          ref={editorRef}
+          setupCode={setupCode}
+          value={value ?? ''}
+          onChange={(next) => onChange?.(next)}
+          onRun={onRun}
+          onHint={onHint}
+          showHintButton={showHintButton}
+          highlightLine={highlightLine}
+          editorSettings={editorSettings}
+          actions={actions}
+          className={className}
+        />
       );
     }
 
@@ -196,6 +205,8 @@ interface ResultPanelProps {
   goalVariant?: 'default' | 'expected';
   /** Optional note beside the Yours label, e.g. when the answer was revealed. */
   yoursNote?: string;
+  /** When set and failed, render token diff instead of plain strings. */
+  outputDiffMode?: OutputDiffMode;
 }
 
 export function ResultPanel({
@@ -207,6 +218,7 @@ export function ResultPanel({
   goalLabel,
   goalVariant = 'default',
   yoursNote,
+  outputDiffMode = 'off',
 }: ResultPanelProps) {
   const showGoal = mode === 'full' || mode === 'output-only';
   const showYours = mode === 'full' || mode === 'feedback-only';
@@ -222,6 +234,14 @@ export function ResultPanel({
         ? 'Expected error'
         : 'Goal');
 
+  const showDiff =
+    passed === false &&
+    outputDiffMode !== 'off' &&
+    goal !== undefined &&
+    yours !== undefined &&
+    yours !== '' &&
+    !isErrorLabel(yours);
+
   return (
     <div
       className={cn(
@@ -232,7 +252,16 @@ export function ResultPanel({
         passed !== true && !errorTone && !expectedTone && 'border-border-strong bg-bg-subtle'
       )}
     >
-      {showGoal && goal !== undefined && (
+      {showDiff && (
+        <OutputDiffView
+          goal={goal}
+          yours={yours}
+          diffMode={outputDiffMode}
+          goalLabel={resolvedGoalLabel}
+        />
+      )}
+
+      {!showDiff && showGoal && goal !== undefined && (
         <div>
           <p
             className={cn(
@@ -258,7 +287,7 @@ export function ResultPanel({
           </p>
         </div>
       )}
-      {showYours && yours !== undefined && (
+      {!showDiff && showYours && yours !== undefined && (
         <div>
           <p className="font-body text-xs font-bold uppercase tracking-wide text-text-secondary mb-1.5">
             Yours
@@ -345,6 +374,15 @@ export function LearnInlineText({
         </p>
       ))}
     </div>
+  );
+}
+
+/** Step prompt — parses `code` and **bold** at larger heading weight. */
+export function LearnPromptText({ content }: { content: string }) {
+  return (
+    <p className="font-body text-xl font-semibold text-text-primary leading-relaxed">
+      {parseInline(content)}
+    </p>
   );
 }
 

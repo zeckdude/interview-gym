@@ -37,8 +37,10 @@ function stepToReviewData(step: LearnStep) {
         prompt: step.prompt,
         setupCode: step.setupCode,
         starterCode: step.starterCode,
+        solutionCode: step.solutionCode,
         expectedOutput: step.expectedOutput,
         goalType: step.goalType,
+        outputFlex: step.outputFlex,
         hint: step.hint,
       },
     };
@@ -124,7 +126,7 @@ export async function POST(req: Request) {
     update: {
       status: nextStatus,
       currentStepIndex: stepIndex,
-      completedAt: isComplete ? new Date() : undefined,
+      completedAt: isComplete ? new Date() : null,
       timeSpentMs: timeSpentMs
         ? { increment: timeSpentMs }
         : undefined,

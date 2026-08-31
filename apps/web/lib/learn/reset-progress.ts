@@ -8,6 +8,7 @@ export async function resetLearnModuleProgress(
     prisma.learnModuleProgress.deleteMany({ where: { userId, moduleId } }),
     prisma.learnConceptReview.deleteMany({ where: { userId, moduleId } }),
     prisma.learnHintEvent.deleteMany({ where: { userId, moduleId } }),
+    prisma.learnStepState.deleteMany({ where: { userId, moduleId } }),
   ]);
 }
 
@@ -16,5 +17,6 @@ export async function resetAllLearnProgress(userId: string): Promise<void> {
     prisma.learnModuleProgress.deleteMany({ where: { userId } }),
     prisma.learnConceptReview.deleteMany({ where: { userId } }),
     prisma.learnHintEvent.deleteMany({ where: { userId } }),
+    prisma.learnStepState.deleteMany({ where: { userId } }),
   ]);
 }

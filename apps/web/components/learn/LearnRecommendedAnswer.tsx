@@ -2,19 +2,53 @@
 
 import { cn } from '@/lib/utils';
 
+/** Shared card shell for recommended answers and challenge breakdowns. */
+export function LearnDisclosurePanel({
+  title,
+  children,
+  className,
+}: {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        'rounded-xl border border-brand/20 bg-brand/5 p-4 space-y-2',
+        className
+      )}
+    >
+      <p className="font-body text-xs font-bold uppercase tracking-wide text-brand">
+        {title}
+      </p>
+      {children}
+    </div>
+  );
+}
+
 interface LearnRecommendedAnswerProps {
   open: boolean;
   onToggle: () => void;
   children: React.ReactNode;
   className?: string;
+  /** Label when collapsed. */
+  showLabel?: string;
+  /** Label when expanded. */
+  hideLabel?: string;
+  /** Small heading inside the expanded panel. */
+  panelTitle?: string;
 }
 
-/** Disclosure toggle for peeking at the recommended answer without copying EP's checkbox pattern. */
+/** Disclosure toggle — used for recommended answers and challenge breakdowns. */
 export function LearnRecommendedAnswer({
   open,
   onToggle,
   children,
   className,
+  showLabel = 'Show recommended answer',
+  hideLabel = 'Hide recommended answer',
+  panelTitle = 'Recommended answer',
 }: LearnRecommendedAnswerProps) {
   return (
     <div className={cn('space-y-3', className)}>
@@ -34,15 +68,10 @@ export function LearnRecommendedAnswer({
         >
           {open ? '−' : '+'}
         </span>
-        {open ? 'Hide recommended answer' : 'Show recommended answer'}
+        {open ? hideLabel : showLabel}
       </button>
       {open && (
-        <div className="rounded-xl border border-brand/20 bg-brand/5 p-4 space-y-2">
-          <p className="font-body text-xs font-bold uppercase tracking-wide text-brand">
-            Recommended answer
-          </p>
-          {children}
-        </div>
+        <LearnDisclosurePanel title={panelTitle}>{children}</LearnDisclosurePanel>
       )}
     </div>
   );

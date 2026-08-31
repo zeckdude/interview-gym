@@ -31,7 +31,7 @@ export function getReferencesForCoveredModules(
   return LEARN_REFERENCES.filter((entry) => covered.has(entry.moduleId));
 }
 
-/** Reference entries for authored modules only (Introduction + Variables). */
+/** Reference entries for authored modules only (Introduction + Variables + Types). */
 export const LEARN_REFERENCES: LearnReferenceEntry[] = [
   {
     id: 'ref-console-log',
@@ -148,7 +148,7 @@ console.log(names);`,
   {
     id: 'ref-typeof',
     title: 'typeof',
-    moduleId: 'js-02-variables',
+    moduleId: 'js-03-types',
     mdnUrl: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof',
     description:
       'Returns a **string** naming the type of a value — `"string"`, `"number"`, `"boolean"`, and so on.',
@@ -160,11 +160,36 @@ string`,
   {
     id: 'ref-typeof-null',
     title: 'typeof null',
-    moduleId: 'js-02-variables',
+    moduleId: 'js-03-types',
     mdnUrl: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof#typeof_null',
     description:
       'A famous quirk: `typeof null` returns `"object"`. In practice, treat `null` as its own empty value.',
     code: `console.log(typeof null);`,
     result: 'object',
+  },
+  {
+    id: 'ref-dynamic-typing',
+    title: 'Dynamic typing',
+    moduleId: 'js-03-types',
+    mdnUrl: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types#data_and_structure',
+    description:
+      'In JavaScript, a `let` variable can point at different **types** over time — the type belongs to each value, not permanently to the name.',
+    code: `let x = 42;
+console.log(typeof x);
+x = 'hello';
+console.log(typeof x);`,
+    result: `number
+string`,
+  },
+  {
+    id: 'ref-typescript-intro',
+    title: 'TypeScript (intro)',
+    moduleId: 'js-03-types',
+    mdnUrl: 'https://www.typescriptlang.org/docs/handbook/intro.html',
+    description:
+      'TypeScript adds **optional type annotations** to JavaScript. The compiler checks types before runtime, then outputs plain JS.',
+    code: `let age: number = 30;
+// age = 'thirty'; // TypeScript error at compile time`,
+    result: '(compile-time check — not runtime output)',
   },
 ];

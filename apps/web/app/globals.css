@@ -27,9 +27,15 @@
 .app-main {
   margin-left: var(--sidebar-width);
   margin-right: var(--right-panel-width);
-  padding-top: 4rem; /* header height */
+  padding-top: 3.5rem;
   min-height: 100vh;
   transition: margin-left 300ms ease, margin-right 300ms ease;
+}
+
+@media (min-width: 640px) {
+  .app-main {
+    padding-top: 4rem;
+  }
 }
 
 /* Theme color CSS custom properties — The Zen light defaults.
@@ -52,6 +58,7 @@
   --color-code-bg: #F6F4F1;
   /* Status callout backgrounds — theme-aware via applyTheme(); pair with text-text-primary */
   --color-success-light: #D4F5E3;
+  --color-error: #E74C3C;
   --color-error-light: #FDECEA;
   --color-warning-light: #FEF3DA;
   --font-display: var(--font-nunito), system-ui, sans-serif;
@@ -168,6 +175,45 @@
 .reference-panel-resize-handle-active::after {
   background: var(--color-brand);
   height: 64px;
+}
+
+.learn-code-editor .monaco-editor,
+.learn-code-editor .monaco-editor-background {
+  background-color: transparent !important;
+}
+
+.learn-code-editor .monaco-editor .view-overlays .learn-editor-error-line,
+.learn-code-editor .monaco-editor .view-lines .learn-editor-error-line {
+  background-color: var(--color-error-light) !important;
+}
+
+.learn-code-editor .monaco-editor .margin-view-overlays .learn-editor-error-line-gutter,
+.learn-code-editor .monaco-editor .lines-decorations .learn-editor-error-line-gutter {
+  background-color: var(--color-error) !important;
+  width: 4px !important;
+  margin-left: 2px;
+  border-radius: 2px;
+}
+
+.learn-code-editor[data-indent-guides='true']
+  .monaco-editor
+  .view-overlays
+  .core-guide-indent {
+  border-left-color: var(--learn-indent-guide-color) !important;
+  border-left-width: 1px !important;
+}
+
+.learn-code-editor[data-indent-guides='true']
+  .monaco-editor
+  .view-overlays
+  .core-guide-indent.indent-active {
+  border-left-color: var(--learn-indent-guide-color-active) !important;
+  border-left-width: 2px !important;
+}
+
+.monaco-editor .current-line {
+  border: none !important;
+  background-color: color-mix(in srgb, var(--color-brand) 8%, transparent) !important;
 }
 
 body {

@@ -1,4 +1,5 @@
 import type { LearnStep } from '@/data/learn/types';
+import { isChallengeYourselfSection } from '@/lib/learn/challenge-yourself';
 
 export const CODE_PROBLEM_INTRO_TITLE = "Here's a code problem:";
 
@@ -15,7 +16,7 @@ function isInteractiveStep(step: LearnStep): boolean {
 
 /** Short explainer text that introduces the next code step. */
 export function isTeachingIntroText(step: LearnStep): boolean {
-  return step.type === 'text' && !step.title;
+  return step.type === 'text' && !step.title && !step.sectionKind;
 }
 
 export function isCodeProblemIntro(step: LearnStep | undefined): boolean {
@@ -57,8 +58,12 @@ export function getLearnStepWrapperMargin(
   return previousSpacing === null ? '' : 'mt-8';
 }
 
-export function learnStepSectionClass(spacing: LearnStepSpacing): string {
+export function learnStepSectionClass(spacing: LearnStepSpacing, step?: LearnStep): string {
   const base = 'scroll-mt-24';
+
+  if (step && isChallengeYourselfSection(step)) {
+    return `${base} space-y-6 pb-10 mb-8 border-b-2 border-dashed border-warning/40 last:border-0 last:mb-0`;
+  }
 
   if (spacing === 'group-start') {
     return `${base} space-y-5 border-0`;

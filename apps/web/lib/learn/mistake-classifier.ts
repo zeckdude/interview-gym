@@ -2,12 +2,15 @@ import type { LearnGoalType } from '@/data/learn/types';
 import type { MistakeKind } from '@/lib/learn/mistake-kind';
 import {
   errorNamesMatch,
+  getPredictOutputStructure,
   isErrorLabel,
   normalizeLogAnswer,
   normalizeOutput,
+  normalizePredictAnswerForMatch,
   outputLines,
   predictOutputsMatch,
   runLearnCode,
+  validatePredictStringQuotes,
   type MatchOptions,
 } from '@/lib/learn/execute-code';
 
@@ -33,6 +36,39 @@ function tokensMatchStructure(user: string, reference: string): boolean {
 
 export interface ClassifyPredictOptions extends MatchOptions {
   expectsError?: boolean;
+  sourceCode?: string;
+}
+
+function contentMatchesPredictAnswer(
+  userAnswer: string,
+  reference: string,
+  expectedOutput: string,
+  options: MatchOptions
+): boolean {
+  const normalizedUser = normalizePredictAnswerForMatch(userAnswer);
+  return (
+    predictOutputsMatch(userAnswer, reference, options) ||
+    predictOutputsMatch(userAnswer, expectedOutput, options) ||
+    predictOutputsMatch(normalizedUser, reference, options) ||
+    predictOutputsMatch(normalizedUser, expectedOutput, options)
+  );
+}
+
+function missingStringQuotesMistake(
+  userAnswer: string,
+  reference: string,
+  expectedOutput: string,
+  options: ClassifyPredictOptions
+): MistakeKind | null {
+  if (!options.sourceCode) return null;
+  if (isErrorLabel(reference) || isErrorLabel(expectedOutput)) return null;
+  if (!contentMatchesPredictAnswer(userAnswer, reference, expectedOutput, options)) {
+    return null;
+  }
+
+  const structure = getPredictOutputStructure(options.sourceCode);
+  const quoteCheck = validatePredictStringQuotes(userAnswer, structure);
+  return quoteCheck.ok ? null : 'missing_string_quotes';
 }
 
 export function classifyPredictMistake(
@@ -41,10 +77,15 @@ export function classifyPredictMistake(
   expectedOutput: string,
   options: ClassifyPredictOptions = {}
 ): MistakeKind {
-  if (
-    predictOutputsMatch(userAnswer, reference, options) ||
-    predictOutputsMatch(userAnswer, expectedOutput, options)
-  ) {
+  const quoteMistake = missingStringQuotesMistake(
+    userAnswer,
+    reference,
+    expectedOutput,
+    options
+  );
+  if (quoteMistake) return quoteMistake;
+
+  if (contentMatchesPredictAnswer(userAnswer, reference, expectedOutput, options)) {
     return 'correct';
   }
 

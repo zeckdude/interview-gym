@@ -26,26 +26,30 @@ export function Header({ title = 'Dashboard' }: HeaderProps) {
 
   const streak = streakData?.currentStreak ?? 0;
   const emoji = streak > 0 ? '🔥' : '✨';
-  const streakLabel = streak === 1 ? '1 day streak' : `${streak} day streak`;
 
   return (
-    <header className="app-header fixed top-0 h-16 bg-bg-surface border-b border-border-subtle z-10 flex items-center justify-between px-6">
-      <div>
-        <h1 className="font-display font-bold text-lg text-text-primary">{title}</h1>
+    <header className="app-header fixed top-0 h-14 sm:h-16 bg-bg-surface border-b border-border-subtle z-10 flex items-center justify-between gap-2 px-3 sm:px-6">
+      <div className="min-w-0 flex-1">
+        <h1 className="font-display font-bold text-base sm:text-lg text-text-primary truncate">
+          {title}
+        </h1>
       </div>
-      <div className="flex items-center gap-3">
-        <div className="hidden sm:flex items-center gap-1.5 text-sm font-body">
+      <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+        <div className="hidden md:flex items-center gap-1.5 text-sm font-body">
           <span className="text-lg">{emoji}</span>
           <div className="text-right">
             <p className="font-semibold text-text-primary leading-none">{streak}</p>
             <p className="text-text-muted text-xs leading-none">day streak</p>
           </div>
         </div>
-        <span className="hidden sm:block text-border-subtle">|</span>
-        <span className="sm:hidden text-sm font-body text-text-secondary">
-          {emoji} {streakLabel}
+        <span
+          className="md:hidden text-lg leading-none"
+          title={streak === 1 ? '1 day streak' : `${streak} day streak`}
+          aria-label={streak === 1 ? '1 day streak' : `${streak} day streak`}
+        >
+          {emoji}
         </span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <NotificationBell />
           <LooksSwitcher />
           <ThemeToggle />

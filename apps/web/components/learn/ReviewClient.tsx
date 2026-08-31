@@ -11,10 +11,16 @@ import {
 import { Button } from '@/components/ui/Button';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import {
+  combineLearnCode,
+  extractUserCodeFromStored,
+} from '@/lib/learn/code-error-line';
+import {
   validateCodeChallenge,
   validatePredictOutput,
+  formatQuotedDisplayOutput,
 } from '@/lib/learn/execute-code';
-import type { ConceptWeight, LearnGoalType } from '@/data/learn/types';
+import { getResolvedLearningSettings } from '@/lib/learn/learning-preferences';
+import type { ConceptWeight, LearnGoalType, LearnOutputFlex } from '@/data/learn/types';
 
 interface ReviewItem {
   id: string;
@@ -27,14 +33,32 @@ interface ReviewItem {
     code?: string;
     setupCode?: string;
     starterCode?: string;
+    solutionCode?: string;
     expectedOutput: string;
     goalType?: LearnGoalType;
+    outputFlex?: LearnOutputFlex;
     hint?: string;
   };
   weight: ConceptWeight;
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
+
+function reviewDisplayOutput(item: ReviewItem): string {
+  const { reviewData, reviewType } = item;
+  if (reviewType === 'predict_output' && reviewData.code) {
+    return formatQuotedDisplayOutput(reviewData.code, reviewData.expectedOutput);
+  }
+  if (reviewType === 'code_goal') {
+    const referenceCode = reviewData.solutionCode
+      ? `${reviewData.setupCode ?? ''}\n${reviewData.solutionCode}`
+      : reviewData.code;
+    if (referenceCode?.trim()) {
+      return formatQuotedDisplayOutput(referenceCode, reviewData.expectedOutput);
+    }
+  }
+  return reviewData.expectedOutput;
+}
 
 export function ReviewClient() {
   const [manual, setManual] = useState(false);
@@ -57,7 +81,13 @@ export function ReviewClient() {
     setResult(null);
     setHintShown(false);
     if (item.reviewType === 'code_goal') {
-      setCode(`${item.reviewData.setupCode ?? ''}\n${item.reviewData.starterCode ?? ''}`);
+      setCode(
+        extractUserCodeFromStored(
+          `${item.reviewData.setupCode ?? ''}\n${item.reviewData.starterCode ?? ''}`,
+          item.reviewData.setupCode ?? '',
+          item.reviewData.starterCode ?? ''
+        )
+      );
     } else {
       setCode('');
     }
@@ -94,13 +124,27 @@ export function ReviewClient() {
     if (!current) return;
     let passed = false;
     if (current.reviewType === 'predict_output') {
-      passed = validatePredictOutput(answer, current.reviewData.expectedOutput, current.stepId).passed;
-    } else {
-      passed = validateCodeChallenge(
-        code,
+      passed = validatePredictOutput(
+        answer,
         current.reviewData.expectedOutput,
         current.stepId,
-        current.reviewData.goalType ?? 'output'
+        current.reviewData.code
+      ).passed;
+    } else {
+      const fullCode = combineLearnCode(
+        current.reviewData.setupCode ?? '',
+        code
+      );
+      const referenceCode = current.reviewData.solutionCode
+        ? `${current.reviewData.setupCode ?? ''}\n${current.reviewData.solutionCode}`
+        : undefined;
+      passed = validateCodeChallenge(
+        fullCode,
+        current.reviewData.expectedOutput,
+        current.stepId,
+        current.reviewData.goalType ?? 'output',
+        referenceCode,
+        current.reviewData.outputFlex
       ).passed;
     }
     setResult(passed);
@@ -198,11 +242,22 @@ export function ReviewClient() {
         )}
 
         {current.reviewType === 'code_goal' && (
-          <LearnCodeBlock code="" editable value={code} onChange={setCode} />
+          <LearnCodeBlock
+            code=""
+            editable
+            setupCode={
+              getResolvedLearningSettings(current.moduleId).setupCodeSplit
+                ? current.reviewData.setupCode
+                : undefined
+            }
+            value={code}
+            onChange={setCode}
+            editorSettings={getResolvedLearningSettings(current.moduleId)}
+          />
         )}
 
         <ResultPanel
-          goal={current.reviewData.expectedOutput}
+          goal={reviewDisplayOutput(current)}
           yours={result === null ? undefined : answer || '—'}
           passed={result}
         />

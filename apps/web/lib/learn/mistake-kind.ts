@@ -11,7 +11,8 @@ export type MistakeKind =
   | 'output_when_error'
   | 'empty_output'
   | 'syntax_error'
-  | 'output_mismatch';
+  | 'output_mismatch'
+  | 'missing_string_quotes';
 
 /** Default hint array index to show first after a wrong attempt (0-based). */
 export const FIRST_HINT_INDEX: Partial<Record<MistakeKind, number>> = {
@@ -25,6 +26,7 @@ export const FIRST_HINT_INDEX: Partial<Record<MistakeKind, number>> = {
   output_when_error: 0,
   empty_output: 0,
   syntax_error: 0,
+  missing_string_quotes: 0,
 };
 
 /** Phase 2 threshold: add per-step mistakeHints when generic fallback exceeds this. */

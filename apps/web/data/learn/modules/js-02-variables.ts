@@ -1,4 +1,5 @@
 import type { LearnModule } from '../types';
+import { CHALLENGE_YOURSELF_SECTION_TITLE } from '../challenge-yourself';
 
 export const moduleVariables: LearnModule = {
   id: 'js-02-variables',
@@ -7,12 +8,14 @@ export const moduleVariables: LearnModule = {
   level: 1,
   levelLabel: 'Fundamentals',
   kind: 'lesson',
-  estimatedMinutes: 35,
+  estimatedMinutes: 30,
   contentAvailable: true,
   steps: [
     {
       id: 'var-1',
       type: 'text',
+      devTitle: 'Variables overview',
+      devDescription: 'Why programs need names for values — const and let.',
       conceptTags: ['variables'],
       title: 'Variables',
       content: `Programs need to **remember values**. A **variable** gives a name to a value so you can use it later.
@@ -22,6 +25,8 @@ In modern JavaScript, you create variables with \`const\` or \`let\`.`,
     {
       id: 'var-2',
       type: 'text',
+      devTitle: 'const basics',
+      devDescription: 'const binds a name to a value that will not be reassigned.',
       conceptTags: ['const'],
       content: `\`const\` means "this name always points to this value."
 
@@ -30,6 +35,8 @@ Use \`const\` by default — for settings, user names, and anything you won't re
     {
       id: 'var-3',
       type: 'code-demo',
+      devTitle: 'Demo: const and logging',
+      devDescription: 'Runnable example — declare a const and log it.',
       conceptTags: ['const'],
       code: `const greeting = 'Hello';
 console.log(greeting);`,
@@ -38,6 +45,8 @@ console.log(greeting);`,
     {
       id: 'var-4',
       type: 'text',
+      devTitle: 'let basics',
+      devDescription: 'let is for values that change — reassignment with =.',
       conceptTags: ['let'],
       content: `\`let\` is for values that **change** — counters, loop indices, toggles.
 
@@ -46,6 +55,8 @@ You can assign a \`let\` variable again with \`=\`.`,
     {
       id: 'var-5',
       type: 'code-demo',
+      devTitle: 'Demo: let reassignment',
+      devDescription: 'Runnable example — increment a score with let.',
       conceptTags: ['let'],
       code: `let score = 0;
 score = score + 10;
@@ -55,6 +66,8 @@ console.log(score);`,
     {
       id: 'var-6',
       type: 'predict-output',
+      devTitle: 'Predict: const + let together',
+      devDescription: 'Trace const and let bindings before a multi-argument console.log.',
       conceptTags: ['const', 'let'],
       prompt: 'What gets logged?',
       code: `const city = 'Paris';
@@ -65,14 +78,16 @@ console.log(city, count);`,
       hints: [
         'Trace each line from top to bottom. What values do `city` and `count` hold right before `console.log` runs?',
         '`count` starts at `1` but gets reassigned to `2` on line 3. `city` never changes.',
-        '`console.log` with multiple arguments prints them separated by a **space** — not a comma.',
+        '`console.log` with multiple arguments prints them separated by a **space** — not a comma. Wrap string values in quotes, e.g. `\'Paris\' 2`.',
       ],
       revealExplanation:
-        'After line 3, `city` is still `"Paris"` and `count` is `2`. `console.log(city, count)` prints: `Paris 2` (space-separated, no comma).',
+        'After line 3, `city` is still `"Paris"` and `count` is `2`. `console.log(city, count)` prints: `\'Paris\' 2` (space-separated, no comma).',
     },
     {
       id: 'var-7',
       type: 'text',
+      devTitle: 'Code challenge intro',
+      devDescription: 'Declare a const for a language name, then log it.',
       conceptTags: ['const'],
       title: "Here's a code problem:",
       content: `Create a \`const\` named \`language\` with value \`'JavaScript'\`, then log it.`,
@@ -80,6 +95,8 @@ console.log(city, count);`,
     {
       id: 'var-8',
       type: 'code-challenge',
+      devTitle: 'Challenge: log a const string',
+      devDescription: 'Write const language and console.log it.',
       conceptTags: ['const', 'console-log'],
       prompt: 'Log the string JavaScript using a const variable.',
       setupCode: `// Declare language, then log it:`,
@@ -94,11 +111,13 @@ console.log(language);`,
         'Assign `\'JavaScript\'` to `language`, then pass `language` to `console.log`.',
       ],
       revealExplanation:
-        'Declare `const language = \'JavaScript\'`, then `console.log(language)` prints `JavaScript`.',
+        'Declare `const language = \'JavaScript\'`, then `console.log(language)` prints `\'JavaScript\'`.',
     },
     {
       id: 'var-9',
       type: 'text',
+      devTitle: 'const reassignment rules',
+      devDescription: 'Why reassigning const throws TypeError — how error steps work.',
       conceptTags: ['const-reassignment', 'type-error'],
       content: `Sometimes we want to ensure a variable is **never reassigned**. That's what \`const\` is for.
 
@@ -106,11 +125,13 @@ If you try to reassign a \`const\`, JavaScript throws:
 
 **TypeError: Assignment to constant variable**
 
-When a step asks what happens and the code will fail, choose **Throws error** at the top of the answer box — or type the error name if you know it.`,
+When a step asks what happens and the code will fail, choose **Throws error** — then pick the specific error from the list you've learned so far.`,
     },
     {
       id: 'var-9-demo',
       type: 'code-demo',
+      devTitle: 'Demo: const inside a function',
+      devDescription: 'Runnable example — const used safely inside a function.',
       conceptTags: ['const'],
       code: `function f() {
   const x = 1;
@@ -122,6 +143,8 @@ console.log(f());`,
     {
       id: 'var-10',
       type: 'predict-output',
+      devTitle: 'Predict: const reassignment error',
+      devDescription: 'What happens when a function tries to reassign a const.',
       conceptTags: ['const-reassignment', 'type-error'],
       prompt: 'What happens when this runs?',
       code: `function f() {
@@ -136,37 +159,16 @@ f();`,
       hints: [
         'Look at line 3. Can you assign a new value to a `const` variable?',
         'Reassigning a `const` throws an error — the function never returns.',
-        'Choose **Throws error**, or type **TypeError** if you know the name.',
+        'Choose **Throws error**, then pick **TypeError: Assignment to constant variable.** from the list.',
       ],
       revealExplanation:
         '`const x = 1` creates a constant binding. `x = 2` throws **TypeError: Assignment to constant variable**.',
     },
     {
-      id: 'var-10-full',
-      type: 'choice',
-      conceptTags: ['const-reassignment', 'type-error'],
-      prompt: 'Same code — which error message does JavaScript show?',
-      code: `const x = 1;
-x = 2;
-console.log(x);`,
-      choices: [
-        'TypeError: Assignment to constant variable.',
-        'ReferenceError: Cannot access \'x\' before initialization',
-        'SyntaxError: Identifier \'x\' has already been declared',
-        'TypeError: x is not defined',
-      ],
-      correctIndex: 0,
-      hints: [
-        'You already know this is a TypeError from the previous step.',
-        'The message mentions assigning to a **constant** variable.',
-        'Pick the option about **Assignment to constant variable**.',
-      ],
-      explanation:
-        'Reassigning a `const` binding throws **TypeError: Assignment to constant variable.** The program stops before `console.log` runs.',
-    },
-    {
       id: 'var-10-challenge',
       type: 'code-challenge',
+      devTitle: 'Challenge: trigger TypeError',
+      devDescription: 'Change let to const so reassignment throws an error.',
       conceptTags: ['const-reassignment', 'type-error', 'let'],
       prompt:
         'Change `let` to `const` so this code throws TypeError: Assignment to constant variable.',
@@ -198,6 +200,8 @@ f();`,
     {
       id: 'var-syntax-1',
       type: 'text',
+      devTitle: 'Duplicate declarations',
+      devDescription: 'Declaring the same const/let name twice in one scope causes SyntaxError.',
       conceptTags: ['syntax-error', 'const-redeclaration'],
       content: `You also **cannot declare the same name twice** with \`const\` or \`let\` in the same scope.
 
@@ -206,6 +210,8 @@ That fails immediately with a **SyntaxError** — JavaScript won't even start ru
     {
       id: 'var-syntax-2',
       type: 'predict-output',
+      devTitle: 'Predict: duplicate const',
+      devDescription: 'What happens when const x is declared twice in the same scope.',
       conceptTags: ['syntax-error', 'const-redeclaration'],
       prompt: 'What happens when this runs?',
       code: `const x = 5;
@@ -217,7 +223,7 @@ console.log(x);`,
       hints: [
         'Count how many times `x` is declared with `const`.',
         'Two `const x` declarations in the same scope is illegal.',
-        'Choose **Throws error**, or type **SyntaxError** if you know the name. The message mentions the identifier was already declared.',
+        'Choose **Throws error**, then pick **SyntaxError: Identifier \'x\' has already been declared** from the list.',
       ],
       revealExplanation:
         '**SyntaxError: Identifier \'x\' has already been declared** — JavaScript rejects duplicate `const` names before running any lines.',
@@ -225,6 +231,8 @@ console.log(x);`,
     {
       id: 'var-tdz-1',
       type: 'text',
+      devTitle: 'Temporal dead zone',
+      devDescription: 'Using const/let before its declaration line throws ReferenceError (TDZ).',
       conceptTags: ['reference-error', 'tdz'],
       content: `You **cannot use a \`const\` or \`let\` variable before its declaration line**.
 
@@ -233,6 +241,8 @@ That throws **ReferenceError: Cannot access 'x' before initialization** — call
     {
       id: 'var-tdz-2',
       type: 'predict-output',
+      devTitle: 'Predict: TDZ error',
+      devDescription: 'What happens when you log a variable before it is declared.',
       conceptTags: ['reference-error', 'tdz'],
       prompt: 'What happens when this runs?',
       code: `console.log(x);
@@ -243,14 +253,57 @@ const x = 5;`,
       hints: [
         'Which line runs first — the `console.log` or the `const`?',
         '`x` exists but is not initialized yet when line 1 runs.',
-        'Choose **Throws error**, or type **ReferenceError** if you know the name. This is different from a variable that was never declared at all.',
+        'Choose **Throws error**, then pick **ReferenceError: Cannot access \'x\' before initialization** from the list.',
       ],
       revealExplanation:
         '**ReferenceError: Cannot access \'x\' before initialization** — `const`/`let` bindings exist but cannot be read until their declaration line runs.',
     },
     {
+      id: 'var-cy-1-intro',
+      type: 'text',
+      devTitle: 'Challenge Yourself',
+      devDescription: 'Optional stretch — block scope with let. Skip anytime.',
+      conceptTags: ['let'],
+      title: CHALLENGE_YOURSELF_SECTION_TITLE,
+      sectionKind: 'challenge-yourself',
+      content: `Optional stretch problem — block scope with \`let\`. No hints.
+
+Skip if you want; it won't block progress.`,
+    },
+    {
+      id: 'var-cy-1',
+      type: 'predict-output',
+      devTitle: 'CY: block scope shadowing',
+      devDescription: 'Optional predict — inner and outer let bindings with the same name.',
+      conceptTags: ['let'],
+      optional: true,
+      prompt: 'What gets logged?',
+      code: `let x = 1;
+{
+  let x = 2;
+  console.log(x);
+}
+console.log(x);`,
+      expectedOutput: `2
+1`,
+      challengeDebrief: {
+        gotcha:
+          'The `{ }` block creates a **new scope** — inner `let x` is a **different variable** that shadows the outer one.',
+        evaluationSteps: [
+          { expression: 'inside block, log x', yields: '2' },
+          { expression: 'after block, log x', yields: '1' },
+        ],
+        greatSolution:
+          'The inner binding disappears when the block ends. The outer `x` was never changed — it is still `1`.',
+        watchFor:
+          'See `{` after a `let`/`const`? Ask whether a **new binding** shares the same name.',
+      },
+    },
+    {
       id: 'var-mutation-1',
       type: 'text',
+      devTitle: 'const vs mutation',
+      devDescription: 'const blocks reassignment, not mutating objects and arrays.',
       conceptTags: ['const-mutation'],
       content: `\`const\` stops **reassignment** — pointing the name at a new value.
 
@@ -259,6 +312,8 @@ It does **not** freeze objects and arrays. You can still change what's **inside*
     {
       id: 'var-mutation-2',
       type: 'code-demo',
+      devTitle: 'Demo: mutating an array',
+      devDescription: 'Runnable example — push to a const array binding.',
       conceptTags: ['const-mutation'],
       code: `const names = ['Ada'];
 names.push('Grace');
@@ -268,6 +323,8 @@ console.log(names);`,
     {
       id: 'var-mutation-3',
       type: 'predict-output',
+      devTitle: 'Predict: reassigning const object',
+      devDescription: 'What happens when you replace a const object binding entirely.',
       conceptTags: ['const-reassignment', 'type-error', 'const-mutation'],
       prompt: 'What happens when this runs?',
       code: `const user = { name: 'Ada' };
@@ -279,89 +336,56 @@ console.log(user);`,
       hints: [
         'Line 2 tries to point `user` at a completely new object. Is that reassignment?',
         'Mutating properties is allowed; replacing the whole binding is not.',
-        'Choose **Throws error**, or type **TypeError** if you know the name — same message as reassigning a primitive `const`.',
+        'Choose **Throws error**, then pick **TypeError: Assignment to constant variable.** from the list.',
       ],
       revealExplanation:
         '`user = { name: \'Bob\' }` tries to reassign the `const` binding. That throws **TypeError: Assignment to constant variable.**',
     },
     {
+      id: 'var-cy-2-intro',
+      type: 'text',
+      devTitle: 'Challenge Yourself',
+      devDescription: 'Optional gotcha — shared references with const. Skip anytime.',
+      conceptTags: ['const-mutation'],
+      title: CHALLENGE_YOURSELF_SECTION_TITLE,
+      sectionKind: 'challenge-yourself',
+      content: `Another optional gotcha — shared references with \`const\`. No hints.`,
+    },
+    {
+      id: 'var-cy-2',
+      type: 'predict-output',
+      devTitle: 'CY: shared array reference',
+      devDescription: 'Optional predict — two consts pointing at the same array.',
+      conceptTags: ['const-mutation'],
+      optional: true,
+      prompt: 'What gets logged?',
+      code: `const a = [];
+const b = a;
+b.push(1);
+console.log(a.length, b.length);`,
+      expectedOutput: '1 1',
+      challengeDebrief: {
+        gotcha:
+          '`const b = a` copies the **reference**, not the array — both names aim at the **same object in memory**.',
+        evaluationSteps: [
+          { expression: 'b.push(1)', yields: 'mutates shared array' },
+          { expression: 'a.length', yields: '1' },
+          { expression: 'b.length', yields: '1' },
+        ],
+        greatSolution: 'One array, two variables pointing at it — both lengths match.',
+        watchFor:
+          'Assigning an array or object to another variable? Ask: **shared reference or fresh copy?**',
+      },
+    },
+    {
       id: 'var-11',
       type: 'text',
-      conceptTags: ['typeof'],
-      content: `\`typeof\` tells you what kind of value a variable holds. It returns a **string** label like \`"string"\` or \`"number"\`.`,
-    },
-    {
-      id: 'var-12',
-      type: 'code-demo',
-      conceptTags: ['typeof'],
-      code: `const name = 'Ada';
-const age = 30;
-console.log(typeof name);
-console.log(typeof age);`,
-      expectedOutput: `string
-number`,
-    },
-    {
-      id: 'var-13',
-      type: 'predict-output',
-      conceptTags: ['typeof'],
-      prompt: 'What does typeof return for true?',
-      code: `console.log(typeof true);`,
-      expectedOutput: 'boolean',
-      hints: [
-        'What JavaScript type is the value `true`?',
-        '`typeof` returns a string name for the type.',
-        '`typeof true` returns the string `"boolean"` — type just: `boolean`',
-      ],
-      revealExplanation:
-        '`true` is a boolean value. `typeof true` returns the string `"boolean"`. Type: `boolean`',
-    },
-    {
-      id: 'var-14',
-      type: 'text',
-      conceptTags: ['typeof-null'],
-      content: `One famous quirk: \`typeof null\` returns \`"object"\` — a long-standing JavaScript bug.
+      devTitle: 'Module wrap-up',
+      devDescription: 'Preview of Types module — typeof, dynamic typing, and TypeScript.',
+      conceptTags: ['types'],
+      content: `Values have **types** — string, number, boolean, and more.
 
-Interviewers love this. Remember: \`null\` is its own type in practice, even if \`typeof\` lies.`,
-    },
-    {
-      id: 'var-15',
-      type: 'predict-output',
-      conceptTags: ['typeof-null'],
-      prompt: 'What does typeof null return?',
-      code: `console.log(typeof null);`,
-      expectedOutput: 'object',
-      hints: [
-        '`null` is a special value in JavaScript. What does `typeof` usually return for types?',
-        'There is a famous historical bug with `typeof` and `null`.',
-        '`typeof null` returns `"object"` — not `"null"`. Type: `object`',
-      ],
-      revealExplanation:
-        'This is a well-known JavaScript quirk: `typeof null` returns `"object"` even though `null` is not an object.',
-    },
-    {
-      id: 'var-16',
-      type: 'code-challenge',
-      conceptTags: ['const', 'let', 'typeof'],
-      prompt: 'Create const item = "book", let qty = 3, then log typeof item and typeof qty on separate lines.',
-      setupCode: `// Fill in item, qty, and two console.log lines:`,
-      starterCode: `const item = '';
-let qty = 0;
-console.log(typeof item);
-console.log(typeof qty);`,
-      solutionCode: `const item = 'book';
-let qty = 3;
-console.log(typeof item);
-console.log(typeof qty);`,
-      expectedOutput: `string
-number`,
-      hints: [
-        '`item` should be a string and `qty` should be a number.',
-        'Use `typeof` before each variable inside `console.log`.',
-        'Two separate `console.log` calls — one for `typeof item`, one for `typeof qty`.',
-      ],
-      revealExplanation:
-        '`item` is the string `"book"` (`typeof` → `string`), `qty` is `3` (`typeof` → `number`). Each `typeof` prints on its own line.',
+The next module covers **typeof**, dynamic typing, and why many teams use **TypeScript** for extra safety.`,
     },
   ],
 };

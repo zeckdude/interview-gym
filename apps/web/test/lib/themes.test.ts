@@ -42,6 +42,7 @@ const BASE_TEST_TOKENS: ThemeTokens = {
   borderStrong: '#666666',
   codeBg: '#1A1A1A',
   successLight: '#D4F5E3',
+  error: '#E74C3C',
   errorLight: '#FDECEA',
   warningLight: '#FEF3DA',
   fontDisplay: 'serif',

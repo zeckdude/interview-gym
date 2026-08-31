@@ -15,6 +15,7 @@ export interface ThemeTokens {
   codeBg: string;
   /** Muted backgrounds for status callouts — always pair with text-text-primary. */
   successLight: string;
+  error: string;
   errorLight: string;
   warningLight: string;
   fontDisplay: string;

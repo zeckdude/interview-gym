@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { HighlightedCodeBlock } from '@/components/code/HighlightedCodeBlock';
 import { LearnInlineText } from '@/components/learn/LearnCodeBlock';
+import { formatQuotedDisplayOutput } from '@/lib/learn/execute-code';
 import {
   getLearnModuleTitle,
   getReferencesForCoveredModules,
@@ -13,6 +14,7 @@ import {
 } from '@/data/learn/reference';
 
 function ReferenceCodeBlock({ code, result }: { code: string; result: string }) {
+  const displayResult = formatQuotedDisplayOutput(code, result);
   return (
     <div className="space-y-4">
       <HighlightedCodeBlock code={code} compact showLineNumbers={false} showPrompt />
@@ -21,7 +23,7 @@ function ReferenceCodeBlock({ code, result }: { code: string; result: string }) 
           Result:
         </p>
         <pre className="font-mono text-success whitespace-pre-wrap text-base leading-relaxed">
-          {result}
+          {displayResult}
         </pre>
       </div>
     </div>
