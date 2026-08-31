@@ -9,6 +9,12 @@ export default function OpsHubPage() {
         'Every button, badge, callout, modal, and theme token — interactive, side by side, in light and dark mode.',
     },
     {
+      href: '/ops/learn-problems',
+      title: 'Learn problem types',
+      description:
+        'Fully interactive demos for each learn-path problem format — shipped step types and new prototypes.',
+    },
+    {
       href: '/admin/paused-features',
       title: 'Paused features',
       description:
